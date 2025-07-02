@@ -182,10 +182,11 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                       ),
 
                       SideMenuExpansionItem(
-                        
+                        icon: Icon(LucideIcons.shoppingCart),
                         title: 'Product',
                         children: [
                           SideMenuItem(
+                            //    trailing: SizedBox(width: .001 * SizeUtils.height),
                             title: 'NFC Card',
                             iconWidget: SideMenuLucideIcon(
                               icon: LucideIcons.shoppingCart,

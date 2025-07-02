@@ -6,8 +6,11 @@ import '/gen/fonts.gen.dart';
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
     expansionTileTheme: ExpansionTileThemeData(
-      backgroundColor: CustomColors.lightGreen,
-      collapsedBackgroundColor: Colors.red,
+      expandedAlignment: Alignment.centerRight,
+      //    expansionAnimationStyle: AnimationStyle(),
+      shape: Border.all(color: Colors.transparent),
+      //  backgroundColor: CustomColors.lightGreen,
+      collapsedBackgroundColor: Colors.white,
     ),
     switchTheme: SwitchThemeData(
       thumbIcon: WidgetStateProperty.resolveWith<Icon?>((states) {

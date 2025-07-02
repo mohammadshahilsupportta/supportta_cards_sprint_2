@@ -45,16 +45,10 @@ class MyApp extends StatelessWidget {
               final size = MediaQuery.of(context).size;
               // final isWindows = Platform.isWindows;
 
-              return Container(
-                // color :
-
-                // padding : EdgeInsets.only()
-                // padding: EdgeInsets.only(bottom: isWindows ? 40.0 : 0.0),
-                child: SizedBox(
-                  width: size.width,
-                  height: size.height,
-                  child: child,
-                ),
+              return SizedBox(
+                width: size.width,
+                height: size.height,
+                child: child,
               );
             },
 

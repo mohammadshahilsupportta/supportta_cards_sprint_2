@@ -18,6 +18,7 @@ class ExpandTileContainer extends StatelessWidget {
           child: Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
+              collapsedBackgroundColor: CustomColors.lightGreen,
               trailing: SizedBox(
                 width: 100,
                 child: Row(
