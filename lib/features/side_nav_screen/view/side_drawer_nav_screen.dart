@@ -1,10 +1,8 @@
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:lucide_icons_flutter/test_icons.dart';
 import 'package:one_clock/one_clock.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/Dashboard_screen/view/dashboard_screen.dart';
@@ -20,26 +18,21 @@ import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 import 'package:taproot_admin/widgets/snakbar_helper.dart';
 
+import '../../portfolio_product_screen/view/porfolio_product.dart';
 import '../widgets/side_menu_lucide_icon_widgt.dart';
 
 class SideDrawerNavScreen extends StatefulWidget {
   final int passedIndex;
 
   static const String path = '/sideDrawerNav';
-  const SideDrawerNavScreen({super.key, this.passedIndex =0 });
+  const SideDrawerNavScreen({super.key, this.passedIndex = 0});
 
   @override
   State<SideDrawerNavScreen> createState() => _SideDrawerNavScreenState();
 }
 
 class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
-
-
   int _currentIndex = 0;
-  
-
-
-  
 
   final GlobalKey<NavigatorState> _innerNavigatorKey =
       GlobalKey<NavigatorState>();
@@ -49,6 +42,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
     'Dashboard',
     'Orders',
     'Product',
+    'NFC Cards',
     'Users',
     'Expense',
     'Leads',
@@ -101,22 +95,6 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
           ),
 
           Gap(CustomPadding.paddingXL),
-
-          // IconButton(onPressed: () {}, icon: const Icon(Icons.notifications)),
-          // PopupMenuButton<String>(
-          //   offset: Offset(0, CustomPadding.paddingXL.v),
-          //   icon: const Icon(Icons.account_circle),
-          //   onSelected: (value) {
-          //     if (value == 'profile') {
-          //     } else if (value == 'logout') {}
-          //   },
-          //   itemBuilder:
-          //       (context) => [
-          //         PopupMenuItem(value: 'profile', child: Text('Profile')),
-          //         PopupMenuItem(value: 'logout', child: Text('Logout')),
-          //       ],
-          // ),
-          // CustomGap.gapXL,
         ],
         leadingWidth: 150,
         leading: Padding(
@@ -140,7 +118,20 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                 Expanded(
                   child: SideMenu(
                     controller: NavControllers.sideMenuController,
+
                     style: SideMenuStyle(
+                      // decoration: BoxDecoration(color: Colors.red),
+                      // unselectedIconColorExpandable: Colors.white,
+                      selectedTitleTextStyleExpandable: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.fSize,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      arrowOpen: CustomColors.buttonColor1,
+                      unselectedTitleTextStyleExpandable: TextStyle(
+                        color: CustomColors.textColorDarkGrey,
+                        fontSize: 14.fSize,
+                      ),
                       backgroundColor: Colors.white,
                       displayMode: SideMenuDisplayMode.open,
                       openSideMenuWidth: (150 / 1440) * SizeUtils.width,
@@ -189,25 +180,51 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                           NavControllers.sideMenuController.changePage(index);
                         },
                       ),
-                      SideMenuItem(
+
+                      SideMenuExpansionItem(
+                        
                         title: 'Product',
-                        iconWidget: SideMenuLucideIcon(
-                          icon: LucideIcons.shoppingCart,
-                          index: 2,
-                          currentIndex: _currentIndex,
-                        ),
-                        onTap: (index, _) {
-                          setState(() {
-                            _currentIndex = index;
-                          });
-                          NavControllers.sideMenuController.changePage(index);
-                        },
+                        children: [
+                          SideMenuItem(
+                            title: 'NFC Card',
+                            iconWidget: SideMenuLucideIcon(
+                              icon: LucideIcons.shoppingCart,
+                              index: 2,
+                              currentIndex: _currentIndex,
+                            ),
+                            onTap: (index, _) {
+                              setState(() {
+                                _currentIndex = index;
+                              });
+                              NavControllers.sideMenuController.changePage(
+                                index,
+                              );
+                            },
+                          ),
+                          SideMenuItem(
+                            title: 'Portfolio',
+                            iconWidget: SideMenuLucideIcon(
+                              icon: LucideIcons.idCard,
+                              index: 3,
+                              currentIndex: _currentIndex,
+                            ),
+                            onTap: (index, _) {
+                              setState(() {
+                                _currentIndex = index;
+                              });
+                              NavControllers.sideMenuController.changePage(
+                                index,
+                              );
+                            },
+                          ),
+                        ],
                       ),
+
                       SideMenuItem(
                         title: 'Users',
                         iconWidget: SideMenuLucideIcon(
                           icon: LucideIcons.users,
-                          index: 3,
+                          index: 4,
                           currentIndex: _currentIndex,
                         ),
                         onTap: (index, _) {
@@ -221,7 +238,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                         title: 'Expense',
                         iconWidget: SideMenuLucideIcon(
                           icon: LucideIcons.network,
-                          index: 4,
+                          index: 5,
                           currentIndex: _currentIndex,
                         ),
                         onTap: (index, _) {
@@ -236,7 +253,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                         title: 'Leads',
                         iconWidget: SideMenuLucideIcon(
                           icon: LucideIcons.briefcaseBusiness,
-                          index: 5,
+                          index: 6,
                           currentIndex: _currentIndex,
                         ),
                         onTap: (index, _) {
@@ -281,12 +298,6 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                     ),
                   ),
                 ),
-
-                // Container(
-                //   width: 200,
-                //   height: 20,
-                //   color: CustomColors.secondaryColor,
-                // ),
               ],
             ),
           ),
@@ -315,6 +326,14 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                   onGenerateRoute: (settings) {
                     return MaterialPageRoute(
                       builder: (_) => ProductScreen(),
+                      settings: settings,
+                    );
+                  },
+                ),
+                Navigator(
+                  onGenerateRoute: (settings) {
+                    return MaterialPageRoute(
+                      builder: (_) => PorfolioProduct(),
                       settings: settings,
                     );
                   },
@@ -378,7 +397,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
               MiniLoadingButton(
                 useGradient: true,
                 needRow: false,
-                // backgroundColor: CustomColors.red,
+
                 text: 'Logout',
                 onPressed: () => Navigator.pop(context, true),
               ),

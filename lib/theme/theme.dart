@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+
 import '/gen/fonts.gen.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
     expansionTileTheme: ExpansionTileThemeData(
       backgroundColor: CustomColors.lightGreen,
-      collapsedBackgroundColor: CustomColors.lightGreen,
+      collapsedBackgroundColor: Colors.red,
     ),
     switchTheme: SwitchThemeData(
       thumbIcon: WidgetStateProperty.resolveWith<Icon?>((states) {
