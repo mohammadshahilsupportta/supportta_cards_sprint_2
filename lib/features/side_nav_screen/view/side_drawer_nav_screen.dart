@@ -189,7 +189,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                             //    trailing: SizedBox(width: .001 * SizeUtils.height),
                             title: 'NFC Card',
                             iconWidget: SideMenuLucideIcon(
-                              icon: LucideIcons.shoppingCart,
+                              icon: LucideIcons.idCard,
                               index: 2,
                               currentIndex: _currentIndex,
                             ),
@@ -205,7 +205,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                           SideMenuItem(
                             title: 'Portfolio',
                             iconWidget: SideMenuLucideIcon(
-                              icon: LucideIcons.idCard,
+                              icon: LucideIcons.tabletSmartphone,
                               index: 3,
                               currentIndex: _currentIndex,
                             ),
