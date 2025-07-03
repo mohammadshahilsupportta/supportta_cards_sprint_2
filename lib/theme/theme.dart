@@ -8,9 +8,22 @@ class AppTheme {
     expansionTileTheme: ExpansionTileThemeData(
       tilePadding: EdgeInsets.only(right: CustomPadding.padding),
       expandedAlignment: Alignment.centerLeft,
+      collapsedShape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.circular(CustomPadding.padding),
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.circular(CustomPadding.padding),
+      ),
+
+      // shape: BeveledRectangleBorder(
+
+      // ),
       //    expansionAnimationStyle: AnimationStyle(),
-      shape: Border.all(color: Colors.transparent),
-      //  backgroundColor: CustomColors.lightGreen,
+      // shape: circularRectangleBorder(
+
+      // ),
+      // // collapsedShape: ,
+      backgroundColor: CustomColors.lightGreen,
       collapsedBackgroundColor: Colors.white,
     ),
     switchTheme: SwitchThemeData(

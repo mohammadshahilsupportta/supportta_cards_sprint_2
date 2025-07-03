@@ -121,6 +121,9 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                     controller: NavControllers.sideMenuController,
 
                     style: SideMenuStyle(
+                      decoration: BoxDecoration(
+                        // borderRadius: BorderRadius.circular(12),
+                      ),
                       // decoration: BoxDecoration(color: Colors.red),
                       // unselectedIconColorExpandable: Colors.white,
                       selectedTitleTextStyleExpandable: TextStyle(
@@ -138,6 +141,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                       openSideMenuWidth: (150 / 1440) * SizeUtils.width,
                       selectedColor: CustomColors.borderGradient.colors.first,
 
+                      // itemBorderRadius: BorderRadius.circular(2),
                       selectedTitleTextStyle: TextStyle(
                         color: Colors.white,
                         fontSize: 14.fSize,
@@ -183,12 +187,10 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                       ),
 
                       SideMenuExpansionItem(
-                        icon: Icon(Icons.shopping_bag_sharp),
+                        
+                        icon: Icon(LucideIcons.shoppingCart, size: 20.fSize),
                         title: 'Product',
-                       iconWidget: Padding(
-                         padding: const EdgeInsets.all(8.0),
-                         child: SizedBox(),
-                       ),
+                        //  iconWidget: SizedBox(),
                         children: [
                           SideMenuItem(
                             builder:
