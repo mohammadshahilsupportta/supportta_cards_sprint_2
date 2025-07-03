@@ -416,99 +416,101 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
                             price: productcard.actualPrice.toString(),
                             offerPrice: productcard.salePrice.toString(),
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              bottom: CustomPadding.paddingLarge.v,
-                            ),
-                            child: Align(
-                              alignment: Alignment.bottomRight,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Switch(
-                                    value: enabledList[index],
-                                    onChanged: (value) async {
-                                      if (!mounted) return;
-
-                                      try {
-                                        BuildContext? dialogContext;
-                                        showDialog(
-                                          context: context,
-                                          barrierDismissible: false,
-                                          builder: (BuildContext ctx) {
-                                            dialogContext = ctx;
-                                            return const Center(
-                                              child:
-                                                  CircularProgressIndicator(),
-                                            );
-                                          },
-                                        );
-
-                                        final success =
-                                            await ProductService.isProductEnable(
-                                              productId: productcard.id ?? '',
-                                            );
-
-                                        if (dialogContext != null && mounted) {
-                                          Navigator.of(dialogContext!).pop();
-                                        }
-
+                          Column(
+                            children: [
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Switch(
+                                      value: enabledList[index],
+                                      onChanged: (value) async {
                                         if (!mounted) return;
 
-                                        if (success) {
-                                          setState(() {
-                                            enabledList[index] = value;
-                                          });
-
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            const SnackBar(
-                                              content: Text(
-                                                'Product status updated successfully',
-                                              ),
-                                              backgroundColor: Colors.green,
-                                            ),
+                                        try {
+                                          BuildContext? dialogContext;
+                                          showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (BuildContext ctx) {
+                                              dialogContext = ctx;
+                                              return const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                            },
                                           );
 
-                                          await refreshProducts();
-                                        } else {
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            const SnackBar(
-                                              content: Text(
-                                                'Failed to update product status',
+                                          final success =
+                                              await ProductService.isProductEnable(
+                                                productId: productcard.id ?? '',
+                                              );
+
+                                          if (dialogContext != null &&
+                                              mounted) {
+                                            Navigator.of(dialogContext!).pop();
+                                          }
+
+                                          if (!mounted) return;
+
+                                          if (success) {
+                                            setState(() {
+                                              enabledList[index] = value;
+                                            });
+
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  'Product status updated successfully',
+                                                ),
+                                                backgroundColor: Colors.green,
                                               ),
-                                              backgroundColor: Colors.red,
-                                            ),
-                                          );
-                                        }
-                                      } catch (e) {
-                                        if (mounted) {
-                                          Navigator.of(context).pop();
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                'Error updating product status: $e',
+                                            );
+
+                                            await refreshProducts();
+                                          } else {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  'Failed to update product status',
+                                                ),
+                                                backgroundColor: Colors.red,
                                               ),
-                                              backgroundColor: Colors.red,
-                                            ),
-                                          );
+                                            );
+                                          }
+                                        } catch (e) {
+                                          if (mounted) {
+                                            Navigator.of(context).pop();
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Error updating product status: $e',
+                                                ),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
+                                          }
                                         }
-                                      }
-                                    },
-                                  ),
-                                  Gap(CustomPadding.padding.v),
-                                  Text(
-                                    enabledList[index] ? 'Enable' : 'Disabled',
-                                  ),
-                                ],
+                                      },
+                                    ),
+                                    Gap(CustomPadding.padding.v),
+                                    Text(
+                                      enabledList[index]
+                                          ? 'Enable'
+                                          : 'Disabled',
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
                         ],
                       ),

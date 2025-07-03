@@ -42,8 +42,8 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
   final List<String> _pageTitles = [
     'Dashboard',
     'Orders',
-    'Product',
-    'NFC Cards',
+    'NFC Card',
+    'Portfolio Product',
     'Users',
     'Expense',
     'Leads',
@@ -117,189 +117,195 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
             child: Column(
               children: [
                 Expanded(
-                  child: SideMenu(
-                    controller: NavControllers.sideMenuController,
+                  child: Container(
+                    color: CustomColors.burgandryRed,
+                    child: SideMenu(
+                      controller: NavControllers.sideMenuController,
 
-                    style: SideMenuStyle(
-                      decoration: BoxDecoration(
-                        // borderRadius: BorderRadius.circular(12),
-                      ),
-                      // decoration: BoxDecoration(color: Colors.red),
-                      // unselectedIconColorExpandable: Colors.white,
-                      selectedTitleTextStyleExpandable: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.fSize,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      arrowOpen: CustomColors.buttonColor1,
-                      unselectedTitleTextStyleExpandable: TextStyle(
-                        color: CustomColors.textColorDarkGrey,
-                        fontSize: 14.fSize,
-                      ),
-                      backgroundColor: Colors.white,
-                      displayMode: SideMenuDisplayMode.open,
-                      openSideMenuWidth: (150 / 1440) * SizeUtils.width,
-                      selectedColor: CustomColors.borderGradient.colors.first,
-
-                      // itemBorderRadius: BorderRadius.circular(2),
-                      selectedTitleTextStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.fSize,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      unselectedTitleTextStyle: TextStyle(
-                        color: CustomColors.textColorDarkGrey,
-                        fontSize: 14.fSize,
-                      ),
-                      hoverColor: CustomColors.hoverColor,
-                      itemOuterPadding: EdgeInsets.symmetric(
-                        vertical: CustomPadding.paddingSmall.v,
-                      ),
-                    ),
-                    items: [
-                      SideMenuItem(
-                        title: 'Dashboard',
-                        iconWidget: SideMenuLucideIcon(
-                          icon: LucideIcons.clipboardMinus,
-                          index: 0,
-                          currentIndex: _currentIndex,
+                      style: SideMenuStyle(
+                        decoration: BoxDecoration(
+                          // borderRadius: BorderRadius.circular(12),
                         ),
-                        onTap: (index, _) {
-                          setState(() {
-                            _currentIndex = index;
-                          });
-                          NavControllers.sideMenuController.changePage(index);
-                        },
-                      ),
-                      SideMenuItem(
-                        title: 'Orders',
-                        iconWidget: SideMenuLucideIcon(
-                          icon: LucideIcons.box,
-                          index: 1,
-                          currentIndex: _currentIndex,
+                        // decoration: BoxDecoration(color: Colors.red),
+                        // unselectedIconColorExpandable: Colors.white,
+                        selectedTitleTextStyleExpandable: TextStyle(
+                          fontSize: 14.fSize,
+                          fontWeight: FontWeight.bold,
                         ),
-                        onTap: (index, _) {
-                          setState(() {
-                            _currentIndex = index;
-                          });
-                          NavControllers.sideMenuController.changePage(index);
-                        },
-                      ),
 
-                      SideMenuExpansionItem(
-                        
-                        icon: Icon(LucideIcons.shoppingCart, size: 20.fSize),
-                        title: 'Product',
-                        //  iconWidget: SizedBox(),
-                        children: [
-                          SideMenuItem(
-                            builder:
-                                (context, displayMode) =>
-                                    CustomSideMenuTitleForExpandedTiles(
-                                      index: 2,
-                                      currentIndex: _currentIndex,
-                                      icon: LucideIcons.idCard,
-                                      title: 'NFC Cards',
-                                      onTap: () {
-                                        setState(() {
-                                          _currentIndex = 2;
-                                        });
-                                        NavControllers.sideMenuController
-                                            .changePage(2);
-                                      },
-                                    ),
+                        // selectedIconColorExpandable: CustomColors.secondaryColor,
+                        iconSizeExpandable: 20.fSize,
+                        arrowOpen: CustomColors.buttonColor1,
+                        unselectedIconColorExpandable: CustomColors.textColor,
+                        unselectedTitleTextStyleExpandable: TextStyle(
+                          color: CustomColors.textColorDarkGrey,
+                          fontSize: 14.fSize,
+                        ),
+                        backgroundColor: Colors.white,
+                        displayMode: SideMenuDisplayMode.open,
+                        openSideMenuWidth: (150 / 1440) * SizeUtils.width,
+                        selectedColor: CustomColors.borderGradient.colors.first,
+
+                        // itemBorderRadius: BorderRadius.circular(2),
+                        selectedTitleTextStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14.fSize,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        unselectedTitleTextStyle: TextStyle(
+                          color: CustomColors.textColorDarkGrey,
+                          fontSize: 14.fSize,
+                        ),
+                        hoverColor: CustomColors.hoverColor,
+                        itemOuterPadding: EdgeInsets.symmetric(
+                          vertical: CustomPadding.paddingSmall.v,
+                        ),
+                      ),
+                      items: [
+                        SideMenuItem(
+                          title: 'Dashboard',
+                          iconWidget: SideMenuLucideIcon(
+                            icon: LucideIcons.clipboardMinus,
+                            index: 0,
+                            currentIndex: _currentIndex,
                           ),
-
-                          SideMenuItem(
-                            builder:
-                                (context, displayMode) =>
-                                    CustomSideMenuTitleForExpandedTiles(
-                                      index: 3,
-                                      currentIndex: _currentIndex,
-                                      icon: LucideIcons.newspaper,
-                                      title: 'Portfolio',
-                                      onTap: () {
-                                        setState(() {
-                                          _currentIndex = 3;
-                                        });
-                                        NavControllers.sideMenuController
-                                            .changePage(3);
-                                      },
-                                    ),
+                          onTap: (index, _) {
+                            setState(() {
+                              _currentIndex = index;
+                            });
+                            NavControllers.sideMenuController.changePage(index);
+                          },
+                        ),
+                        SideMenuItem(
+                          title: 'Orders',
+                          iconWidget: SideMenuLucideIcon(
+                            icon: LucideIcons.box,
+                            index: 1,
+                            currentIndex: _currentIndex,
                           ),
-                        ],
-                      ),
-
-                      SideMenuItem(
-                        title: 'Users',
-                        iconWidget: SideMenuLucideIcon(
-                          icon: LucideIcons.users,
-                          index: 4,
-                          currentIndex: _currentIndex,
+                          onTap: (index, _) {
+                            setState(() {
+                              _currentIndex = index;
+                            });
+                            NavControllers.sideMenuController.changePage(index);
+                          },
                         ),
-                        onTap: (index, _) {
-                          setState(() {
-                            _currentIndex = index;
-                          });
-                          NavControllers.sideMenuController.changePage(index);
-                        },
-                      ),
-                      SideMenuItem(
-                        title: 'Expense',
-                        iconWidget: SideMenuLucideIcon(
-                          icon: LucideIcons.network,
-                          index: 5,
-                          currentIndex: _currentIndex,
-                        ),
-                        onTap: (index, _) {
-                          setState(() {
-                            _currentIndex = index;
-                          });
 
-                          NavControllers.sideMenuController.changePage(index);
-                        },
-                      ),
-                      SideMenuItem(
-                        title: 'Leads',
-                        iconWidget: SideMenuLucideIcon(
-                          icon: LucideIcons.briefcaseBusiness,
-                          index: 6,
-                          currentIndex: _currentIndex,
-                        ),
-                        onTap: (index, _) {
-                          setState(() {
-                            _currentIndex = index;
-                          });
-
-                          NavControllers.sideMenuController.changePage(index);
-                        },
-                      ),
-                    ],
-                    footer: Padding(
-                      padding: EdgeInsets.only(bottom: CustomPadding.paddingXL),
-                      child: Container(
-                        color: CustomColors.secondaryColor,
-                        child: Padding(
-                          padding: EdgeInsets.all(CustomPadding.padding),
-                          child: TextButton.icon(
-                            style: ButtonStyle(
-                              overlayColor:
-                                  WidgetStateProperty.resolveWith<Color?>((
-                                    states,
-                                  ) {
-                                    if (states.contains(WidgetState.hovered)) {
-                                      return Colors.red.shade100;
-                                    }
-                                    return null;
-                                  }),
+                        SideMenuExpansionItem(
+                          icon: Icon(LucideIcons.shoppingCart, size: 20.fSize),
+                          title: 'Product',
+                          //  iconWidget: SizedBox(),
+                          children: [
+                            SideMenuItem(
+                              builder:
+                                  (context, displayMode) =>
+                                      CustomSideMenuTitleForExpandedTiles(
+                                        index: 2,
+                                        currentIndex: _currentIndex,
+                                        icon: LucideIcons.idCard,
+                                        title: 'NFC Cards',
+                                        onTap: () {
+                                          setState(() {
+                                            _currentIndex = 2;
+                                          });
+                                          NavControllers.sideMenuController
+                                              .changePage(2);
+                                        },
+                                      ),
                             ),
-                            onPressed: () => _handleLogout(context),
-                            icon: const Icon(Icons.logout, color: Colors.red),
-                            label: const Text(
-                              'Logout',
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.w600,
+
+                            SideMenuItem(
+                              builder:
+                                  (context, displayMode) =>
+                                      CustomSideMenuTitleForExpandedTiles(
+                                        index: 3,
+                                        currentIndex: _currentIndex,
+                                        icon: LucideIcons.newspaper,
+                                        title: 'Portfolio',
+                                        onTap: () {
+                                          setState(() {
+                                            _currentIndex = 3;
+                                          });
+                                          NavControllers.sideMenuController
+                                              .changePage(3);
+                                        },
+                                      ),
+                            ),
+                          ],
+                        ),
+
+                        SideMenuItem(
+                          title: 'Users',
+                          iconWidget: SideMenuLucideIcon(
+                            icon: LucideIcons.users,
+                            index: 4,
+                            currentIndex: _currentIndex,
+                          ),
+                          onTap: (index, _) {
+                            setState(() {
+                              _currentIndex = index;
+                            });
+                            NavControllers.sideMenuController.changePage(index);
+                          },
+                        ),
+                        SideMenuItem(
+                          title: 'Expense',
+                          iconWidget: SideMenuLucideIcon(
+                            icon: LucideIcons.network,
+                            index: 5,
+                            currentIndex: _currentIndex,
+                          ),
+                          onTap: (index, _) {
+                            setState(() {
+                              _currentIndex = index;
+                            });
+
+                            NavControllers.sideMenuController.changePage(index);
+                          },
+                        ),
+                        SideMenuItem(
+                          title: 'Leads',
+                          iconWidget: SideMenuLucideIcon(
+                            icon: LucideIcons.briefcaseBusiness,
+                            index: 6,
+                            currentIndex: _currentIndex,
+                          ),
+                          onTap: (index, _) {
+                            setState(() {
+                              _currentIndex = index;
+                            });
+
+                            NavControllers.sideMenuController.changePage(index);
+                          },
+                        ),
+                      ],
+                      footer: Padding(
+                        padding: EdgeInsets.only(
+                          bottom: CustomPadding.paddingXL,
+                        ),
+                        child: Container(
+                          color: CustomColors.secondaryColor,
+                          child: Padding(
+                            padding: EdgeInsets.all(CustomPadding.padding),
+                            child: TextButton.icon(
+                              style: ButtonStyle(
+                                overlayColor: WidgetStateProperty.resolveWith<
+                                  Color?
+                                >((states) {
+                                  if (states.contains(WidgetState.hovered)) {
+                                    return Colors.red.shade100;
+                                  }
+                                  return null;
+                                }),
+                              ),
+                              onPressed: () => _handleLogout(context),
+                              icon: const Icon(Icons.logout, color: Colors.red),
+                              label: const Text(
+                                'Logout',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ),
