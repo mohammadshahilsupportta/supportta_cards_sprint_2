@@ -12,6 +12,7 @@ import 'package:taproot_admin/features/leads_screen.dart/view/leads.dart';
 import 'package:taproot_admin/features/order_screen/view/order_screen.dart';
 import 'package:taproot_admin/features/product_screen/views/product_screen.dart';
 import 'package:taproot_admin/features/side_nav_screen/controllers/nav_controllers.dart';
+import 'package:taproot_admin/features/side_nav_screen/widgets/custom_side_menu_item_for_expanded_tile.dart';
 import 'package:taproot_admin/features/users_screen/view/user_management_screen.dart';
 import 'package:taproot_admin/gen/assets.gen.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
@@ -186,37 +187,39 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                         title: 'Product',
                         children: [
                           SideMenuItem(
-                            //    trailing: SizedBox(width: .001 * SizeUtils.height),
-                            title: 'NFC Card',
-                            iconWidget: SideMenuLucideIcon(
-                              icon: LucideIcons.idCard,
-                              index: 2,
-                              currentIndex: _currentIndex,
-                            ),
-                            onTap: (index, _) {
-                              setState(() {
-                                _currentIndex = index;
-                              });
-                              NavControllers.sideMenuController.changePage(
-                                index,
-                              );
-                            },
+                            builder:
+                                (context, displayMode) =>
+                                    CustomSideMenuTitleForExpandedTiles(
+                                      index: 2,
+                                      currentIndex: _currentIndex,
+                                      icon: LucideIcons.idCard,
+                                      title: 'NFC Cards',
+                                      onTap: () {
+                                        setState(() {
+                                          _currentIndex = 2;
+                                        });
+                                        NavControllers.sideMenuController
+                                            .changePage(2);
+                                      },
+                                    ),
                           ),
+
                           SideMenuItem(
-                            title: 'Portfolio',
-                            iconWidget: SideMenuLucideIcon(
-                              icon: LucideIcons.tabletSmartphone,
-                              index: 3,
-                              currentIndex: _currentIndex,
-                            ),
-                            onTap: (index, _) {
-                              setState(() {
-                                _currentIndex = index;
-                              });
-                              NavControllers.sideMenuController.changePage(
-                                index,
-                              );
-                            },
+                            builder:
+                                (context, displayMode) =>
+                                    CustomSideMenuTitleForExpandedTiles(
+                                      index: 3,
+                                      currentIndex: _currentIndex,
+                                      icon: LucideIcons.newspaper,
+                                      title: 'Portfolio',
+                                      onTap: () {
+                                        setState(() {
+                                          _currentIndex = 3;
+                                        });
+                                        NavControllers.sideMenuController
+                                            .changePage(3);
+                                      },
+                                    ),
                           ),
                         ],
                       ),
