@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../exporter/exporter.dart';
 
@@ -28,27 +27,35 @@ class CustomSideMenuTitleForExpandedTiles extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          // mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Icon(
-              icon,
-              size: 20,
-              color:
-                  isSelected
-                      ? CustomColors.buttonColor1
-                      : CustomColors.textColorDarkGrey,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              title,
-              style: TextStyle(
-                color:
-                    isSelected
-                        ? CustomColors.buttonColor1
-                        : CustomColors.textColorDarkGrey,
-                fontSize: 14.fSize,
-                fontWeight: FontWeight.w500,
-              ),
+            CustomGap.gapLarge,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(
+                  icon,
+                  size: 20,
+                  color:
+                      isSelected
+                          ? CustomColors.buttonColor1
+                          : CustomColors.textColorDarkGrey,
+                ),
+
+                CustomGap.gap,
+                // const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color:
+                        isSelected
+                            ? CustomColors.buttonColor1
+                            : CustomColors.textColorDarkGrey,
+                    fontSize: 14.fSize,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
