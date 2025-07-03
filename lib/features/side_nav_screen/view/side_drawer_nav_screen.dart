@@ -183,8 +183,12 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                       ),
 
                       SideMenuExpansionItem(
-                        icon: Icon(LucideIcons.shoppingCart),
+                        icon: Icon(Icons.shopping_bag_sharp),
                         title: 'Product',
+                       iconWidget: Padding(
+                         padding: const EdgeInsets.all(8.0),
+                         child: SizedBox(),
+                       ),
                         children: [
                           SideMenuItem(
                             builder:
