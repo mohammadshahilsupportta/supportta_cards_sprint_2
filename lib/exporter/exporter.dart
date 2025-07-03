@@ -6,3 +6,5 @@ export '/core/logger.dart';
 // export './core/logger.dart';
 // export './gen/assets.gen.dart';
 export '/services/size_utils.dart';
+export 'package:shimmer/shimmer.dart';
+export 'package:gap/gap.dart';

@@ -1,17 +1,15 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/portfolio_product_screen/widgets/add_portfolio_product.dart';
+import 'package:taproot_admin/features/portfolio_product_screen/widgets/portfolio_product_card.dart';
+import 'package:taproot_admin/features/portfolio_product_screen/widgets/portfolio_product_container.dart';
 import 'package:taproot_admin/features/portfolio_product_screen/widgets/view_portfolio_product.dart';
 import 'package:taproot_admin/features/product_screen/data/product_category_model.dart';
 import 'package:taproot_admin/features/product_screen/data/product_model.dart';
 import 'package:taproot_admin/features/product_screen/data/product_service.dart';
-import 'package:taproot_admin/features/product_screen/widgets/product_detail_row.dart';
 import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
 import 'package:taproot_admin/features/product_screen/widgets/sort_button.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
@@ -225,24 +223,7 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
                       ],
                     ),
                     Gap(CustomPadding.paddingLarge.v),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: CustomPadding.paddingLarge.v,
-                        vertical: CustomPadding.paddingLarge.v,
-                      ),
-                      margin: EdgeInsets.symmetric(
-                        horizontal: CustomPadding.paddingLarge.v,
-                      ),
-                      decoration: BoxDecoration(
-                        boxShadow: floatingShadowLarge,
-
-                        color: CustomColors.secondaryColor,
-                        borderRadius: BorderRadius.circular(
-                          CustomPadding.paddingLarge * 2,
-                        ),
-                      ),
-                      width: double.infinity,
-                      height: SizeUtils.height,
+                    PortfolioProductContainer(
                       child: Column(
                         children: [
                           Row(
@@ -355,173 +336,13 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
             }
           },
 
-          child: Card(
-            color: Colors.white,
-            elevation: 8,
+          child: PortfolioProductCard(
+            productCard: productcard,
 
-            shadowColor: Colors.black.withValues(alpha: 0.6),
+            enabledList: enabledList,
 
-            child: Column(
-              children: [
-                Gap(CustomPadding.paddingLarge.v),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Gap(CustomPadding.paddingLarge.v),
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: CustomColors.hoverColor,
-                          borderRadius: BorderRadius.circular(
-                            CustomPadding.padding.v,
-                          ),
-                        ),
-                        height: 320.v,
-                        width: 200.v,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                            CustomPadding.padding.v,
-                          ),
-                          child: CachedNetworkImage(
-                            imageUrl:
-                                '$baseUrlImage/products/${productcard.productImages!.first.key}',
-
-                            fit: BoxFit.fill,
-                            placeholder:
-                                (context, url) => Shimmer.fromColors(
-                                  baseColor: Colors.grey[300]!,
-                                  highlightColor: Colors.grey[100]!,
-                                  child: Container(color: Colors.grey),
-                                ),
-                            errorWidget:
-                                (context, url, error) =>
-                                    Icon(Icons.error, color: Colors.red),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Gap(CustomPadding.paddingLarge.v),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            productcard.name.toString(),
-                            style: context.inter50014,
-                          ),
-                          Gap(CustomPadding.paddingLarge.v),
-                          ProductDetaileRow(
-                            cardType: productcard.category!.name ?? '',
-                            price: productcard.actualPrice.toString(),
-                            offerPrice: productcard.salePrice.toString(),
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              CustomGap.gapLarge,
-                              Align(
-                                alignment: Alignment.bottomRight,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Switch(
-                                      value: enabledList[index],
-                                      onChanged: (value) async {
-                                        if (!mounted) return;
-
-                                        try {
-                                          BuildContext? dialogContext;
-                                          showDialog(
-                                            context: context,
-                                            barrierDismissible: false,
-                                            builder: (BuildContext ctx) {
-                                              dialogContext = ctx;
-                                              return const Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              );
-                                            },
-                                          );
-
-                                          final success =
-                                              await ProductService.isProductEnable(
-                                                productId: productcard.id ?? '',
-                                              );
-
-                                          // if (dialogContext != null &&
-                                          //     mounted) {
-                                          //   Navigator.of(dialogContext!).pop();
-                                          // }
-
-                                          if (!mounted) return;
-
-                                          if (success) {
-                                            setState(() {
-                                              enabledList[index] = value;
-                                            });
-
-                                            // ScaffoldMessenger.of(
-                                            //   context,
-                                            // ).showSnackBar(
-                                            //   const SnackBar(
-                                            //     content: Text(
-                                            //       'Product status updated successfully',
-                                            //     ),
-                                            //     backgroundColor: Colors.green,
-                                            //   ),
-                                            // );
-
-                                            await refreshProducts();
-                                          } else {
-                                            // ScaffoldMessenger.of(
-                                            //   context,
-                                            // ).showSnackBar(
-                                            //   const SnackBar(
-                                            //     content: Text(
-                                            //       'Failed to update product status',
-                                            //     ),
-                                            //     backgroundColor: Colors.red,
-                                            //   ),
-                                            // );
-                                          }
-                                        } catch (e) {
-                                          // if (mounted) {
-                                          //   Navigator.of(context).pop();
-                                          //   ScaffoldMessenger.of(
-                                          //     context,
-                                          //   ).showSnackBar(
-                                          //     SnackBar(
-                                          //       content: Text(
-                                          //         'Error updating product status: $e',
-                                          //       ),
-                                          //       backgroundColor: Colors.red,
-                                          //     ),
-                                          //   );
-                                          // }
-                                        }
-                                      },
-                                    ),
-                                    Gap(CustomPadding.padding.v),
-                                    Text(
-                                      enabledList[index]
-                                          ? 'Enable'
-                                          : 'Disabled',
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    Gap(CustomPadding.paddingLarge.v),
-                  ],
-                ),
-                Gap(CustomPadding.paddingLarge.v),
-              ],
-            ),
+            refreshCartItem: () async => await refreshProducts(),
+            enabledIndex: index,
           ),
         );
       },
