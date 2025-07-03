@@ -5,7 +5,6 @@ import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/order_screen/data/order_service.dart';
 import 'package:taproot_admin/features/order_screen/view/create_order_details.dart';
 import 'package:taproot_admin/features/product_screen/data/product_model.dart';
-import 'package:taproot_admin/features/product_screen/data/product_service.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/widgets/common_product_container.dart';

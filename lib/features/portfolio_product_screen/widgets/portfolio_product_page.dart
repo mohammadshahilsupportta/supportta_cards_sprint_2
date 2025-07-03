@@ -56,7 +56,6 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
   SortOption _currentSort = SortOption.newItem;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchInitialData();
 
@@ -188,7 +187,7 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
     _searchDebounce?.cancel();
     _tabController.dispose();
     _scrollController.dispose();
-    // TODO: implement dispose
+
     super.dispose();
   }
 
@@ -346,13 +345,13 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
                     (context) => ViewPortfolioProduct(
                       product: productcard,
                       onBack: () => Navigator.pop(context),
-                      onEdit: () => refreshProducts(), // << IMPORTANT
+                      onEdit: () => refreshProducts(),
                     ),
               ),
             );
 
             if (updated == true) {
-              await refreshProducts(); // << Backup refresh if needed
+              await refreshProducts();
             }
           },
 
@@ -417,7 +416,9 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
                             offerPrice: productcard.salePrice.toString(),
                           ),
                           Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
+                              CustomGap.gapLarge,
                               Align(
                                 alignment: Alignment.bottomRight,
                                 child: Row(
@@ -448,10 +449,10 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
                                                 productId: productcard.id ?? '',
                                               );
 
-                                          if (dialogContext != null &&
-                                              mounted) {
-                                            Navigator.of(dialogContext!).pop();
-                                          }
+                                          // if (dialogContext != null &&
+                                          //     mounted) {
+                                          //   Navigator.of(dialogContext!).pop();
+                                          // }
 
                                           if (!mounted) return;
 
@@ -460,44 +461,44 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
                                               enabledList[index] = value;
                                             });
 
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
-                                                  'Product status updated successfully',
-                                                ),
-                                                backgroundColor: Colors.green,
-                                              ),
-                                            );
+                                            // ScaffoldMessenger.of(
+                                            //   context,
+                                            // ).showSnackBar(
+                                            //   const SnackBar(
+                                            //     content: Text(
+                                            //       'Product status updated successfully',
+                                            //     ),
+                                            //     backgroundColor: Colors.green,
+                                            //   ),
+                                            // );
 
                                             await refreshProducts();
                                           } else {
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
-                                                  'Failed to update product status',
-                                                ),
-                                                backgroundColor: Colors.red,
-                                              ),
-                                            );
+                                            // ScaffoldMessenger.of(
+                                            //   context,
+                                            // ).showSnackBar(
+                                            //   const SnackBar(
+                                            //     content: Text(
+                                            //       'Failed to update product status',
+                                            //     ),
+                                            //     backgroundColor: Colors.red,
+                                            //   ),
+                                            // );
                                           }
                                         } catch (e) {
-                                          if (mounted) {
-                                            Navigator.of(context).pop();
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Error updating product status: $e',
-                                                ),
-                                                backgroundColor: Colors.red,
-                                              ),
-                                            );
-                                          }
+                                          // if (mounted) {
+                                          //   Navigator.of(context).pop();
+                                          //   ScaffoldMessenger.of(
+                                          //     context,
+                                          //   ).showSnackBar(
+                                          //     SnackBar(
+                                          //       content: Text(
+                                          //         'Error updating product status: $e',
+                                          //       ),
+                                          //       backgroundColor: Colors.red,
+                                          //     ),
+                                          //   );
+                                          // }
                                         }
                                       },
                                     ),
@@ -519,81 +520,6 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
                   ],
                 ),
                 Gap(CustomPadding.paddingLarge.v),
-                // Row(
-                //   children: [
-                //     Gap(CustomPadding.paddingLarge.v),
-                //     Switch(
-                //       value: enabledList[index],
-                //       onChanged: (value) async {
-                //         if (!mounted) return;
-
-                //         try {
-                //           BuildContext? dialogContext;
-                //           showDialog(
-                //             context: context,
-                //             barrierDismissible: false,
-                //             builder: (BuildContext ctx) {
-                //               dialogContext = ctx;
-                //               return const Center(
-                //                 child: CircularProgressIndicator(),
-                //               );
-                //             },
-                //           );
-
-                //           final success = await ProductService.isProductEnable(
-                //             productId: productcard.id ?? '',
-                //           );
-
-                //           if (dialogContext != null && mounted) {
-                //             Navigator.of(dialogContext!).pop();
-                //           }
-
-                //           if (!mounted) return;
-
-                //           if (success) {
-                //             setState(() {
-                //               enabledList[index] = value;
-                //             });
-
-                //             ScaffoldMessenger.of(context).showSnackBar(
-                //               const SnackBar(
-                //                 content: Text(
-                //                   'Product status updated successfully',
-                //                 ),
-                //                 backgroundColor: Colors.green,
-                //               ),
-                //             );
-
-                //             await refreshProducts();
-                //           } else {
-                //             ScaffoldMessenger.of(context).showSnackBar(
-                //               const SnackBar(
-                //                 content: Text(
-                //                   'Failed to update product status',
-                //                 ),
-                //                 backgroundColor: Colors.red,
-                //               ),
-                //             );
-                //           }
-                //         } catch (e) {
-                //           if (mounted) {
-                //             Navigator.of(context).pop();
-                //             ScaffoldMessenger.of(context).showSnackBar(
-                //               SnackBar(
-                //                 content: Text(
-                //                   'Error updating product status: $e',
-                //                 ),
-                //                 backgroundColor: Colors.red,
-                //               ),
-                //             );
-                //           }
-                //         }
-                //       },
-                //     ),
-                //     Gap(CustomPadding.padding.v),
-                //     Text(enabledList[index] ? 'Enable' : 'Disabled'),
-                //   ],
-                // ),
               ],
             ),
           ),

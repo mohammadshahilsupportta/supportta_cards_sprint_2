@@ -575,8 +575,9 @@ class OrderDataSource extends DataTableSource {
                               context,
                               'Confirm Retry',
                               'Are you sure you want to retry this order?\nThis will attempt to process the order again and cannot be undone.',
-                            ))
+                            )) {
                               return;
+                            }
                             loadingOrderIds.add(order.id);
                             setState(() {});
 
@@ -616,8 +617,9 @@ class OrderDataSource extends DataTableSource {
                               context,
                               'Confirm Order',
                               'Are you sure you want to confirm this order?\nOnce confirmed, this step cannot be reversed.',
-                            ))
+                            )) {
                               return;
+                            }
                             loadingOrderIds.add(order.id);
                             setState(() {});
 
@@ -658,8 +660,9 @@ class OrderDataSource extends DataTableSource {
                               context,
                               'Dispatch Order',
                               'Are you ready to mark this order as dispatched?\nThis action will notify the user and cannot be undone.',
-                            ))
+                            )) {
                               return;
+                            }
                             loadingOrderIds.add(order.id);
                             setState(() {});
 
@@ -700,8 +703,9 @@ class OrderDataSource extends DataTableSource {
                               context,
                               'Complete Order',
                               'Are you sure you want to mark this order as completed?\nThis finalizes the order and cannot be changed afterward.',
-                            ))
+                            )) {
                               return;
+                            }
                             loadingOrderIds.add(order.id);
                             setState(() {});
 
