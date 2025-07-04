@@ -135,7 +135,7 @@ class _ViewProductState extends State<ViewProduct> {
                       product.productImages!.length,
                       (index) => SizedBox(
                         width: SizeUtils.width / 5,
-                        child: AddImageContainer(
+                        child: AddViewImageContainer(
                           isImageView: true,
                           imageUrl:
                               '$baseUrlImage/products/${product.productImages![index].key}',

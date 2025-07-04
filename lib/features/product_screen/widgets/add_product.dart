@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
+
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/product_screen/data/product_category_model.dart';
@@ -66,7 +66,12 @@ class _AddProductState extends State<AddProduct> {
           filename,
         );
         setState(() {
-          uploadedImageKeys.add(uploadResult['key']);
+          // uploadedImageKeys.add(uploadResult['key']);
+          if (index < uploadedImageKeys.length) {
+            uploadedImageKeys[index] = uploadResult['key'];
+          } else {
+            uploadedImageKeys.add(uploadResult['key']);
+          }
         });
         logSuccess('name: ${uploadResult['name']}');
         logSuccess('key: ${uploadResult['key']}');
@@ -412,8 +417,8 @@ class _AddProductState extends State<AddProduct> {
     Navigator.pop(context);
   }
 }
-
 class AddImageContainer extends StatelessWidget {
+  final double height;
   final VoidCallback removeImage;
   final VoidCallback pickImage;
   final File? selectedImage;
@@ -422,7 +427,7 @@ class AddImageContainer extends StatelessWidget {
   final File? file;
   final String? imagekey;
 
-  const AddImageContainer({
+  AddImageContainer({
     super.key,
     required this.removeImage,
     required this.pickImage,
@@ -431,6 +436,7 @@ class AddImageContainer extends StatelessWidget {
     this.path,
     this.file,
     this.imagekey,
+    this.height = 150,
   });
 
   @override
@@ -441,180 +447,320 @@ class AddImageContainer extends StatelessWidget {
         onTap: pickImage,
         child: Container(
           width: 200.v,
-          height: 150.h,
+          height: height.h,
           decoration: BoxDecoration(
             color: CustomColors.hoverColor,
             borderRadius: BorderRadius.circular(CustomPadding.padding.v),
           ),
-          child:
-              isImageView
-                  ? Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                          CustomPadding.padding.v,
-                        ),
-                        child: Image.network(
-                          '$baseUrlImage/products/$path',
-                          fit: BoxFit.cover,
-                        ),
-                        // Image.file(File(path.toString()), fit: BoxFit.cover),
+          child: isImageView
+              ? Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(
+                        CustomPadding.padding.v,
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              removeImage();
-                            },
-                            icon: Icon(
-                              Icons.cancel_outlined,
-                              size: 30.v,
-                              color: CustomColors.secondaryColor,
-                            ),
-                          ),
-                          Spacer(),
-                          GestureDetector(
-                            onTap: () {
-                              pickImage();
-                            },
-                            child: Container(
-                              height: 30,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.vertical(
-                                  bottom: Radius.circular(
-                                    CustomPadding.padding.v,
-                                  ),
-                                ),
-                                gradient: CustomColors.borderGradient,
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    'Replace',
-                                    style: context.inter60012.copyWith(
-                                      color: CustomColors.secondaryColor,
-                                    ),
-                                  ),
-                                  Gap(CustomPadding.padding.v),
-                                  Icon(
-                                    Icons.repeat,
-                                    color: CustomColors.secondaryColor,
-                                    size: 25,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  )
-                  : Center(
-                    child:
-                        selectedImage == null
-                            ? Icon(
-                              Icons.add,
-                              size: 40.v,
-                              color: CustomColors.greenDark,
+                      child: (path != null && path!.isNotEmpty)
+                          ? Image.network(
+                              '$baseUrlImage/products/$path',
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Center(child: Icon(Icons.broken_image)),
                             )
-                            : Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(
-                                    CustomPadding.padding.v,
-                                  ),
-                                  child: Image.network(
-                                    '$baseUrlImage/products/$imagekey',
-                                    fit: BoxFit.cover,
-                                  ),
-                                  //  Image.file(
-                                  //   selectedImage!,
-                                  //   fit: BoxFit.cover,
-                                  // ),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        removeImage();
-                                      },
-                                      icon: Icon(
-                                        Icons.cancel_outlined,
-                                        size: 30.v,
-                                        color: CustomColors.secondaryColor,
-                                      ),
+                          : Center(child: Icon(Icons.image_not_supported)),
+                    ),
+                    _buildControls(context),
+                  ],
+                )
+              : Center(
+                  child: selectedImage == null
+                      ? Icon(
+                          Icons.add,
+                          size: 40.v,
+                          color: CustomColors.greenDark,
+                        )
+                      : Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                CustomPadding.padding.v,
+                              ),
+                              child: (imagekey != null && imagekey!.isNotEmpty)
+                                  ? Image.network(
+                                      '$baseUrlImage/products/$imagekey',
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Center(
+                                                  child: Icon(
+                                                      Icons.broken_image)),
+                                    )
+                                  : Image.file(
+                                      selectedImage!,
+                                      fit: BoxFit.cover,
                                     ),
-                                    Spacer(),
-                                    GestureDetector(
-                                      onTap: () {
-                                        pickImage();
-                                      },
-                                      child: Container(
-                                        height: 30,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.vertical(
-                                            bottom: Radius.circular(
-                                              CustomPadding.padding.v,
-                                            ),
-                                          ),
-                                          gradient: CustomColors.borderGradient,
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              'Replace',
-                                              style: context.inter60012
-                                                  .copyWith(
-                                                    color:
-                                                        CustomColors
-                                                            .secondaryColor,
-                                                  ),
-                                            ),
-                                            Gap(CustomPadding.padding.v),
-                                            Icon(
-                                              Icons.repeat,
-                                              color:
-                                                  CustomColors.secondaryColor,
-                                              size: 25,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
                             ),
-                  ),
+                            _buildControls(context),
+                          ],
+                        ),
+                ),
         ),
       ),
     );
   }
 
-  // Widget _buildImageFromPath(String? path) {
-  //   if (path == null || path.isEmpty) {
-  //     return const Icon(Icons.broken_image, size: 50);
-  //   }
-
-  //   final isNetwork = path.startsWith('http') || path.startsWith('https');
-
-  //   return isNetwork
-  //       ? Image.network(
-  //         path,
-  //         fit: BoxFit.cover,
-  //         errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
-  //       )
-  //       : Image.file(
-  //         File(path),
-  //         fit: BoxFit.cover,
-  //         errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
-  //       );
-  // }
+  Widget _buildControls(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        IconButton(
+          onPressed: removeImage,
+          icon: Icon(
+            Icons.cancel_outlined,
+            size: 30.v,
+            color: CustomColors.secondaryColor,
+          ),
+        ),
+        Spacer(),
+        GestureDetector(
+          onTap: pickImage,
+          child: Container(
+            height: 30,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(CustomPadding.padding.v),
+              ),
+              gradient: CustomColors.borderGradient,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Replace',
+                  style: context.inter60012.copyWith(
+                    color: CustomColors.secondaryColor,
+                  ),
+                ),
+                Gap(CustomPadding.padding.v),
+                Icon(
+                  Icons.repeat,
+                  color: CustomColors.secondaryColor,
+                  size: 25,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
+
+// class AddImageContainer extends StatelessWidget {
+//   final double height;
+//   final VoidCallback removeImage;
+//   final VoidCallback pickImage;
+//   final File? selectedImage;
+//   final bool isImageView;
+//   final String? path;
+//   final File? file;
+//   final String? imagekey;
+
+//   AddImageContainer({
+//     super.key,
+//     required this.removeImage,
+//     required this.pickImage,
+//     this.selectedImage,
+//     this.isImageView = false,
+//     this.path,
+//     this.file,
+//     this.imagekey,
+//     this.height = 150,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: EdgeInsets.only(left: CustomPadding.paddingLarge.v),
+//       child: GestureDetector(
+//         onTap: pickImage,
+//         child: Container(
+//           width: 200.v,
+//           height: height.h,
+//           decoration: BoxDecoration(
+//             color: CustomColors.hoverColor,
+//             borderRadius: BorderRadius.circular(CustomPadding.padding.v),
+//           ),
+//           child:
+//               isImageView
+//                   ? Stack(
+//                     fit: StackFit.expand,
+//                     children: [
+//                       ClipRRect(
+//                         borderRadius: BorderRadius.circular(
+//                           CustomPadding.padding.v,
+//                         ),
+//                         child: Image.network(
+//                           '$baseUrlImage/products/$path',
+//                           fit: BoxFit.cover,
+//                         ),
+//                         // Image.file(File(path.toString()), fit: BoxFit.cover),
+//                       ),
+//                       Column(
+//                         crossAxisAlignment: CrossAxisAlignment.end,
+//                         children: [
+//                           IconButton(
+//                             onPressed: () {
+//                               removeImage();
+//                             },
+//                             icon: Icon(
+//                               Icons.cancel_outlined,
+//                               size: 30.v,
+//                               color: CustomColors.secondaryColor,
+//                             ),
+//                           ),
+//                           Spacer(),
+//                           GestureDetector(
+//                             onTap: () {
+//                               pickImage();
+//                             },
+//                             child: Container(
+//                               height: 30,
+//                               decoration: BoxDecoration(
+//                                 borderRadius: BorderRadius.vertical(
+//                                   bottom: Radius.circular(
+//                                     CustomPadding.padding.v,
+//                                   ),
+//                                 ),
+//                                 gradient: CustomColors.borderGradient,
+//                               ),
+//                               child: Row(
+//                                 mainAxisAlignment: MainAxisAlignment.center,
+//                                 children: [
+//                                   Text(
+//                                     'Replace',
+//                                     style: context.inter60012.copyWith(
+//                                       color: CustomColors.secondaryColor,
+//                                     ),
+//                                   ),
+//                                   Gap(CustomPadding.padding.v),
+//                                   Icon(
+//                                     Icons.repeat,
+//                                     color: CustomColors.secondaryColor,
+//                                     size: 25,
+//                                   ),
+//                                 ],
+//                               ),
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ],
+//                   )
+//                   : Center(
+//                     child:
+//                         selectedImage == null
+//                             ? Icon(
+//                               Icons.add,
+//                               size: 40.v,
+//                               color: CustomColors.greenDark,
+//                             )
+//                             : Stack(
+//                               fit: StackFit.expand,
+//                               children: [
+//                                 ClipRRect(
+//                                   borderRadius: BorderRadius.circular(
+//                                     CustomPadding.padding.v,
+//                                   ),
+//                                   child: Image.network(
+//                                     '$baseUrlImage/products/$imagekey',
+//                                     fit: BoxFit.cover,
+//                                   ),
+//                                   //  Image.file(
+//                                   //   selectedImage!,
+//                                   //   fit: BoxFit.cover,
+//                                   // ),
+//                                 ),
+//                                 Column(
+//                                   crossAxisAlignment: CrossAxisAlignment.end,
+//                                   children: [
+//                                     IconButton(
+//                                       onPressed: () {
+//                                         removeImage();
+//                                       },
+//                                       icon: Icon(
+//                                         Icons.cancel_outlined,
+//                                         size: 30.v,
+//                                         color: CustomColors.secondaryColor,
+//                                       ),
+//                                     ),
+//                                     Spacer(),
+//                                     GestureDetector(
+//                                       onTap: () {
+//                                         pickImage();
+//                                       },
+//                                       child: Container(
+//                                         height: 30,
+//                                         decoration: BoxDecoration(
+//                                           borderRadius: BorderRadius.vertical(
+//                                             bottom: Radius.circular(
+//                                               CustomPadding.padding.v,
+//                                             ),
+//                                           ),
+//                                           gradient: CustomColors.borderGradient,
+//                                         ),
+//                                         child: Row(
+//                                           mainAxisAlignment:
+//                                               MainAxisAlignment.center,
+//                                           children: [
+//                                             Text(
+//                                               'Replace',
+//                                               style: context.inter60012
+//                                                   .copyWith(
+//                                                     color:
+//                                                         CustomColors
+//                                                             .secondaryColor,
+//                                                   ),
+//                                             ),
+//                                             Gap(CustomPadding.padding.v),
+//                                             Icon(
+//                                               Icons.repeat,
+//                                               color:
+//                                                   CustomColors.secondaryColor,
+//                                               size: 25,
+//                                             ),
+//                                           ],
+//                                         ),
+//                                       ),
+//                                     ),
+//                                   ],
+//                                 ),
+//                               ],
+//                             ),
+//                   ),
+//         ),
+//       ),
+//     );
+//   }
+
+//   // Widget _buildImageFromPath(String? path) {
+//   //   if (path == null || path.isEmpty) {
+//   //     return const Icon(Icons.broken_image, size: 50);
+//   //   }
+
+//   //   final isNetwork = path.startsWith('http') || path.startsWith('https');
+
+//   //   return isNetwork
+//   //       ? Image.network(
+//   //         path,
+//   //         fit: BoxFit.cover,
+//   //         errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
+//   //       )
+//   //       : Image.file(
+//   //         File(path),
+//   //         fit: BoxFit.cover,
+//   //         errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),
+//   //       );
+//   // }
+// }

@@ -71,7 +71,7 @@ class _ServiceEditState extends State<ServiceEdit> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AddImageContainer(
+          AddViewImageContainer(
             previewBytes: widget.previewBytes,
             onTapEdit: pickServiceImage,
             imageUrl:

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 
 class CommonUserContainer extends StatelessWidget {
@@ -21,7 +20,7 @@ class CommonUserContainer extends StatelessWidget {
           color: CustomColors.secondaryColor,
           borderRadius: BorderRadius.circular(CustomPadding.paddingLarge),
         ),
-        height: height ?? SizeUtils.height * 0.48,
+        height: height ?? SizeUtils.height * 0.49,
         // height: SizeUtils.height * 0.40,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -3,9 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/product_screen/data/product_category_model.dart';
 import 'package:taproot_admin/features/product_screen/data/product_model.dart';
@@ -17,9 +15,8 @@ import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 class AddPortfolioProduct extends StatefulWidget {
-    final VoidCallback onBack;
-      final Future<void> Function()? onSave;
-
+  final VoidCallback onBack;
+  final Future<void> Function()? onSave;
 
   const AddPortfolioProduct({super.key, required this.onBack, this.onSave});
 
@@ -68,7 +65,12 @@ class _AddPortfolioProductState extends State<AddPortfolioProduct> {
           filename,
         );
         setState(() {
-          uploadedImageKeys.add(uploadResult['key']);
+          // uploadedImageKeys.add(uploadResult['key']);
+          if (index < uploadedImageKeys.length) {
+            uploadedImageKeys[index] = uploadResult['key'];
+          } else {
+            uploadedImageKeys.add(uploadResult['key']);
+          }
         });
         logSuccess('name: ${uploadResult['name']}');
         logSuccess('key: ${uploadResult['key']}');
@@ -223,6 +225,7 @@ class _AddPortfolioProductState extends State<AddPortfolioProduct> {
                       children: List.generate(4, (index) {
                         if (index == 0 || _selectedImages[index - 1] != null) {
                           return AddImageContainer(
+                            height: 220.h,
                             selectedImage: _selectedImages[index],
                             pickImage: () => pickImage(index),
                             removeImage: () => removeImage(index),
@@ -408,8 +411,8 @@ class _AddPortfolioProductState extends State<AddPortfolioProduct> {
         ),
       ),
     );
-
   }
+
   void quitBack() {
     Navigator.pop(context);
   }

@@ -4,25 +4,27 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 
-class AddImageContainer extends StatelessWidget {
+class AddViewImageContainer extends StatelessWidget {
+  final double height;
   final VoidCallback? onTapEdit;
   final String? imageUrl;
   final Uint8List? previewBytes;
-  final bool isImageView; // Add this parameter
+  final bool isImageView;
 
-  const AddImageContainer({
+  const AddViewImageContainer({
     super.key,
     this.onTapEdit,
     this.imageUrl,
     this.previewBytes,
-    this.isImageView = false, // Default to false
+    this.isImageView = false,
+    this.height = 200,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: isImageView ? double.infinity : 200,
-      height: 200,
+      height: height,
       decoration: BoxDecoration(
         color: CustomColors.hoverColor,
         borderRadius: BorderRadius.circular(CustomPadding.padding),

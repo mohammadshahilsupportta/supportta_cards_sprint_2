@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/users_screen/data/user_service.dart';
 import 'package:taproot_admin/features/users_screen/widget/adduser_dialog.dart';
@@ -54,7 +53,10 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         users = response.users;
         premiumUsers = users.where((user) => user.isPremium).length;
         totalUser = response.totalCount;
-        totalPages = rowsPerPage == 0 ? 1 : (totalUser / rowsPerPage).ceil();
+
+        // totalPages = rowsPerPage == 0 ? 1 : (totalUser / rowsPerPage).ceil();
+        totalPages = (rowsPerPage != 0) ? (totalUser / rowsPerPage).ceil() : 1;
+
         // totalPages = (totalUser / rowsPerPage).ceil();
         isLoading = false;
 
@@ -100,9 +102,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   }
 
   void _handlePageChange(int firstRowIndex) {
-    // if (!mounted) return;
-
-    final newPage = (firstRowIndex / rowsPerPage).floor() + 1;
+    final newPage = (rowsPerPage != 0) ? (firstRowIndex ~/ rowsPerPage) + 1 : 1;
 
     if (newPage != currentPage && newPage <= totalPages) {
       setState(() {
@@ -111,6 +111,19 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
       loadUsers();
     }
   }
+
+  // void _handlePageChange(int firstRowIndex) {
+  //   // if (!mounted) return;
+
+  //   final newPage = (firstRowIndex / rowsPerPage).floor() + 1;
+
+  //   if (newPage != currentPage && newPage <= totalPages) {
+  //     setState(() {
+  //       currentPage = newPage;
+  //     });
+  //     loadUsers();
+  //   }
+  // }
 
   @override
   void initState() {
