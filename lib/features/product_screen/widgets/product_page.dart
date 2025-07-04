@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/product_screen/data/product_category_model.dart';
 import 'package:taproot_admin/features/product_screen/data/product_model.dart';
@@ -485,6 +483,7 @@ class _ProductPageState extends State<ProductPage>
                     Gap(CustomPadding.paddingLarge.v),
                     Expanded(
                       child: Column(
+                        
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(

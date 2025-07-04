@@ -5,6 +5,7 @@ import '/gen/fonts.gen.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
+    tabBarTheme: TabBarThemeData(dividerHeight: 0.5),
     expansionTileTheme: ExpansionTileThemeData(
       tilePadding: EdgeInsets.symmetric(horizontal: CustomPadding.paddingSmall),
       expandedAlignment: Alignment.centerLeft,
