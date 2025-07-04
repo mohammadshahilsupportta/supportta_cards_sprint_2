@@ -319,14 +319,22 @@ class UserDataTableSource extends DataTableSource {
   @override
   DataRow getRow(int index) {
     // Calculate the actual index within the current page's data
-    final actualIndex = index % (users.length);
+    // final actualIndex = index % (users.length);
 
-    if (actualIndex >= (users.length)) {
+    // if (actualIndex >= (users.length)) {
+    //   return DataRow(
+    //     cells: List<DataCell>.generate(7, (index) => const DataCell(Text(''))),
+    //   );
+    // }
+
+    // final user = users[actualIndex];
+    if (users.isEmpty) {
       return DataRow(
-        cells: List<DataCell>.generate(7, (index) => const DataCell(Text(''))),
+        cells: List<DataCell>.generate(6, (_) => const DataCell(Text(''))),
       );
     }
 
+    final actualIndex = index % users.length;
     final user = users[actualIndex];
 
     void handleRowTap() {
