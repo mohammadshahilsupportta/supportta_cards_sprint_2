@@ -58,6 +58,7 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
   final TextEditingController pincodeController = TextEditingController();
   final TextEditingController districtController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
+  final TextEditingController countryController = TextEditingController();
   final TextEditingController aboutHeadingController = TextEditingController();
   final TextEditingController serviceHeadController = TextEditingController();
 
@@ -175,6 +176,8 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
           pincode: pincodeController.text,
           district: districtController.text,
           state: stateController.text,
+          country: countryController.text,
+          
         ),
         about: About(
           heading: aboutHeadingController.text,
@@ -350,6 +353,7 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
                     pincodecontroller: pincodeController,
                     districtcontroller: districtController,
                     statecontroller: stateController,
+                    countrycontroller: countryController,
                   ),
                 ],
               ),

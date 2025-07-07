@@ -67,6 +67,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
   final TextEditingController pincodeController = TextEditingController();
   final TextEditingController districtController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
+  final TextEditingController countryController = TextEditingController();
   final TextEditingController buildingNamecontroller = TextEditingController();
   final TextEditingController primaryWebsiteController =
       TextEditingController();
@@ -101,6 +102,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
     pincodeController.text = theFetchedPortfolio!.addressInfo.pincode;
     districtController.text = theFetchedPortfolio!.addressInfo.district;
     stateController.text = theFetchedPortfolio!.addressInfo.state;
+    countryController.text = theFetchedPortfolio!.addressInfo.country;
     buildingNamecontroller.text = theFetchedPortfolio!.addressInfo.buildingName;
     primaryWebsiteController.text =
         theFetchedPortfolio!.workInfo.primaryWebsite;
@@ -261,6 +263,9 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
         }
         if (stateController.text != portfolio.addressInfo.state) {
           addressInfo['state'] = stateController.text;
+        }
+        if (countryController.text != portfolio.addressInfo.country) {
+          addressInfo['country'] = countryController.text;
         }
 
         if (addressInfo.isNotEmpty) {
@@ -792,6 +797,8 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                     pincodeController: pincodeController,
                     districtController: districtController,
                     stateController: stateController,
+                    countryController: countryController
+                    ,
                     user: widget.user,
                     isEdit: true,
                     portfolio: widget.portfolio,

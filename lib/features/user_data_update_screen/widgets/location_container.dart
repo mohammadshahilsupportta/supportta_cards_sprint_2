@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
@@ -17,6 +16,7 @@ class LocationContainer extends StatefulWidget {
   final TextEditingController? pincodeController;
   final TextEditingController? districtController;
   final TextEditingController? stateController;
+  final TextEditingController? countryController;
 
   final PortfolioDataModel? portfolio;
   final bool isEdit;
@@ -31,6 +31,7 @@ class LocationContainer extends StatefulWidget {
     this.pincodeController,
     this.districtController,
     this.stateController,
+    this.countryController,
   });
   final User? user;
 
@@ -60,6 +61,7 @@ class _LocationContainerState extends State<LocationContainer> {
           pincode: text,
           districtController: widget.districtController!,
           stateController: widget.stateController!,
+          countryController: widget.countryController!,
           logSuccess: logSuccess,
           logError: logError,
         );
@@ -127,8 +129,9 @@ class _LocationContainerState extends State<LocationContainer> {
                     ),
                     Expanded(
                       child: TextFormContainer(
-                        readonly: true,
-                        initialValue: 'India',
+                        controller: widget.countryController,
+                        // readonly: true,
+                        // initialValue: 'India',
                         labelText: 'Country',
                         user: widget.user,
                       ),
@@ -161,7 +164,10 @@ class _LocationContainerState extends State<LocationContainer> {
                   label: 'State',
                   value: widget.portfolio?.addressInfo.state ?? 'Loading...',
                 ),
-                DetailRow(label: 'Country', value: 'India'),
+                DetailRow(
+                  label: 'Country',
+                  value: widget.portfolio?.addressInfo.country ?? '',
+                ),
               ],
     );
   }

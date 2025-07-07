@@ -6,6 +6,7 @@ class PincodeHelper {
     required String pincode,
     required TextEditingController districtController,
     required TextEditingController stateController,
+    required TextEditingController countryController,
     required void Function(String) logSuccess,
     required void Function(String) logError,
   }) async {
@@ -18,11 +19,13 @@ class PincodeHelper {
       if (postOffice != null) {
         final district = postOffice['District'] ?? '';
         final state = postOffice['State'] ?? '';
+        final country = postOffice['Country'] ?? '';
 
         logSuccess('Fetched: $district, $state');
 
         districtController.text = district;
         stateController.text = state;
+        countryController.text = country;
       } else {
         logError('No PostOffice data found.');
       }

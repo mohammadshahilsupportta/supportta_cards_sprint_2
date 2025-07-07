@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
@@ -15,14 +14,16 @@ class AddUserLocation extends StatefulWidget {
   final TextEditingController pincodecontroller;
   final TextEditingController districtcontroller;
   final TextEditingController statecontroller;
+  final TextEditingController countrycontroller;
   const AddUserLocation({
     super.key,
-     this.user,
+    this.user,
     required this.buildingcontroller,
     required this.areacontroller,
     required this.pincodecontroller,
     required this.districtcontroller,
     required this.statecontroller,
+    required this.countrycontroller,
   });
 
   final User? user;
@@ -65,12 +66,14 @@ class _AddUserLocationState extends State<AddUserLocation> {
       if (postOffice != null) {
         final district = postOffice['District'];
         final state = postOffice['State'];
+        final country = postOffice['Country'];
 
         logSuccess(response);
 
         setState(() {
           widget.districtcontroller.text = district ?? '';
           widget.statecontroller.text = state ?? '';
+          widget.countrycontroller.text = country ?? '';
         });
       } else {
         logError('PostOffice data is empty.');
@@ -154,8 +157,9 @@ class _AddUserLocationState extends State<AddUserLocation> {
             ),
             Expanded(
               child: TextFormContainer(
+                controller: widget.countrycontroller,
                 readonly: true,
-                initialValue: 'India',
+                // initialValue: 'India',
                 labelText: 'Country',
                 user: widget.user,
               ),

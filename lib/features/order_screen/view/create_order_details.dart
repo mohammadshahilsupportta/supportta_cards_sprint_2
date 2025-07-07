@@ -243,6 +243,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
   final TextEditingController pincodeController = TextEditingController();
   final TextEditingController districtController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
+  final TextEditingController countryController = TextEditingController();
   final TextEditingController designationController = TextEditingController();
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController productSearchController = TextEditingController();
@@ -317,6 +318,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
     stateController.text = portfolio?.addressInfo.state ?? '';
     pincodeController.text = portfolio?.addressInfo.pincode ?? '';
     districtController.text = portfolio?.addressInfo.district ?? '';
+    countryController.text=portfolio?.addressInfo.country??'';
     fullNameController.text = portfolio?.personalInfo.name ?? '';
   }
 
@@ -537,7 +539,8 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
         pincode: pincodeController.text,
         district: districtController.text,
         state: stateController.text,
-        country: 'India',
+        country: countryController.text
+        // country: 'India',
       );
 
       final products =
@@ -614,7 +617,8 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
           pincode: pincodeController.text,
           district: districtController.text,
           state: stateController.text,
-          country: 'India',
+          // country: 'India',
+          country: countryController.text,
         ),
         paymentServiceProvider: paymentInfo['paymentServiceProvider'],
         paymentMethod: paymentInfo['paymentMethod'],
@@ -986,6 +990,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                   pincodecontroller: pincodeController,
                   districtcontroller: districtController,
                   statecontroller: stateController,
+                  countrycontroller: countryController ,
                 ),
               ],
             ),

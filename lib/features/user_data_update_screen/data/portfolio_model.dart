@@ -325,6 +325,7 @@ class AddressInfo {
   final String pincode;
   final String district;
   final String state;
+  final String country;
 
   AddressInfo({
     required this.buildingName,
@@ -332,6 +333,7 @@ class AddressInfo {
     required this.pincode,
     required this.district,
     required this.state,
+    required this.country,
   });
 
   factory AddressInfo.fromJson(Map<String, dynamic> json) {
@@ -341,6 +343,7 @@ class AddressInfo {
       pincode: json['pincode'],
       district: json['district'],
       state: json['state'],
+      country: json['country'] ?? 'India',
     );
   }
 
@@ -350,6 +353,7 @@ class AddressInfo {
     'pincode': pincode,
     'district': district,
     'state': state,
+    'country': country,
   };
 }
 
