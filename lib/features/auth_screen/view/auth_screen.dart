@@ -40,6 +40,8 @@ class _AuthScreenState extends State<AuthScreen> {
       );
 
       if (success) {
+
+        //TODO
         Navigator.of(context).pushReplacementNamed(SideDrawerNavScreen.path);
       } else {
         setState(() => isLoading = false);

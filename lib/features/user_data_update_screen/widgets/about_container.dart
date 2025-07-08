@@ -7,6 +7,7 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/common_us
 import 'package:taproot_admin/features/user_data_update_screen/widgets/expand_tile_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
+import 'package:taproot_admin/services/size_utils.dart';
 
 class AboutContainer extends StatelessWidget {
   final TextEditingController? aboutHeadingController;
@@ -63,7 +64,8 @@ class AboutContainer extends StatelessWidget {
                   Text(portfolio!.about.heading, style: context.inter50016),
                   Gap(CustomPadding.paddingLarge),
                   SizedBox(
-                    height: 300,
+                    height: SizeUtils.height * .3,
+                    // height: 280,
                     child: SingleChildScrollView(
                       child: Text(portfolio!.about.description),
                     ),

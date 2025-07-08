@@ -312,13 +312,13 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
   }
 
   void fetchPortfoliData() {
-    designationController.text = portfolio?.workInfo.designation ?? '';
-    buildingController.text = portfolio?.addressInfo.buildingName ?? '';
-    areaController.text = portfolio?.addressInfo.area ?? '';
-    stateController.text = portfolio?.addressInfo.state ?? '';
-    pincodeController.text = portfolio?.addressInfo.pincode ?? '';
-    districtController.text = portfolio?.addressInfo.district ?? '';
-    countryController.text=portfolio?.addressInfo.country??'';
+    designationController.text = portfolio?.workInfo?.designation ?? '';
+    buildingController.text = portfolio?.addressInfo?.buildingName ?? '';
+    areaController.text = portfolio?.addressInfo?.area ?? '';
+    stateController.text = portfolio?.addressInfo?.state ?? '';
+    pincodeController.text = portfolio?.addressInfo?.pincode ?? '';
+    districtController.text = portfolio?.addressInfo?.district ?? '';
+    countryController.text=portfolio?.addressInfo?.country??'';
     fullNameController.text = portfolio?.personalInfo.name ?? '';
   }
 
@@ -415,7 +415,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
         setState(() {
           portfolio = result;
 
-          if (portfolio?.workInfo.companyLogo?.key != null) {
+          if (portfolio?.workInfo?.companyLogo?.key != null) {
             companyLogoUploadState = 'Replace';
           }
           if (portfolio?.personalInfo.profilePicture?.key != null) {

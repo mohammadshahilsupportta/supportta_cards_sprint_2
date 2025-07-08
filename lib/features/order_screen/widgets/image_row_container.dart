@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart' as picker;
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -78,7 +79,7 @@ class _ImageRowContainerState extends State<ImageRowContainer> {
 
         switch (widget.imageType) {
           case 'companyLogo':
-            final logo = portfolio?.workInfo.companyLogo;
+            final logo = portfolio?.workInfo?.companyLogo;
             if (logo != null) {
               imageDetails = ImageDetails(
                 key: logo.key,

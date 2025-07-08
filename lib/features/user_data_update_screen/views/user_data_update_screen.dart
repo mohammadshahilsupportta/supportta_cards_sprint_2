@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
@@ -23,9 +22,9 @@ import '../widgets/additional_container.dart';
 
 class UserDataUpdateScreen extends StatefulWidget {
   final dynamic user;
-
+  // final PortfolioDataModel? userData;
   static const path = '/userDataUpdateScreen';
-  const UserDataUpdateScreen({super.key, required this.user});
+  const UserDataUpdateScreen({super.key, required this.user, });
 
   @override
   State<UserDataUpdateScreen> createState() => _UserDataUpdateScreenState();
@@ -58,9 +57,9 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
   }
 
   Future<void> fetchPortfolioProducts() async {
-    final result = await PortfolioService.getPortfolioProducts();
+    final portfolioProducts = await PortfolioService.getPortfolioProducts();
     setState(() {
-      portfolioProductModel = result;
+      portfolioProductModel = portfolioProducts;
     });
   }
 
@@ -73,13 +72,13 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
       isLoading = true;
     });
     try {
-      final result = await PortfolioService.getPortfolio(userid: user.id);
+      final userData = await PortfolioService.getPortfolio(userid: user.id);
       final paidStatus = await PortfolioService.isUserPaidPortfolio(
         userId: user.id,
       );
-      if (result != null) {
+      if (userData != null) {
         setState(() {
-          portfolio = result;
+          portfolio = userData;
           isPortfolioPaid = paidStatus;
           isLoading = false;
         });
@@ -249,7 +248,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       child: Row(
                         children: [
                           AdditionalContainer(
-                            logoImageUrl: portfolio?.workInfo.getCompanyLogoUrl(
+                            logoImageUrl: portfolio?.workInfo?.getCompanyLogoUrl(
                               baseUrl,
                             ),
                             bannerImageUrl: portfolio?.personalInfo

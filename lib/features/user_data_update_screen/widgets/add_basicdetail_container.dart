@@ -2,8 +2,6 @@
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gap/gap.dart';
-
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
@@ -14,8 +12,7 @@ class AddBasicDetailContainer extends StatefulWidget {
   final TextEditingController phonecontroller;
   final TextEditingController whatsappcontroller;
   final TextEditingController countryCodephoneController;
-    final TextEditingController countryCodewhatsappController;
-
+  final TextEditingController countryCodewhatsappController;
 
   const AddBasicDetailContainer({
     super.key,
@@ -24,8 +21,7 @@ class AddBasicDetailContainer extends StatefulWidget {
     required this.phonecontroller,
     required this.whatsappcontroller,
     required this.countryCodephoneController,
-        required this.countryCodewhatsappController,
-
+    required this.countryCodewhatsappController,
   });
 
   @override
@@ -36,8 +32,8 @@ class AddBasicDetailContainer extends StatefulWidget {
 class _AddBasicDetailContainerState extends State<AddBasicDetailContainer> {
   @override
   Widget build(BuildContext context) {
-    
     return CommonUserContainer(
+      height: SizeUtils.height * .55,
       title: 'Basic Details',
       children: [
         Gap(CustomPadding.paddingLarge.v),
@@ -108,7 +104,7 @@ class _AddBasicDetailContainerState extends State<AddBasicDetailContainer> {
 
         TextFormContainer(
           isNumberField: true,
-           countryCodeWidget: CountryCodePicker(
+          countryCodeWidget: CountryCodePicker(
             initialSelection: 'IN',
             onChanged: (value) {
               setState(() {

@@ -128,11 +128,11 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
                       : DetailRow(
                         label: 'Website Link',
                         value:
-                            widget.portfolio?.workInfo.primaryWebsite ??
+                            widget.portfolio?.workInfo?.primaryWebsite ??
                             'loading....',
                         ontap:
                             () => launchWebsiteLink(
-                              widget.portfolio?.workInfo.primaryWebsite ?? '',
+                              widget.portfolio?.workInfo?.primaryWebsite ?? '',
                               context,
                             ),
                       ),
@@ -144,10 +144,10 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
                       : DetailRow(
                         label: 'Website Link',
                         value:
-                            widget.portfolio?.workInfo.secondaryWebsite ?? '-',
+                            widget.portfolio?.workInfo?.secondaryWebsite ?? '-',
                         ontap:
                             () => launchWebsiteLink(
-                              widget.portfolio?.workInfo.secondaryWebsite ?? '',
+                              widget.portfolio?.workInfo?.secondaryWebsite ?? '',
                               context,
                             ),
                       ),

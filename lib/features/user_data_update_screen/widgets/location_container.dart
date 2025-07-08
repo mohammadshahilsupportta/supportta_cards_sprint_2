@@ -8,6 +8,7 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_ro
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/services/pincode_helper.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LocationContainer extends StatefulWidget {
   final TextEditingController? buildingNamecontroller;
@@ -17,6 +18,7 @@ class LocationContainer extends StatefulWidget {
   final TextEditingController? districtController;
   final TextEditingController? stateController;
   final TextEditingController? countryController;
+  final TextEditingController? mapUrlController;
 
   final PortfolioDataModel? portfolio;
   final bool isEdit;
@@ -32,6 +34,7 @@ class LocationContainer extends StatefulWidget {
     this.districtController,
     this.stateController,
     this.countryController,
+    this.mapUrlController,
   });
   final User? user;
 
@@ -76,9 +79,27 @@ class _LocationContainerState extends State<LocationContainer> {
     super.dispose();
   }
 
+  String? validateGoogleMapsUrl(String? value) {
+    if (value == null || value.isEmpty) {
+      return null;
+    }
+
+    final googleMapsRegex = RegExp(
+      r'^https:\/\/((www\.)?google\.com\/maps|maps\.app\.goo\.gl)',
+    );
+
+    if (!googleMapsRegex.hasMatch(value)) {
+      return 'Location must be a valid Google Maps URL';
+    }
+
+    return null; // means valid
+  }
+
   @override
   Widget build(BuildContext context) {
     return CommonUserContainer(
+      height: SizeUtils.height * .57,
+
       title: 'Location',
       children:
           widget.isEdit
@@ -87,14 +108,14 @@ class _LocationContainerState extends State<LocationContainer> {
                 TextFormContainer(
                   controller: widget.buildingNamecontroller,
                   // initialValue: portfolio!.addressInfo.buildingName,
-                  labelText: 'Building Name',
+                  labelText: 'Address Line 1',
                   user: widget.user,
                   maxline: 3,
                 ),
                 TextFormContainer(
                   controller: widget.areaController,
                   // initialValue: portfolio!.addressInfo.area,
-                  labelText: 'Area',
+                  labelText: 'Address Line 2',
                   user: widget.user,
                 ),
                 Row(
@@ -138,37 +159,119 @@ class _LocationContainerState extends State<LocationContainer> {
                     ),
                   ],
                 ),
+                TextFormContainer(
+                  labelText: 'Map Url',
+                  controller: widget.mapUrlController,
+                  initialValue: '',
+                  user: widget.user,
+                  validator: validateGoogleMapsUrl,
+                ),
               ]
               : [
                 Gap(CustomPadding.paddingLarge.v),
 
                 DetailRow(
-                  label: 'Building Name',
+                  label: 'Address Line 1',
                   value:
-                      widget.portfolio?.addressInfo.buildingName ??
-                      'Loading...',
+                      widget.portfolio?.addressInfo?.buildingName ??
+                      'No Data Available',
                 ),
                 DetailRow(
-                  label: 'Area',
-                  value: widget.portfolio?.addressInfo.area ?? 'Loading...',
+                  label: 'Address Line 2',
+                  value:
+                      widget.portfolio?.addressInfo?.area ??
+                      'No Data Available',
                 ),
                 DetailRow(
                   label: 'Pin code',
-                  value: widget.portfolio?.addressInfo.pincode ?? 'Loading...',
+                  value:
+                      widget.portfolio?.addressInfo?.pincode ??
+                      'No Data Available',
                 ),
                 DetailRow(
                   label: 'District',
-                  value: widget.portfolio?.addressInfo.district ?? 'Loading...',
+                  value:
+                      widget.portfolio?.addressInfo?.district ??
+                      'No Data Available',
                 ),
                 DetailRow(
                   label: 'State',
-                  value: widget.portfolio?.addressInfo.state ?? 'Loading...',
+                  value:
+                      (widget.portfolio?.addressInfo?.country != null &&
+                              widget.portfolio!.addressInfo!.state!.isNotEmpty)
+                          ? widget.portfolio!.addressInfo!.state!
+                          : 'No Data Available',
+                  // value:
+                  //     widget.portfolio?.addressInfo?.state ??
+                  //     'No Data Available',
                 ),
                 DetailRow(
                   label: 'Country',
-                  value: widget.portfolio?.addressInfo.country ?? '',
+                  value:
+                      (widget.portfolio?.addressInfo?.country != null &&
+                              widget
+                                  .portfolio!
+                                  .addressInfo!
+                                  .country!
+                                  .isNotEmpty)
+                          ? widget.portfolio!.addressInfo!.country!
+                          : 'No Data Available',
+                ),
+                // DetailRow(
+                //   label: 'Map',
+                //   value:
+                //       widget.portfolio?.addressInfo?.mapUrl ??
+                //       'No Data Available',
+                // ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: CustomPadding.paddingLarge.v,
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Map Url',
+                        style: context.inter50014.copyWith(fontSize: 14.fSize),
+                      ),
+                      Spacer(),
+                      widget.portfolio?.addressInfo?.mapUrl != null &&
+                              widget.portfolio!.addressInfo!.mapUrl!.isNotEmpty
+                          ? Text(
+                            widget.portfolio!.addressInfo!.mapUrl!,
+                            style: context.inter50014.copyWith(
+                              fontSize: 14.fSize,
+                              color: CustomColors.textColorGrey,
+                            ),
+                          )
+                          : Text(
+                            'No Map URL Available',
+                            style: context.inter50014.copyWith(
+                              fontSize: 14.fSize,
+                              color: CustomColors.textColorGrey,
+                            ),
+                          ),
+                      IconButton(
+                        onPressed: () async {
+                          final mapUrl = widget.portfolio?.addressInfo?.mapUrl;
+                          if (mapUrl != null && mapUrl.isNotEmpty) {
+                            final Uri url = Uri.parse(mapUrl);
+                            if (!await launchUrl(url)) {
+                              throw Exception('Could not launch $url');
+                            }
+                          } else {
+                            logError('Map URL is not available');
+                          }
+                        },
+                        icon: Icon(Icons.location_pin, color: CustomColors.red),
+                      ),
+                      // Icon(Icons.location_pin, color: CustomColors.red),
+                    ],
+                  ),
                 ),
               ],
     );
   }
 }
+
+// style: context.inter50014.copyWith(fontSize: 14.fSize),

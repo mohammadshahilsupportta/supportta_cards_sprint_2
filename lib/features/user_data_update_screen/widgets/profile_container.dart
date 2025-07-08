@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/common_user_container.dart';
@@ -30,6 +29,8 @@ class ProfileContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CommonUserContainer(
+      height: SizeUtils.height * .57,
+
       title: 'Profile',
       children: [
         Gap(CustomPadding.paddingLarge.v),
@@ -42,30 +43,30 @@ class ProfileContainer extends StatelessWidget {
             )
             : DetailRow(
               label: 'Designation',
-              value: portfolio?.workInfo.designation ?? 'loading...',
+              value: portfolio?.workInfo?.designation ?? 'No Data Available',
             ),
         isEdit
             ? TextFormContainer(
               controller: companyController,
               // readonly: true,
-              initialValue: portfolio!.workInfo.companyName,
+              initialValue: portfolio!.workInfo?.companyName,
               labelText: 'Company Name',
               user: user,
             )
             : DetailRow(
               label: 'Company Name',
-              value: portfolio?.workInfo.companyName ?? 'loading...',
+              value: portfolio?.workInfo?.companyName ?? 'No Data Available',
             ),
         isEdit
             ? TextFormContainer(
               controller: workEmailController,
               user: user,
-              initialValue: portfolio!.workInfo.workEmail,
+              initialValue: portfolio!.workInfo?.workEmail,
               labelText: 'Email',
             )
             : DetailRow(
               label: 'Email',
-              value: portfolio?.workInfo.workEmail ?? ' loading...',
+              value: portfolio?.workInfo?.workEmail ?? ' No Data Available',
             ),
       ],
     );

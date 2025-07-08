@@ -3,9 +3,7 @@ import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
@@ -169,7 +167,9 @@ class _UserProfileContainerState extends State<UserProfileContainer>
           color: CustomColors.secondaryColor,
           borderRadius: BorderRadius.circular(CustomPadding.paddingLarge),
         ),
-        height: SizeUtils.height * 0.475,
+        // height: SizeUtils.height * 0.475,
+        height: SizeUtils.height * .55,
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

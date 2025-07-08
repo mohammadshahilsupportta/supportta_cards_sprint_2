@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gap/gap.dart';
-
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
@@ -57,6 +55,8 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
   @override
   Widget build(BuildContext context) {
     return CommonUserContainer(
+      height: SizeUtils.height * .55,
+
       title: 'Basic Details',
       children: [
         Gap(CustomPadding.paddingLarge.v),
@@ -71,7 +71,7 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
             )
             : DetailRow(
               label: 'Full Name',
-              value: widget.portfolio?.personalInfo.name ?? 'loading...',
+              value: widget.portfolio?.personalInfo.name ?? 'No Data Available',
             ),
 
         widget.isEdit
@@ -99,7 +99,7 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
             )
             : DetailRow(
               label: 'Email',
-              value: widget.portfolio?.personalInfo.email ?? 'loading...',
+              value: widget.portfolio?.personalInfo.email ?? '',
             ),
         widget.isEdit
             ? TextFormContainer(
@@ -114,7 +114,9 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
             )
             : DetailRow(
               label: 'Phone Number',
-              value: widget.portfolio?.personalInfo.phoneNumber ?? 'loading...',
+              value:
+                  widget.portfolio?.personalInfo.phoneNumber ??
+                  'No Data Available',
             ),
         widget.isEdit
             ? TextFormContainer(
@@ -129,7 +131,8 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
             : DetailRow(
               label: 'WhatsApp Number',
               value:
-                  widget.portfolio?.personalInfo.whatsappNumber ?? 'loading...',
+                  widget.portfolio?.personalInfo.whatsappNumber ??
+                  'No Data Available',
             ),
         widget.isEdit
             ? SizedBox()

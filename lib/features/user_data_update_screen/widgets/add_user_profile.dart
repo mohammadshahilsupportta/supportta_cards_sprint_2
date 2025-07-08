@@ -18,6 +18,8 @@ class AddUserProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CommonUserContainer(
+            height: SizeUtils.height * .55,
+
       title: 'Profile',
       children: [
         Gap(CustomPadding.paddingLarge.v),

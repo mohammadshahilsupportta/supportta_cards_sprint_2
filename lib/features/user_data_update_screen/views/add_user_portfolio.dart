@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:gap/gap.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
@@ -61,6 +60,7 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
   final TextEditingController countryController = TextEditingController();
   final TextEditingController aboutHeadingController = TextEditingController();
   final TextEditingController serviceHeadController = TextEditingController();
+  final TextEditingController mapController = TextEditingController();
 
   final TextEditingController aboutDescriptionController =
       TextEditingController();
@@ -177,7 +177,8 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
           district: districtController.text,
           state: stateController.text,
           country: countryController.text,
-          
+          mapUrl: mapController.text,
+
         ),
         about: About(
           heading: aboutHeadingController.text,
@@ -354,6 +355,8 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
                     districtcontroller: districtController,
                     statecontroller: stateController,
                     countrycontroller: countryController,
+                    mapUrlController: mapController,
+
                   ),
                 ],
               ),

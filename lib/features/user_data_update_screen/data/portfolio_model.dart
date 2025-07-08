@@ -3,8 +3,8 @@ import 'package:taproot_admin/constants/constants.dart';
 class PortfolioDataModel {
   final String id;
   final PersonalInfo personalInfo;
-  final WorkInfo workInfo;
-  final AddressInfo addressInfo;
+  final WorkInfo? workInfo;
+  final AddressInfo? addressInfo;
   final About about;
   final UserInfo user;
   final List<SocialMedia> socialMedia;
@@ -14,8 +14,8 @@ class PortfolioDataModel {
   PortfolioDataModel({
     required this.id,
     required this.personalInfo,
-    required this.workInfo,
-    required this.addressInfo,
+    this.workInfo,
+    this.addressInfo,
     required this.about,
     required this.user,
     required this.socialMedia,
@@ -28,7 +28,7 @@ class PortfolioDataModel {
     return PortfolioDataModel(
       id: portfolio['_id'] ?? '',
       personalInfo: PersonalInfo.fromJson(portfolio['personalInfo'] ?? {}),
-      // Add default empty objects for missing fields
+
       workInfo: WorkInfo.fromJson(
         portfolio['workInfo'] ??
             {
@@ -59,34 +59,12 @@ class PortfolioDataModel {
     );
   }
 
-  // factory PortfolioDataModel.fromJson(Map<String, dynamic> json) {
-  //   final portfolio = json['result']['portfolio'];
-
-  //   return PortfolioDataModel(
-  //     id: portfolio['_id'],
-  //     personalInfo: PersonalInfo.fromJson(portfolio['personalInfo']),
-  //     workInfo: WorkInfo.fromJson(portfolio['workInfo']),
-  //     addressInfo: AddressInfo.fromJson(portfolio['addressInfo']),
-  //     about: About.fromJson(portfolio['about']),
-  //     user: UserInfo.fromJson(portfolio['user']),
-  //     socialMedia:
-  //         (portfolio['socialMedia'] as List<dynamic>)
-  //             .map((e) => SocialMedia.fromJson(e))
-  //             .toList(),
-  //     serviceHeading: portfolio['serviceHeading'],
-  //     services:
-  //         (json['result']['services'] as List<dynamic>)
-  //             .map((e) => Service.fromJson(e))
-  //             .toList(),
-  //   );
-  // }
-
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
       'personalInfo': personalInfo.toJson(),
-      'workInfo': workInfo.toJson(),
-      'addressInfo': addressInfo.toJson(),
+      'workInfo': workInfo!.toJson(),
+      'addressInfo': addressInfo?.toJson(),
       'about': about.toJson(),
       'user': user.toJson(),
       'socialMedia': socialMedia.map((e) => e.toJson()).toList(),
@@ -129,23 +107,6 @@ class PersonalInfo {
     );
   }
 
-  // factory PersonalInfo.fromJson(Map<String, dynamic> json) {
-  //   return PersonalInfo(
-  //     name: json['name'],
-  //     email: json['email'],
-  //     phoneNumber: json['phoneNumber'],
-  //     whatsappNumber: json['whatsappNumber'],
-  //     profilePicture:
-  //         json['profilePicture'] != null
-  //             ? ProductImage.fromJson(json['profilePicture'])
-  //             : null,
-  //     bannerImage:
-  //         json['bannerImage'] != null
-  //             ? ProductImage.fromJson(json['bannerImage'])
-  //             : null,
-  //   );
-  // }
-
   Map<String, dynamic> toJson() => {
     'name': name,
     'email': email,
@@ -175,7 +136,7 @@ class ProductImage {
   factory ProductImage.fromJson(Map<String, dynamic> json) {
     return ProductImage(
       name: json['name'],
-      key: json['key'] ?? '', // Provide empty string as default
+      key: json['key'] ?? '',
       size: json['size'] != null ? int.tryParse(json['size'].toString()) : null,
       mimetype: json['mimetype'],
     );
@@ -195,71 +156,6 @@ class ProductImage {
     return null;
   }
 }
-
-// class ProductImage {
-//   final String? name;
-//   final String key;
-//   final int? size;
-//   final String? mimetype;
-
-//   ProductImage({this.name, required this.key, this.size, this.mimetype});
-
-//   factory ProductImage.fromJson(Map<String, dynamic> json) {
-//     return ProductImage(
-//       name: json['name'],
-//       key: json['key'],
-//       size: json['size'] != null ? int.tryParse(json['size'].toString()) : null,      mimetype: json['mimetype'],
-//     );
-//   }
-
-//   Map<String, dynamic> toJson() => {
-//     'name': name,
-//     'key': key,
-//     'size': size?.toString(),
-//     'mimetype': mimetype,
-//   };
-
-//   String? getImageUrl(String baseUrl) {
-//     if (key.isNotEmpty) {
-//       return '$baseUrl/file?key=portfolios/$key';
-//     }
-//     return null;
-//   }
-// }
-
-// class PersonalInfo {
-//   final String name;
-//   final String email;
-//   final String phoneNumber;
-//   final String whatsappNumber;
-//   final String? bannerImage;
-//   final String? profileImage;
-
-//   PersonalInfo({
-//     required this.name,
-//     required this.email,
-//     required this.phoneNumber,
-//     required this.whatsappNumber,
-//     this.bannerImage,
-//     this.profileImage,
-//   });
-
-//   factory PersonalInfo.fromJson(Map<String, dynamic> json) {
-//     return PersonalInfo(
-//       name: json['name'],
-//       email: json['email'],
-//       phoneNumber: json['phoneNumber'],
-//       whatsappNumber: json['whatsappNumber'],
-//     );
-//   }
-
-//   Map<String, dynamic> toJson() => {
-//     'name': name,
-//     'email': email,
-//     'phoneNumber': phoneNumber,
-//     'whatsappNumber': whatsappNumber,
-//   };
-// }
 
 class WorkInfo {
   final String companyName;
@@ -291,20 +187,6 @@ class WorkInfo {
     );
   }
 
-  // factory WorkInfo.fromJson(Map<String, dynamic> json) {
-  //   return WorkInfo(
-  //     companyName: json['companyName'],
-  //     designation: json['designation'],
-  //     workEmail: json['workEmail'],
-  //     primaryWebsite: json['primaryWebsite'],
-  //     secondaryWebsite: json['secondaryWebsite'],
-  //     companyLogo:
-  //         json['companyLogo'] != null
-  //             ? ProductImage.fromJson(json['companyLogo'])
-  //             : null,
-  //   );
-  // }
-
   Map<String, dynamic> toJson() => {
     'companyName': companyName,
     'designation': designation,
@@ -320,20 +202,22 @@ class WorkInfo {
 }
 
 class AddressInfo {
-  final String buildingName;
-  final String area;
-  final String pincode;
-  final String district;
-  final String state;
-  final String country;
+  final String? buildingName;
+  final String? area;
+  final String? pincode;
+  final String? district;
+  final String? state;
+  final String? country;
+  final String? mapUrl;
 
   AddressInfo({
-    required this.buildingName,
-    required this.area,
-    required this.pincode,
-    required this.district,
-    required this.state,
-    required this.country,
+    this.buildingName,
+    this.area,
+    this.pincode,
+    this.district,
+    this.state,
+    this.country,
+    this.mapUrl,
   });
 
   factory AddressInfo.fromJson(Map<String, dynamic> json) {
@@ -343,7 +227,8 @@ class AddressInfo {
       pincode: json['pincode'],
       district: json['district'],
       state: json['state'],
-      country: json['country'] ?? 'India',
+      country: json['country'],
+      mapUrl: json['mapUrl'],
     );
   }
 
@@ -354,6 +239,7 @@ class AddressInfo {
     'district': district,
     'state': state,
     'country': country,
+    'mapUrl': mapUrl,
   };
 }
 

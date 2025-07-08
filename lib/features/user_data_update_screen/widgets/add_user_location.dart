@@ -15,6 +15,7 @@ class AddUserLocation extends StatefulWidget {
   final TextEditingController districtcontroller;
   final TextEditingController statecontroller;
   final TextEditingController countrycontroller;
+  final TextEditingController? mapUrlController;
   const AddUserLocation({
     super.key,
     this.user,
@@ -24,6 +25,7 @@ class AddUserLocation extends StatefulWidget {
     required this.districtcontroller,
     required this.statecontroller,
     required this.countrycontroller,
+    this.mapUrlController,
   });
 
   final User? user;
@@ -83,9 +85,27 @@ class _AddUserLocationState extends State<AddUserLocation> {
     }
   }
 
+  String? validateGoogleMapsUrl(String? value) {
+    if (value == null || value.isEmpty) {
+      return null;
+    }
+
+    final googleMapsRegex = RegExp(
+      r'^https:\/\/((www\.)?google\.com\/maps|maps\.app\.goo\.gl)',
+    );
+
+    if (!googleMapsRegex.hasMatch(value)) {
+      return 'Location must be a valid Google Maps URL';
+    }
+
+    return null; // means valid
+  }
+
   @override
   Widget build(BuildContext context) {
     return CommonUserContainer(
+      height: SizeUtils.height * .57,
+
       title: 'Location',
       children: [
         Gap(CustomPadding.paddingLarge.v),
@@ -165,6 +185,13 @@ class _AddUserLocationState extends State<AddUserLocation> {
               ),
             ),
           ],
+        ),
+        TextFormContainer(
+          labelText: 'Map Url',
+          controller: widget.mapUrlController,
+          initialValue: '',
+          user: widget.user,
+          validator: validateGoogleMapsUrl,
         ),
       ],
     );

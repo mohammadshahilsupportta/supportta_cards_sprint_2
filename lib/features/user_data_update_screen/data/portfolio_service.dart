@@ -22,7 +22,7 @@ class PortfolioService with ErrorExceptionHandler {
       final model = PortfolioDataModel.fromJson(response.data);
       return model;
     } catch (e) {
-      throw PortfolioService().handleError(e);
+      throw PortfolioService().handleError(e)!;
     }
   }
 
@@ -356,6 +356,7 @@ class PortfolioService with ErrorExceptionHandler {
       rethrow;
     }
   }
+
   static Future createPortfolioOrder({
     required String userId,
     required String productId,
@@ -395,7 +396,6 @@ class PortfolioService with ErrorExceptionHandler {
       rethrow;
     }
   }
-
 
   // static Future createPortfolioOrder({
   //   required String userId,

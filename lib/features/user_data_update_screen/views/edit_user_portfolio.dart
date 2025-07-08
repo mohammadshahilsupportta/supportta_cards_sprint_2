@@ -1,7 +1,7 @@
 import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_service.dart';
@@ -53,7 +53,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
   bool isLogoImageRemoved = false;
   bool isBannerImageRemoved = false;
   bool isProfileImageRemoved = false;
-  
 
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -76,6 +75,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
   final TextEditingController headingcontroller = TextEditingController();
   final TextEditingController descriptioncontroller = TextEditingController();
   final TextEditingController serviceHeadController = TextEditingController();
+  final TextEditingController mapUrlController = TextEditingController();
   final TextEditingController serviceHeadingController =
       TextEditingController();
   final TextEditingController serviceDescriptionController =
@@ -95,21 +95,25 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
     phoneNumberController.text = theFetchedPortfolio!.personalInfo.phoneNumber;
     whatsappNumberController.text =
         theFetchedPortfolio!.personalInfo.whatsappNumber;
-    companyNameController.text = theFetchedPortfolio!.workInfo.companyName;
-    designationcontroller.text = theFetchedPortfolio!.workInfo.designation;
-    workemailController.text = theFetchedPortfolio!.workInfo.workEmail;
-    areaController.text = theFetchedPortfolio!.addressInfo.area;
-    pincodeController.text = theFetchedPortfolio!.addressInfo.pincode;
-    districtController.text = theFetchedPortfolio!.addressInfo.district;
-    stateController.text = theFetchedPortfolio!.addressInfo.state;
-    countryController.text = theFetchedPortfolio!.addressInfo.country;
-    buildingNamecontroller.text = theFetchedPortfolio!.addressInfo.buildingName;
+    companyNameController.text =
+        theFetchedPortfolio!.workInfo?.companyName ?? "";
+    designationcontroller.text =
+        theFetchedPortfolio!.workInfo?.designation ?? "";
+    workemailController.text = theFetchedPortfolio!.workInfo!.workEmail;
+    areaController.text = theFetchedPortfolio!.addressInfo?.area ?? "";
+    pincodeController.text = theFetchedPortfolio!.addressInfo?.pincode ?? '';
+    districtController.text = theFetchedPortfolio!.addressInfo?.district ?? '';
+    stateController.text = theFetchedPortfolio!.addressInfo?.state ?? "";
+    countryController.text = theFetchedPortfolio!.addressInfo?.country ?? "";
+    buildingNamecontroller.text =
+        theFetchedPortfolio!.addressInfo?.buildingName ?? '';
     primaryWebsiteController.text =
-        theFetchedPortfolio!.workInfo.primaryWebsite;
+        theFetchedPortfolio!.workInfo?.primaryWebsite ?? "";
     secondaryWebsiteController.text =
-        theFetchedPortfolio!.workInfo.secondaryWebsite;
+        theFetchedPortfolio!.workInfo?.secondaryWebsite ?? "";
     headingcontroller.text = theFetchedPortfolio!.about.heading;
     descriptioncontroller.text = theFetchedPortfolio!.about.description;
+    mapUrlController.text = theFetchedPortfolio?.addressInfo?.mapUrl ?? '';
     if (theFetchedPortfolio!.services.isNotEmpty) {
       serviceHeadController.text = theFetchedPortfolio!.serviceHeading;
       serviceHeadingController.text = theFetchedPortfolio!.services[0].heading;
@@ -217,21 +221,21 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
           workInfo['companyLogo'] = null;
         }
 
-        if (companyNameController.text != portfolio.workInfo.companyName) {
+        if (companyNameController.text != portfolio.workInfo?.companyName) {
           workInfo['companyName'] = companyNameController.text;
         }
-        if (designationcontroller.text != portfolio.workInfo.designation) {
+        if (designationcontroller.text != portfolio.workInfo?.designation) {
           workInfo['designation'] = designationcontroller.text;
         }
-        if (workemailController.text != portfolio.workInfo.workEmail) {
+        if (workemailController.text != portfolio.workInfo?.workEmail) {
           workInfo['workEmail'] = workemailController.text;
         }
         if (primaryWebsiteController.text !=
-            portfolio.workInfo.primaryWebsite) {
+            portfolio.workInfo?.primaryWebsite) {
           workInfo['primaryWebsite'] = primaryWebsiteController.text;
         }
         if (secondaryWebsiteController.text !=
-            portfolio.workInfo.secondaryWebsite) {
+            portfolio.workInfo?.secondaryWebsite) {
           workInfo['secondaryWebsite'] = secondaryWebsiteController.text;
         }
         updateData['workInfo'] = {
@@ -249,23 +253,27 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
 
       try {
         final Map<String, dynamic> addressInfo = {};
-        if (buildingNamecontroller.text != portfolio.addressInfo.buildingName) {
+        if (buildingNamecontroller.text !=
+            portfolio.addressInfo?.buildingName) {
           addressInfo['buildingName'] = buildingNamecontroller.text;
         }
-        if (areaController.text != portfolio.addressInfo.area) {
+        if (areaController.text != portfolio.addressInfo?.area) {
           addressInfo['area'] = areaController.text;
         }
-        if (pincodeController.text != portfolio.addressInfo.pincode) {
+        if (pincodeController.text != portfolio.addressInfo?.pincode) {
           addressInfo['pincode'] = pincodeController.text;
         }
-        if (districtController.text != portfolio.addressInfo.district) {
+        if (districtController.text != portfolio.addressInfo?.district) {
           addressInfo['district'] = districtController.text;
         }
-        if (stateController.text != portfolio.addressInfo.state) {
+        if (stateController.text != portfolio.addressInfo?.state) {
           addressInfo['state'] = stateController.text;
         }
-        if (countryController.text != portfolio.addressInfo.country) {
+        if (countryController.text != portfolio.addressInfo?.country) {
           addressInfo['country'] = countryController.text;
+        }
+        if (mapUrlController.text != portfolio.addressInfo?.mapUrl) {
+          addressInfo['mapUrl'] = mapUrlController.text;
         }
 
         if (addressInfo.isNotEmpty) {
@@ -303,7 +311,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
         if (theFetchedPortfolio?.socialMedia != null) {
           final socialMediaList =
               theFetchedPortfolio!.socialMedia
-                  .where((social) => social != null)
+                  // .where((social) => social != null)
                   .map((social) => social.toJson())
                   .toList();
 
@@ -518,23 +526,23 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
 
   //     try {
   //       final Map<String, dynamic> addressInfo = {};
-  //       if (buildingNamecontroller.text != portfolio.addressInfo.buildingName) {
+  //       if (buildingNamecontroller.text != portfolio.addressInfo?.buildingName) {
   //         addressInfo['buildingName'] = buildingNamecontroller.text;
   //       }
-  //       if (areaController.text != portfolio.addressInfo.area) {
+  //       if (areaController.text != portfolio.addressInfo?.area) {
   //         addressInfo['area'] = areaController.text;
   //       }
-  //       if (pincodeController.text != portfolio.addressInfo.pincode) {
+  //       if (pincodeController.text != portfolio.addressInfo?.pincode) {
   //         addressInfo['pincode'] = pincodeController.text;
   //       }
-  //       if (districtController.text != portfolio.addressInfo.district) {
+  //       if (districtController.text != portfolio.addressInfo?.district) {
   //         addressInfo['district'] = districtController.text;
   //       }
-  //       if (stateController.text != portfolio.addressInfo.state) {
+  //       if (stateController.text != portfolio.addressInfo?.state) {
   //         addressInfo['state'] = stateController.text;
   //       }
 
-  //       if (addressInfo.isNotEmpty) {
+  //       if (addressInfo?.isNotEmpty) {
   //         updateData['addressInfo'] = addressInfo;
   //       }
   //     } catch (e) {
@@ -797,11 +805,11 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                     pincodeController: pincodeController,
                     districtController: districtController,
                     stateController: stateController,
-                    countryController: countryController
-                    ,
+                    countryController: countryController,
                     user: widget.user,
                     isEdit: true,
                     portfolio: widget.portfolio,
+                    mapUrlController: mapUrlController,
                   ),
                 ],
               ),
@@ -826,11 +834,10 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                       setState(() {
                         pickedBannerImage = null;
                         previewBannerBytes = null;
-                                                      isBannerImageRemoved = true;
-
+                        isBannerImageRemoved = true;
                       });
                     },
-                    logoImageUrl: widget.portfolio?.workInfo.getCompanyLogoUrl(
+                    logoImageUrl: widget.portfolio?.workInfo?.getCompanyLogoUrl(
                       baseUrl,
                     ),
                     bannerImageUrl: widget.portfolio?.personalInfo
