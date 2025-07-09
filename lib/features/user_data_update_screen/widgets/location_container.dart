@@ -39,11 +39,13 @@ class LocationContainer extends StatefulWidget {
   final User? user;
 
   @override
-  State<LocationContainer> createState() => _LocationContainerState();
+  State<LocationContainer> createState() => LocationContainerState();
 }
 
-class _LocationContainerState extends State<LocationContainer> {
+class LocationContainerState extends State<LocationContainer> {
   Timer? _debounce;
+    String? mapUrlErrorText;
+
 
   @override
   void initState() {
@@ -79,22 +81,37 @@ class _LocationContainerState extends State<LocationContainer> {
     super.dispose();
   }
 
-  String? validateGoogleMapsUrl(String? value) {
-    if (value == null || value.isEmpty) {
-      return null;
-    }
+  // String? validateGoogleMapsUrl(String? value) {
+  //   if (value == null || value.isEmpty) {
+  //     return null;
+  //   }
 
-    final googleMapsRegex = RegExp(
-      r'^https:\/\/((www\.)?google\.com\/maps|maps\.app\.goo\.gl)',
-    );
+  //   final googleMapsRegex = RegExp(
+  //     r'^https:\/\/((www\.)?google\.com\/maps|maps\.app\.goo\.gl)',
+  //   );
 
-    if (!googleMapsRegex.hasMatch(value)) {
-      return 'Location must be a valid Google Maps URL';
-    }
+  //   if (!googleMapsRegex.hasMatch(value)) {
+  //     return 'Location must be a valid Google Maps URL';
+  //   }
 
-    return null; // means valid
+  //   return null; // means valid
+  // }
+ void validateMapUrlField() {
+    final value = widget.mapUrlController?.text ?? '';
+    final isValid = _isMapUrlValid(value.trim());
+
+    setState(() {
+      mapUrlErrorText = isValid ? null : 'Please enter a valid Google Maps URL';
+    });
   }
 
+  bool _isMapUrlValid(String value) {
+    if (value.isEmpty) return true;
+    final regex = RegExp(r'^https:\/\/((www\.)?google\.com\/maps|maps\.app\.goo\.gl)');
+    return regex.hasMatch(value);
+  }
+
+  bool get hasMapUrlError => mapUrlErrorText != null;
   @override
   Widget build(BuildContext context) {
     return CommonUserContainer(
@@ -164,7 +181,14 @@ class _LocationContainerState extends State<LocationContainer> {
                   controller: widget.mapUrlController,
                   initialValue: '',
                   user: widget.user,
-                  validator: validateGoogleMapsUrl,
+                   onChanged: (value) {
+                  setState(() {
+                    mapUrlErrorText = _isMapUrlValid(value.trim())
+                        ? null
+                        : 'Please enter a valid Google Maps URL';
+                  });
+                },
+                  // validator: validateGoogleMapsUrl,
                 ),
               ]
               : [
@@ -173,26 +197,59 @@ class _LocationContainerState extends State<LocationContainer> {
                 DetailRow(
                   label: 'Address Line 1',
                   value:
-                      widget.portfolio?.addressInfo?.buildingName ??
-                      'No Data Available',
+                      (widget.portfolio?.addressInfo?.buildingName != null &&
+                              widget
+                                  .portfolio!
+                                  .addressInfo!
+                                  .buildingName!
+                                  .isNotEmpty)
+                          ? widget.portfolio!.addressInfo!.buildingName!
+                          : 'No Data Available',
+                  // value:
+                  //     widget.portfolio?.addressInfo?.buildingName ??
+                  //     'No Data Available',
                 ),
                 DetailRow(
                   label: 'Address Line 2',
                   value:
-                      widget.portfolio?.addressInfo?.area ??
-                      'No Data Available',
+                      (widget.portfolio?.addressInfo?.area != null &&
+                              widget.portfolio!.addressInfo!.area!.isNotEmpty)
+                          ? widget.portfolio!.addressInfo!.area!
+                          : 'No Data Available',
+
+                  // value:
+                  //     widget.portfolio?.addressInfo?.area ??
+                  //     'No Data Available',
                 ),
                 DetailRow(
                   label: 'Pin code',
                   value:
-                      widget.portfolio?.addressInfo?.pincode ??
-                      'No Data Available',
+                      (widget.portfolio?.addressInfo?.pincode != null &&
+                              widget
+                                  .portfolio!
+                                  .addressInfo!
+                                  .pincode!
+                                  .isNotEmpty)
+                          ? widget.portfolio!.addressInfo!.pincode!
+                          : 'No Data Available',
+                  // value:
+                  //     widget.portfolio?.addressInfo?.pincode ??
+                  //     'No Data Available',
                 ),
                 DetailRow(
                   label: 'District',
                   value:
-                      widget.portfolio?.addressInfo?.district ??
-                      'No Data Available',
+                      (widget.portfolio?.addressInfo?.district != null &&
+                              widget
+                                  .portfolio!
+                                  .addressInfo!
+                                  .district!
+                                  .isNotEmpty)
+                          ? widget.portfolio!.addressInfo!.district!
+                          : 'No Data Available',
+                  // value:
+                  //     widget.portfolio?.addressInfo?.district ??
+                  //     'No Data Available',
                 ),
                 DetailRow(
                   label: 'State',

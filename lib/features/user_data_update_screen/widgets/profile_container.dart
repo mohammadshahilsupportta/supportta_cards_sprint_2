@@ -25,6 +25,26 @@ class ProfileContainer extends StatelessWidget {
   });
 
   final User user;
+  String getDesignation() {
+    final designation = portfolio?.workInfo?.designation;
+    return (designation != null && designation.trim().isNotEmpty)
+        ? designation
+        : 'No Data Available';
+  }
+
+  String getCompanyName() {
+    final companyName = portfolio?.workInfo?.companyName;
+    return (companyName != null && companyName.trim().isNotEmpty)
+        ? companyName
+        : 'No Data Available';
+  }
+
+  String getWorkEmail() {
+    final workEmail = portfolio?.workInfo?.workEmail;
+    return (workEmail != null && workEmail.trim().isNotEmpty)
+        ? workEmail
+        : 'No Data Available';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +63,9 @@ class ProfileContainer extends StatelessWidget {
             )
             : DetailRow(
               label: 'Designation',
-              value: portfolio?.workInfo?.designation ?? 'No Data Available',
+              value: getDesignation(),
+
+              // value: portfolio?.workInfo?.designation ?? 'No Data Available',
             ),
         isEdit
             ? TextFormContainer(
@@ -55,7 +77,8 @@ class ProfileContainer extends StatelessWidget {
             )
             : DetailRow(
               label: 'Company Name',
-              value: portfolio?.workInfo?.companyName ?? 'No Data Available',
+              value: getCompanyName(),
+              // value: portfolio?.workInfo?.companyName ?? 'No Data Available',
             ),
         isEdit
             ? TextFormContainer(
@@ -66,7 +89,8 @@ class ProfileContainer extends StatelessWidget {
             )
             : DetailRow(
               label: 'Email',
-              value: portfolio?.workInfo?.workEmail ?? ' No Data Available',
+              value: getWorkEmail(),
+              // value: portfolio?.workInfo?.workEmail ?? ' No Data Available',
             ),
       ],
     );

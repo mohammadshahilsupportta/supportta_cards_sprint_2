@@ -52,6 +52,20 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
     super.initState();
   }
 
+  String getPhone() {
+    final phone = widget.portfolio?.personalInfo.phoneNumber;
+    return (phone != null && phone.trim().isNotEmpty)
+        ? phone
+        : 'No Data Available';
+  }
+
+  String getWhatsapp() {
+    final whatsapp = widget.portfolio?.personalInfo.whatsappNumber;
+    return (whatsapp != null && whatsapp.trim().isNotEmpty)
+        ? whatsapp
+        : 'No Data Available';
+  }
+
   @override
   Widget build(BuildContext context) {
     return CommonUserContainer(
@@ -114,9 +128,10 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
             )
             : DetailRow(
               label: 'Phone Number',
-              value:
-                  widget.portfolio?.personalInfo.phoneNumber ??
-                  'No Data Available',
+              value: getPhone(),
+              // value:
+              //     widget.portfolio?.personalInfo.phoneNumber ??
+              //     'No Data Available',
             ),
         widget.isEdit
             ? TextFormContainer(
@@ -130,9 +145,10 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
             )
             : DetailRow(
               label: 'WhatsApp Number',
-              value:
-                  widget.portfolio?.personalInfo.whatsappNumber ??
-                  'No Data Available',
+              value: getWhatsapp(),
+              // value:
+              //     widget.portfolio?.personalInfo.whatsappNumber ??
+              //     'No Data Available',
             ),
         widget.isEdit
             ? SizedBox()

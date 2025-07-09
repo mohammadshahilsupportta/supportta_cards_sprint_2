@@ -31,6 +31,9 @@ class UserDataUpdateScreen extends StatefulWidget {
 }
 
 class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
+
+  // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   final TextEditingController refController = TextEditingController();
 
   PortfolioDataModel? portfolio;
@@ -147,6 +150,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                           Spacer(),
                           userEdit
                               ? MiniLoadingButton(
+                                
                                 icon: Icons.save,
                                 text: 'Save',
                                 onPressed: () {},
@@ -182,7 +186,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                             onPressed: () {
                               Navigator.pop(context);
                             },
-
+                
                             gradient: LinearGradient(
                               colors: CustomColors.borderGradient.colors,
                             ),
@@ -191,7 +195,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       ),
                     ),
                     Gap(CustomPadding.paddingLarge.v),
-
+                
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: CustomPadding.paddingLarge,
@@ -218,7 +222,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       ),
                     ),
                     Gap(CustomPadding.paddingXL.v),
-
+                
                     Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: CustomPadding.paddingLarge,
@@ -231,7 +235,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                             portfolio: portfolio,
                           ),
                           Gap(CustomPadding.paddingXL.v),
-
+                
                           LocationContainer(
                             user: user,
                             isEdit: userEdit,
@@ -292,7 +296,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       ),
                     ),
                     Gap(CustomPadding.paddingXL.v),
-
+                
                     Visibility(
                       visible: !(portfolio?.services.isEmpty ?? true),
                       child: CommonProductContainer(
@@ -323,7 +327,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                               scrollDirection: Axis.horizontal,
                               itemCount: (portfolio?.services.length ?? 0)
                                   .clamp(0, 3),
-
+                
                               itemBuilder: (context, index) {
                                 return Padding(
                                   padding: EdgeInsets.only(
@@ -355,7 +359,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                         user: user,
                         onProceed: () => fetchPortfolio(),
                       ),
-
+                
                     Gap(CustomPadding.paddingXXL.v),
                   ],
                 ),

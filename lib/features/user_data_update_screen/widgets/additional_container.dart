@@ -1,7 +1,7 @@
 import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/data/portfolio_model.dart';
@@ -10,6 +10,7 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_ro
 import 'package:taproot_admin/features/user_data_update_screen/widgets/image_container.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/widgets/launch_url.dart';
+
 import '../../users_screen/data/user_data_model.dart';
 
 class AdditionalContainer extends StatefulWidget {
@@ -110,6 +111,20 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
     });
   }
 
+  String getPrimaryWebsite() {
+    final link = widget.portfolio?.workInfo?.primaryWebsite;
+    return (link != null && link.trim().isNotEmpty)
+        ? link
+        : 'No Data Available';
+  }
+
+  String getSecondaryWebsite() {
+    final link = widget.portfolio?.workInfo?.secondaryWebsite;
+    return (link != null && link.trim().isNotEmpty)
+        ? link
+        : 'No Data Available';
+  }
+
   @override
   Widget build(BuildContext context) {
     return CommonUserContainer(
@@ -127,9 +142,10 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
                       )
                       : DetailRow(
                         label: 'Website Link',
-                        value:
-                            widget.portfolio?.workInfo?.primaryWebsite ??
-                            'loading....',
+                        value: getPrimaryWebsite(),
+                        // value:
+                        //     widget.portfolio?.workInfo?.primaryWebsite ??
+                        //     'loading....',
                         ontap:
                             () => launchWebsiteLink(
                               widget.portfolio?.workInfo?.primaryWebsite ?? '',
@@ -143,11 +159,13 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
                       )
                       : DetailRow(
                         label: 'Website Link',
-                        value:
-                            widget.portfolio?.workInfo?.secondaryWebsite ?? '-',
+                        value: getSecondaryWebsite(),
+                        // value:
+                        //     widget.portfolio?.workInfo?.secondaryWebsite ?? '-',
                         ontap:
                             () => launchWebsiteLink(
-                              widget.portfolio?.workInfo?.secondaryWebsite ?? '',
+                              widget.portfolio?.workInfo?.secondaryWebsite ??
+                                  '',
                               context,
                             ),
                       ),

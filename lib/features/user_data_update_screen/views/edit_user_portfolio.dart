@@ -39,6 +39,9 @@ class EditUserPortfolio extends StatefulWidget {
 }
 
 class _EditUserPortfolioState extends State<EditUserPortfolio> {
+  final GlobalKey<LocationContainerState> locationKey =
+      GlobalKey<LocationContainerState>();
+
   PortfolioDataModel? theFetchedPortfolio;
   PlatformFile? pickedProfileImage;
   PlatformFile? pickedLogoImage;
@@ -725,6 +728,16 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                   text: 'Save',
 
                   onPressed: () async {
+                    locationKey.currentState?.validateMapUrlField();
+                    final hasErrorMapUrl =
+                        locationKey.currentState?.mapUrlErrorText != null;
+                    if (hasErrorMapUrl) {
+                      SnackbarHelper.showError(
+                        context,
+                        'Please correct the map URL',
+                      );
+                      return;
+                    }
                     await editPortfolio();
                     if (!mounted) return;
                     widget.onCallFunction();
@@ -800,6 +813,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                   Gap(CustomPadding.paddingXL.v),
 
                   LocationContainer(
+                    key: locationKey,
                     buildingNamecontroller: buildingNamecontroller,
                     areaController: areaController,
                     pincodeController: pincodeController,
