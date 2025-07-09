@@ -83,6 +83,10 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       TextEditingController();
   final TextEditingController serviceDescriptionController =
       TextEditingController();
+  final TextEditingController countryCodePhoneController =
+      TextEditingController();
+  final TextEditingController countryCodeWhatsappController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -95,9 +99,31 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
     theFetchedPortfolio = widget.portfolio;
     nameController.text = theFetchedPortfolio?.personalInfo.name ?? '';
     emailController.text = theFetchedPortfolio!.personalInfo.email;
-    phoneNumberController.text = theFetchedPortfolio!.personalInfo.phoneNumber;
-    whatsappNumberController.text =
-        theFetchedPortfolio!.personalInfo.whatsappNumber;
+    final fullPhone = theFetchedPortfolio?.personalInfo.phoneNumber ?? '';
+    final phoneMatch = RegExp(r'^(\+\d{1,4})(\d+)$').firstMatch(fullPhone);
+    if (phoneMatch != null) {
+      countryCodePhoneController.text = phoneMatch.group(1)!;
+      phoneNumberController.text = phoneMatch.group(2)!;
+    } else {
+      countryCodePhoneController.text = '+91';
+      phoneNumberController.text = fullPhone;
+    }
+
+    // Extract country code and local number for WhatsApp
+    final fullWhatsapp = theFetchedPortfolio?.personalInfo.whatsappNumber ?? '';
+    final whatsappMatch = RegExp(
+      r'^(\+\d{1,4})(\d+)$',
+    ).firstMatch(fullWhatsapp);
+    if (whatsappMatch != null) {
+      countryCodeWhatsappController.text = whatsappMatch.group(1)!;
+      whatsappNumberController.text = whatsappMatch.group(2)!;
+    } else {
+      countryCodeWhatsappController.text = '+91';
+      whatsappNumberController.text = fullWhatsapp;
+    }
+    // phoneNumberController.text = theFetchedPortfolio!.personalInfo.phoneNumber;
+    // whatsappNumberController.text =
+    //     theFetchedPortfolio!.personalInfo.whatsappNumber;
     companyNameController.text =
         theFetchedPortfolio!.workInfo?.companyName ?? "";
     designationcontroller.text =
@@ -180,13 +206,27 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
         if (emailController.text != portfolio.personalInfo.email) {
           personalInfo['email'] = emailController.text;
         }
-        if (phoneNumberController.text != portfolio.personalInfo.phoneNumber) {
-          personalInfo['phoneNumber'] = phoneNumberController.text;
+        if (countryCodePhoneController.text + phoneNumberController.text !=
+            portfolio.personalInfo.phoneNumber) {
+          personalInfo['phoneNumber'] =
+              countryCodePhoneController.text + phoneNumberController.text;
         }
-        if (whatsappNumberController.text !=
+
+        if (countryCodeWhatsappController.text +
+                whatsappNumberController.text !=
             portfolio.personalInfo.whatsappNumber) {
-          personalInfo['whatsappNumber'] = whatsappNumberController.text;
+          personalInfo['whatsappNumber'] =
+              countryCodeWhatsappController.text +
+              whatsappNumberController.text;
         }
+
+        // if (phoneNumberController.text != portfolio.personalInfo.phoneNumber) {
+        //   personalInfo['phoneNumber'] = phoneNumberController.text;
+        // }
+        // if (whatsappNumberController.text !=
+        //     portfolio.personalInfo.whatsappNumber) {
+        //   personalInfo['whatsappNumber'] = whatsappNumberController.text;
+        // }
         updateData['personalInfo'] = {
           ...personalInfo,
           if (isBannerImageRemoved && pickedBannerImage == null)
@@ -782,6 +822,9 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                   Gap(CustomPadding.paddingXL.v),
                   BasicDetailContainer(
                     autofocus: false,
+                    countryCodephoneController: countryCodePhoneController,
+                    countryCodewhatsappController:
+                        countryCodeWhatsappController,
                     namecontroller: nameController,
                     emailController: emailController,
                     whatsappController: whatsappNumberController,

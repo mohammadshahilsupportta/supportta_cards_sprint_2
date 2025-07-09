@@ -1,3 +1,4 @@
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
@@ -17,6 +18,8 @@ class BasicDetailContainer extends StatefulWidget {
   final TextEditingController? emailController;
   final TextEditingController? phoneController;
   final TextEditingController? whatsappController;
+  final TextEditingController? countryCodephoneController;
+  final TextEditingController? countryCodewhatsappController;
   final PortfolioDataModel? portfolio;
   final bool autofocus;
   final dynamic user;
@@ -34,6 +37,8 @@ class BasicDetailContainer extends StatefulWidget {
     this.emailController,
     this.phoneController,
     this.whatsappController,
+    this.countryCodephoneController,
+    this.countryCodewhatsappController,
   });
 
   @override
@@ -47,9 +52,55 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
   @override
   void initState() {
     user = widget.user;
+    _initializePhoneFields();
 
     // TODO: implement initState
     super.initState();
+  }
+
+  String getIsoCodeFromDialCode(String dialCode) {
+    switch (dialCode) {
+      case '+91':
+        return 'IN';
+      case '+1':
+        return 'US';
+      case '+44':
+        return 'GB';
+      case '+971':
+        return 'AE';
+      case '+61':
+        return 'AU';
+      case '+93':
+        return 'AF';
+      // Add more mappings as needed
+      default:
+        return 'IN'; // fallback default
+    }
+  }
+
+  Map<String, String> splitPhoneNumber(String fullNumber) {
+    final regExp = RegExp(
+      r'^\+(\d{1,2})(\d{6,})$',
+    ); // ensures at least 6 digits in number
+    final match = regExp.firstMatch(fullNumber);
+    if (match != null && match.groupCount == 2) {
+      return {'countryCode': '+${match.group(1)}', 'number': match.group(2)!};
+    }
+    return {'countryCode': '+91', 'number': fullNumber};
+  }
+
+  void _initializePhoneFields() {
+    final phone = widget.portfolio?.personalInfo.phoneNumber ?? '';
+    final whatsapp = widget.portfolio?.personalInfo.whatsappNumber ?? '';
+
+    final phoneSplit = splitPhoneNumber(phone);
+    final whatsappSplit = splitPhoneNumber(whatsapp);
+
+    widget.countryCodephoneController?.text = phoneSplit['countryCode']!;
+    widget.phoneController?.text = phoneSplit['number']!;
+
+    widget.countryCodewhatsappController?.text = whatsappSplit['countryCode']!;
+    widget.whatsappController?.text = whatsappSplit['number']!;
   }
 
   String getPhone() {
@@ -117,15 +168,36 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
             ),
         widget.isEdit
             ? TextFormContainer(
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(13),
-                FilteringTextInputFormatter.allow(RegExp(r'^[0-9+]*$')),
-                // FilteringTextInputFormatter.digitsOnly,
-              ],
-              user: widget.user,
+              isNumberField: true,
               controller: widget.phoneController,
               labelText: 'Phone Number',
+              user: widget.user,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              countryCodeWidget: CountryCodePicker(
+                initialSelection: getIsoCodeFromDialCode(
+                  widget.countryCodephoneController?.text ?? '+91',
+                ),
+                onChanged: (value) {
+                  widget.countryCodephoneController?.text = value.dialCode!;
+                },
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Phone number is required';
+                }
+                return null;
+              },
             )
+            // TextFormContainer(
+            //   inputFormatters: [
+            //     LengthLimitingTextInputFormatter(13),
+            //     FilteringTextInputFormatter.allow(RegExp(r'^[0-9+]*$')),
+            //     // FilteringTextInputFormatter.digitsOnly,
+            //   ],
+            //   user: widget.user,
+            //   controller: widget.phoneController,
+            //   labelText: 'Phone Number',
+            // )
             : DetailRow(
               label: 'Phone Number',
               value: getPhone(),
@@ -135,14 +207,35 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
             ),
         widget.isEdit
             ? TextFormContainer(
-              inputFormatters: [
-                LengthLimitingTextInputFormatter(13),
-                FilteringTextInputFormatter.allow(RegExp(r'^\+91[0-9]*$')),
-              ],
-              user: widget.user,
+              isNumberField: true,
               controller: widget.whatsappController,
               labelText: 'WhatsApp Number',
+              user: widget.user,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              countryCodeWidget: CountryCodePicker(
+                initialSelection: getIsoCodeFromDialCode(
+                  widget.countryCodewhatsappController?.text ?? '+91',
+                ),
+                onChanged: (value) {
+                  widget.countryCodewhatsappController?.text = value.dialCode!;
+                },
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Phone number is required';
+                }
+                return null;
+              },
             )
+            //  TextFormContainer(
+            //   inputFormatters: [
+            //     LengthLimitingTextInputFormatter(13),
+            //     FilteringTextInputFormatter.allow(RegExp(r'^\+91[0-9]*$')),
+            //   ],
+            //   user: widget.user,
+            //   controller: widget.whatsappController,
+            //   labelText: 'WhatsApp Number',
+            // )
             : DetailRow(
               label: 'WhatsApp Number',
               value: getWhatsapp(),
