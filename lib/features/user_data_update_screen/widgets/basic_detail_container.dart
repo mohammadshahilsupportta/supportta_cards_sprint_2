@@ -11,6 +11,7 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/gen/assets.gen.dart';
 import 'package:taproot_admin/services/download_qr.dart';
+import 'package:taproot_admin/services/get_country_code.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class BasicDetailContainer extends StatefulWidget {
@@ -82,24 +83,31 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
     }
   }
 
-  String getIsoCodeFromDialCode(String dialCode) {
-    switch (dialCode) {
-      case '+91':
-        return 'IN';
-      case '+1':
-        return 'US';
-      case '+44':
-        return 'GB';
-      case '+971':
-        return 'AE';
-      case '+61':
-        return 'AU';
-      case '+93':
-        return 'AF';
-      default:
-        return 'IN';
-    }
-  }
+  // String getIsoCodeFromDialCode(String dialCode) {
+  //   const dialCodeToIso = {
+  //     '+91': 'IN',
+  //     '+1': 'US',
+  //     '+44': 'GB',
+  //     '+971': 'AE',
+  //     '+61': 'AU',
+  //     '+93': 'AF',
+  //     '+81': 'JP',
+  //     '+49': 'DE',
+  //     '+33': 'FR',
+  //     '+966': 'SA',
+  //     '+974': 'QA',
+  //     '+965': 'KW',
+  //     '+968': 'OM',
+  //     '+880': 'BD',
+  //     '+94': 'LK',
+  //     '+254': 'KE',
+  //     '+27': 'ZA',
+  //     '+43': 'AT',
+  //   };
+
+  //   return dialCodeToIso[dialCode] ??
+  //       'IN';
+  // }
 
   Map<String, String> splitPhoneNumber(String fullNumber) {
     final regExp = RegExp(r'^\+(\d{1,2})(\d{6,})$');
@@ -140,6 +148,18 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
 
   @override
   Widget build(BuildContext context) {
+    logError(
+      ' Phone dial code in controller: ${widget.countryCodephoneController?.text}',
+    );
+    logError(
+      '🌍 ISO for initialSelection: ${GetCountryCode().getIsoCodeFromDialCode(widget.countryCodephoneController?.text ?? "+91")}',
+    );
+    logError(
+      ' whatsapp dial code in controller: ${widget.countryCodewhatsappController?.text}',
+    );
+    logError(
+      '🌍 ISO for initialSelection: ${GetCountryCode().getIsoCodeFromDialCode(widget.countryCodephoneController?.text ?? "+91")}',
+    );
     return CommonUserContainer(
       height: SizeUtils.height * .55,
 
@@ -197,7 +217,7 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
               countryCodeWidget: CountryCodePicker(
                 dialogSize: Size(SizeUtils.width * 0.4, SizeUtils.height * 0.7),
 
-                initialSelection: getIsoCodeFromDialCode(
+                initialSelection: GetCountryCode().getIsoCodeFromDialCode(
                   widget.countryCodephoneController?.text ?? '+91',
                 ),
                 onChanged: (value) {
@@ -237,9 +257,12 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               countryCodeWidget: CountryCodePicker(
                 dialogSize: Size(SizeUtils.width * 0.4, SizeUtils.height * 0.7),
-                initialSelection: getIsoCodeFromDialCode(
+                initialSelection: GetCountryCode().getIsoCodeFromDialCode(
                   widget.countryCodewhatsappController?.text ?? '+91',
                 ),
+                // initialSelection: getIsoCodeFromDialCode(
+                //   widget.countryCodewhatsappController?.text ?? '+91',
+                // ),
                 onChanged: (value) {
                   widget.countryCodewhatsappController?.text = value.dialCode!;
                 },

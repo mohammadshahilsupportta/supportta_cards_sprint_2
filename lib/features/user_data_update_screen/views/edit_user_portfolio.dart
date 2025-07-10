@@ -106,10 +106,13 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
     final fullPhone = theFetchedPortfolio?.personalInfo.phoneNumber ?? '';
     final phoneMatch = RegExp(r'^(\+\d{1,4})(\d+)$').firstMatch(fullPhone);
     if (phoneMatch != null) {
-      countryCodePhoneController.text = phoneMatch.group(1)!;
-      phoneNumberController.text = phoneMatch.group(2)!;
+      countryCodePhoneController.text = phoneMatch.group(1)!; // +971
+      phoneNumberController.text = phoneMatch.group(2)!; // 509999999
+    } else if (fullPhone.startsWith('+')) {
+      countryCodePhoneController.text = fullPhone.substring(0, 4); // +971
+      phoneNumberController.text = fullPhone.substring(4); // rest
     } else {
-      countryCodePhoneController.text = '+91';
+      countryCodePhoneController.text = ''; // do not assume India
       phoneNumberController.text = fullPhone;
     }
 
@@ -120,10 +123,34 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
     if (whatsappMatch != null) {
       countryCodeWhatsappController.text = whatsappMatch.group(1)!;
       whatsappNumberController.text = whatsappMatch.group(2)!;
+    } else if (fullWhatsapp.startsWith('+')) {
+      countryCodeWhatsappController.text = fullWhatsapp.substring(0, 4);
+      whatsappNumberController.text = fullWhatsapp.substring(4);
     } else {
-      countryCodeWhatsappController.text = '+91';
+      countryCodeWhatsappController.text = '';
       whatsappNumberController.text = fullWhatsapp;
     }
+    // final fullPhone = theFetchedPortfolio?.personalInfo.phoneNumber ?? '';
+    // final phoneMatch = RegExp(r'^(\+\d{1,4})(\d+)$').firstMatch(fullPhone);
+    // if (phoneMatch != null) {
+    //   countryCodePhoneController.text = phoneMatch.group(1)!;
+    //   phoneNumberController.text = phoneMatch.group(2)!;
+    // } else {
+    //   countryCodePhoneController.text = '';
+    //   phoneNumberController.text = fullPhone;
+    // }
+
+    // final fullWhatsapp = theFetchedPortfolio?.personalInfo.whatsappNumber ?? '';
+    // final whatsappMatch = RegExp(
+    //   r'^(\+\d{1,4})(\d+)$',
+    // ).firstMatch(fullWhatsapp);
+    // if (whatsappMatch != null) {
+    //   countryCodeWhatsappController.text = whatsappMatch.group(1)!;
+    //   whatsappNumberController.text = whatsappMatch.group(2)!;
+    // } else {
+    //   countryCodeWhatsappController.text = '';
+    //   whatsappNumberController.text = fullWhatsapp;
+    // }
 
     companyNameController.text =
         theFetchedPortfolio!.workInfo?.companyName ?? "";
