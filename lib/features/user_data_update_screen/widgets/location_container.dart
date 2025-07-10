@@ -8,6 +8,7 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_ro
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/services/pincode_helper.dart';
+import 'package:taproot_admin/widgets/launch_url.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LocationContainer extends StatefulWidget {
@@ -44,8 +45,7 @@ class LocationContainer extends StatefulWidget {
 
 class LocationContainerState extends State<LocationContainer> {
   Timer? _debounce;
-    String? mapUrlErrorText;
-
+  String? mapUrlErrorText;
 
   @override
   void initState() {
@@ -96,7 +96,7 @@ class LocationContainerState extends State<LocationContainer> {
 
   //   return null; // means valid
   // }
- void validateMapUrlField() {
+  void validateMapUrlField() {
     final value = widget.mapUrlController?.text ?? '';
     final isValid = _isMapUrlValid(value.trim());
 
@@ -107,7 +107,9 @@ class LocationContainerState extends State<LocationContainer> {
 
   bool _isMapUrlValid(String value) {
     if (value.isEmpty) return true;
-    final regex = RegExp(r'^https:\/\/((www\.)?google\.com\/maps|maps\.app\.goo\.gl)');
+    final regex = RegExp(
+      r'^https:\/\/((www\.)?google\.com\/maps|maps\.app\.goo\.gl)',
+    );
     return regex.hasMatch(value);
   }
 
@@ -181,13 +183,14 @@ class LocationContainerState extends State<LocationContainer> {
                   controller: widget.mapUrlController,
                   initialValue: '',
                   user: widget.user,
-                   onChanged: (value) {
-                  setState(() {
-                    mapUrlErrorText = _isMapUrlValid(value.trim())
-                        ? null
-                        : 'Please enter a valid Google Maps URL';
-                  });
-                },
+                  onChanged: (value) {
+                    setState(() {
+                      mapUrlErrorText =
+                          _isMapUrlValid(value.trim())
+                              ? null
+                              : 'Please enter a valid Google Maps URL';
+                    });
+                  },
                   // validator: validateGoogleMapsUrl,
                 ),
               ]
@@ -294,11 +297,19 @@ class LocationContainerState extends State<LocationContainer> {
                       Spacer(),
                       widget.portfolio?.addressInfo?.mapUrl != null &&
                               widget.portfolio!.addressInfo!.mapUrl!.isNotEmpty
-                          ? Text(
-                            widget.portfolio!.addressInfo!.mapUrl!,
-                            style: context.inter50014.copyWith(
-                              fontSize: 14.fSize,
-                              color: CustomColors.textColorGrey,
+                          ? GestureDetector(
+                            onTap:
+                                () => launchWebsiteLink(
+                                  widget.portfolio!.addressInfo!.mapUrl!,
+                                  context,
+                                ),
+                            child: Text(
+                              widget.portfolio!.addressInfo!.mapUrl!,
+                              style: context.inter50014.copyWith(
+                                fontSize: 14.fSize,
+                                color: CustomColors.green,
+                                decoration: TextDecoration.underline,
+                              ),
                             ),
                           )
                           : Text(

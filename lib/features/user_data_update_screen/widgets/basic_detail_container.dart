@@ -52,10 +52,34 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
   @override
   void initState() {
     user = widget.user;
-    _initializePhoneFields();
+    // _initializePhoneFields();
 
     // TODO: implement initState
     super.initState();
+  }
+
+  bool _didInitPhone = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_didInitPhone && widget.isEdit) {
+      _didInitPhone = true;
+
+      final phone = widget.portfolio?.personalInfo.phoneNumber ?? '';
+      final whatsapp = widget.portfolio?.personalInfo.whatsappNumber ?? '';
+
+      final phoneSplit = splitPhoneNumber(phone);
+      final whatsappSplit = splitPhoneNumber(whatsapp);
+
+      widget.countryCodephoneController?.text = phoneSplit['countryCode']!;
+      widget.phoneController?.text = phoneSplit['number']!;
+
+      widget.countryCodewhatsappController?.text =
+          whatsappSplit['countryCode']!;
+      widget.whatsappController?.text = whatsappSplit['number']!;
+    }
   }
 
   String getIsoCodeFromDialCode(String dialCode) {
@@ -72,16 +96,13 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
         return 'AU';
       case '+93':
         return 'AF';
-      // Add more mappings as needed
       default:
-        return 'IN'; // fallback default
+        return 'IN';
     }
   }
 
   Map<String, String> splitPhoneNumber(String fullNumber) {
-    final regExp = RegExp(
-      r'^\+(\d{1,2})(\d{6,})$',
-    ); // ensures at least 6 digits in number
+    final regExp = RegExp(r'^\+(\d{1,2})(\d{6,})$');
     final match = regExp.firstMatch(fullNumber);
     if (match != null && match.groupCount == 2) {
       return {'countryCode': '+${match.group(1)}', 'number': match.group(2)!};
@@ -89,19 +110,19 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
     return {'countryCode': '+91', 'number': fullNumber};
   }
 
-  void _initializePhoneFields() {
-    final phone = widget.portfolio?.personalInfo.phoneNumber ?? '';
-    final whatsapp = widget.portfolio?.personalInfo.whatsappNumber ?? '';
+  // void _initializePhoneFields() {
+  //   final phone = widget.portfolio?.personalInfo.phoneNumber ?? '';
+  //   final whatsapp = widget.portfolio?.personalInfo.whatsappNumber ?? '';
 
-    final phoneSplit = splitPhoneNumber(phone);
-    final whatsappSplit = splitPhoneNumber(whatsapp);
+  //   final phoneSplit = splitPhoneNumber(phone);
+  //   final whatsappSplit = splitPhoneNumber(whatsapp);
 
-    widget.countryCodephoneController?.text = phoneSplit['countryCode']!;
-    widget.phoneController?.text = phoneSplit['number']!;
+  //   widget.countryCodephoneController?.text = phoneSplit['countryCode']!;
+  //   widget.phoneController?.text = phoneSplit['number']!;
 
-    widget.countryCodewhatsappController?.text = whatsappSplit['countryCode']!;
-    widget.whatsappController?.text = whatsappSplit['number']!;
-  }
+  //   widget.countryCodewhatsappController?.text = whatsappSplit['countryCode']!;
+  //   widget.whatsappController?.text = whatsappSplit['number']!;
+  // }
 
   String getPhone() {
     final phone = widget.portfolio?.personalInfo.phoneNumber;
@@ -174,6 +195,8 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
               user: widget.user,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               countryCodeWidget: CountryCodePicker(
+                dialogSize: Size(SizeUtils.width * 0.4, SizeUtils.height * 0.7),
+
                 initialSelection: getIsoCodeFromDialCode(
                   widget.countryCodephoneController?.text ?? '+91',
                 ),
@@ -213,6 +236,7 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
               user: widget.user,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               countryCodeWidget: CountryCodePicker(
+                dialogSize: Size(SizeUtils.width * 0.4, SizeUtils.height * 0.7),
                 initialSelection: getIsoCodeFromDialCode(
                   widget.countryCodewhatsappController?.text ?? '+91',
                 ),
@@ -259,72 +283,81 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
                 }
               },
             ),
-        Row(
-          children: [
-            Gap(CustomPadding.paddingLarge),
-            Text(
-              'QR Code',
-              style: context.inter50014.copyWith(fontSize: 14.fSize),
-            ),
-            Spacer(),
-            GestureDetector(
-              onTap: () {
-                showDialog(
-                  context: context, // Must be valid Material context
-                  builder:
-                      (context) => AlertDialog(
-                        title: Text('Download'),
-                        content: SizedBox(
-                          width: 300,
-                          child: RepaintBoundary(
-                            key: qrKey,
-                            child: PrettyQrView.data(
-                              data:
-                                  'https://app.supporttacards.com/portfolio-view/${user.id}',
-                              decoration: PrettyQrDecoration(
-                                image: PrettyQrDecorationImage(
-                                  fit: BoxFit.contain,
-                                  image: AssetImage(Assets.png.supportta4.path),
+        widget.isEdit
+            ? SizedBox()
+            : Row(
+              children: [
+                Gap(CustomPadding.paddingLarge),
+                Text(
+                  'QR Code',
+                  style: context.inter50014.copyWith(fontSize: 14.fSize),
+                ),
+                Spacer(),
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context, // Must be valid Material context
+                      builder:
+                          (context) => AlertDialog(
+                            title: Text('Download'),
+                            content: SizedBox(
+                              width: 300,
+                              child: RepaintBoundary(
+                                key: qrKey,
+                                child: PrettyQrView.data(
+                                  data:
+                                      'https://app.supporttacards.com/portfolio-view/${user.id}',
+                                  decoration: PrettyQrDecoration(
+                                    image: PrettyQrDecorationImage(
+                                      fit: BoxFit.contain,
+                                      image: AssetImage(
+                                        Assets.png.supportta4.path,
+                                      ),
+                                    ),
+                                    quietZone: PrettyQrQuietZone.zero,
+                                  ),
                                 ),
-                                quietZone: PrettyQrQuietZone.zero,
                               ),
                             ),
+                            actions: [
+                              TextButton(
+                                onPressed: () async {
+                                  final username =
+                                      widget.portfolio?.personalInfo.name ??
+                                      'user';
+                                  await downloadQrCode(
+                                    qrKey,
+                                    context,
+                                    username,
+                                  );
+                                },
+                                child: Text('Download'),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text('Close'),
+                              ),
+                            ],
                           ),
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () async {
-                              final username =
-                                  widget.portfolio?.personalInfo.name ?? 'user';
-                              await downloadQrCode(qrKey, context, username);
-                            },
-                            child: Text('Download'),
-                          ),
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text('Close'),
-                          ),
-                        ],
+                    );
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Text(
+                      'Download',
+                      style: context.inter50014.copyWith(
+                        decoration: TextDecoration.underline,
+                        decorationColor: CustomColors.buttonColor1,
+                        fontSize: 14.fSize,
+                        color: CustomColors.buttonColor1,
                       ),
-                );
-              },
-              child: Padding(
-                padding: EdgeInsets.all(12),
-                child: Text(
-                  'Download',
-                  style: context.inter50014.copyWith(
-                    decoration: TextDecoration.underline,
-                    decorationColor: CustomColors.buttonColor1,
-                    fontSize: 14.fSize,
-                    color: CustomColors.buttonColor1,
+                    ),
                   ),
                 ),
-              ),
-            ),
 
-            Gap(CustomPadding.paddingLarge),
-          ],
-        ),
+                Gap(CustomPadding.paddingLarge),
+              ],
+            ),
       ],
     );
   }

@@ -61,6 +61,7 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
   final TextEditingController aboutHeadingController = TextEditingController();
   final TextEditingController serviceHeadController = TextEditingController();
   final TextEditingController mapController = TextEditingController();
+  final TextEditingController gstinController = TextEditingController();
 
   final TextEditingController aboutDescriptionController =
       TextEditingController();
@@ -162,7 +163,7 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
               countryCodewhatsappController.text + whatsappController.text,
           // '+91${whatsappController.text}',
         ),
-        workInfo: WorkInfo(
+        workInfo: WorkInfo(gstin: gstinController.text,
           companyLogo: companyLogo,
           companyName: companyController.text,
           designation: designationController.text,

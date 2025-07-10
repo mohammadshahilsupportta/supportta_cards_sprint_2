@@ -164,6 +164,7 @@ class WorkInfo {
   final String primaryWebsite;
   final String secondaryWebsite;
   final ProductImage? companyLogo;
+  final String gstin;
 
   WorkInfo({
     required this.companyName,
@@ -172,6 +173,8 @@ class WorkInfo {
     required this.primaryWebsite,
     required this.secondaryWebsite,
     this.companyLogo,
+        required this.gstin,
+
   });
   factory WorkInfo.fromJson(Map<String, dynamic> json) {
     return WorkInfo(
@@ -184,6 +187,7 @@ class WorkInfo {
           json['companyLogo'] != null
               ? ProductImage.fromJson(json['companyLogo'])
               : null,
+      gstin: json['gstin'] ?? '',        
     );
   }
 
@@ -194,6 +198,7 @@ class WorkInfo {
     'primaryWebsite': primaryWebsite,
     'secondaryWebsite': secondaryWebsite,
     'companyLogo': companyLogo?.toJson(),
+    'gstin': gstin,
   };
 
   String? getCompanyLogoUrl(String baseUrl) {

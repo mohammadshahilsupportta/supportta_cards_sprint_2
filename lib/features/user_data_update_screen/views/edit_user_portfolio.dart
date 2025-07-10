@@ -41,6 +41,8 @@ class EditUserPortfolio extends StatefulWidget {
 class _EditUserPortfolioState extends State<EditUserPortfolio> {
   final GlobalKey<LocationContainerState> locationKey =
       GlobalKey<LocationContainerState>();
+  final GlobalKey<ProfileContainerState> profileKey =
+      GlobalKey<ProfileContainerState>();
 
   PortfolioDataModel? theFetchedPortfolio;
   PlatformFile? pickedProfileImage;
@@ -75,6 +77,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       TextEditingController();
   final TextEditingController secondaryWebsiteController =
       TextEditingController();
+  final TextEditingController gstinController = TextEditingController();
   final TextEditingController headingcontroller = TextEditingController();
   final TextEditingController descriptioncontroller = TextEditingController();
   final TextEditingController serviceHeadController = TextEditingController();
@@ -97,6 +100,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
 
   void fetchedTexfieldValue() {
     theFetchedPortfolio = widget.portfolio;
+    gstinController.text = theFetchedPortfolio?.workInfo?.gstin ?? '';
     nameController.text = theFetchedPortfolio?.personalInfo.name ?? '';
     emailController.text = theFetchedPortfolio!.personalInfo.email;
     final fullPhone = theFetchedPortfolio?.personalInfo.phoneNumber ?? '';
@@ -109,7 +113,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       phoneNumberController.text = fullPhone;
     }
 
-    // Extract country code and local number for WhatsApp
     final fullWhatsapp = theFetchedPortfolio?.personalInfo.whatsappNumber ?? '';
     final whatsappMatch = RegExp(
       r'^(\+\d{1,4})(\d+)$',
@@ -121,9 +124,7 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       countryCodeWhatsappController.text = '+91';
       whatsappNumberController.text = fullWhatsapp;
     }
-    // phoneNumberController.text = theFetchedPortfolio!.personalInfo.phoneNumber;
-    // whatsappNumberController.text =
-    //     theFetchedPortfolio!.personalInfo.whatsappNumber;
+
     companyNameController.text =
         theFetchedPortfolio!.workInfo?.companyName ?? "";
     designationcontroller.text =
@@ -162,7 +163,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       try {
         final Map<String, dynamic> personalInfo = {};
 
-        // Profile Picture
         if (pickedProfileImage?.bytes != null) {
           try {
             final profileUploadResult = await PortfolioService.uploadImageFile(
@@ -180,7 +180,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
           }
         }
 
-        // Banner Image
         if (pickedBannerImage?.bytes != null) {
           try {
             final bannerUploadResult = await PortfolioService.uploadImageFile(
@@ -206,27 +205,39 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
         if (emailController.text != portfolio.personalInfo.email) {
           personalInfo['email'] = emailController.text;
         }
-        if (countryCodePhoneController.text + phoneNumberController.text !=
-            portfolio.personalInfo.phoneNumber) {
-          personalInfo['phoneNumber'] =
-              countryCodePhoneController.text + phoneNumberController.text;
+        final String phoneCountryCode = countryCodePhoneController.text.trim();
+        final String phoneLocal = phoneNumberController.text.trim();
+        if (phoneLocal.isNotEmpty && phoneCountryCode.isNotEmpty) {
+          final fullPhone = '$phoneCountryCode$phoneLocal';
+          if (fullPhone != portfolio.personalInfo.phoneNumber) {
+            personalInfo['phoneNumber'] = fullPhone;
+          }
         }
 
-        if (countryCodeWhatsappController.text +
-                whatsappNumberController.text !=
-            portfolio.personalInfo.whatsappNumber) {
-          personalInfo['whatsappNumber'] =
-              countryCodeWhatsappController.text +
-              whatsappNumberController.text;
+        final String whatsappCountryCode =
+            countryCodeWhatsappController.text.trim();
+        final String whatsappLocal = whatsappNumberController.text.trim();
+        if (whatsappLocal.isNotEmpty && whatsappCountryCode.isNotEmpty) {
+          final fullWhatsapp = '$whatsappCountryCode$whatsappLocal';
+          if (fullWhatsapp != portfolio.personalInfo.whatsappNumber) {
+            personalInfo['whatsappNumber'] = fullWhatsapp;
+          }
         }
 
-        // if (phoneNumberController.text != portfolio.personalInfo.phoneNumber) {
-        //   personalInfo['phoneNumber'] = phoneNumberController.text;
+        // if (countryCodePhoneController.text + phoneNumberController.text !=
+        //     portfolio.personalInfo.phoneNumber) {
+        //   personalInfo['phoneNumber'] =
+        //       countryCodePhoneController.text + phoneNumberController.text;
         // }
-        // if (whatsappNumberController.text !=
+
+        // if (countryCodeWhatsappController.text +
+        //         whatsappNumberController.text !=
         //     portfolio.personalInfo.whatsappNumber) {
-        //   personalInfo['whatsappNumber'] = whatsappNumberController.text;
+        //   personalInfo['whatsappNumber'] =
+        //       countryCodeWhatsappController.text +
+        //       whatsappNumberController.text;
         // }
+
         updateData['personalInfo'] = {
           ...personalInfo,
           if (isBannerImageRemoved && pickedBannerImage == null)
@@ -234,10 +245,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
           if (isProfileImageRemoved && pickedProfileImage == null)
             'profilePicture': null,
         };
-
-        // if (personalInfo.isNotEmpty) {
-        //   updateData['personalInfo'] = personalInfo;
-        // }
       } catch (e) {
         logError('Error processing personalInfo: $e');
       }
@@ -273,6 +280,9 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
         if (workemailController.text != portfolio.workInfo?.workEmail) {
           workInfo['workEmail'] = workemailController.text;
         }
+        if (gstinController.text != portfolio.workInfo?.gstin) {
+          workInfo['gstin'] = gstinController.text;
+        }
         if (primaryWebsiteController.text !=
             portfolio.workInfo?.primaryWebsite) {
           workInfo['primaryWebsite'] = primaryWebsiteController.text;
@@ -286,10 +296,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
           if (isLogoImageRemoved && pickedLogoImage == null)
             'companyLogo': null,
         };
-
-        // if (workInfo.isNotEmpty) {
-        //   updateData['workInfo'] = workInfo;
-        // }
       } catch (e) {
         logError('Error processing workInfo: $e');
       }
@@ -354,7 +360,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
         if (theFetchedPortfolio?.socialMedia != null) {
           final socialMediaList =
               theFetchedPortfolio!.socialMedia
-                  // .where((social) => social != null)
                   .map((social) => social.toJson())
                   .toList();
 
@@ -390,272 +395,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       }
     }
   }
-
-  // Future<void> editPortfolio() async {
-  //   try {
-  //     final portfolio = widget.portfolio!;
-  //     final Map<String, dynamic> updateData = {};
-
-  //     try {
-  //       final Map<String, dynamic> personalInfo = {};
-  //       if (nameController.text != portfolio.personalInfo.name) {
-  //         personalInfo['name'] = nameController.text;
-  //       }
-  //       if (emailController.text != portfolio.personalInfo.email) {
-  //         personalInfo['email'] = emailController.text;
-  //       }
-  //       if (phoneNumberController.text != portfolio.personalInfo.phoneNumber) {
-  //         personalInfo['phoneNumber'] = phoneNumberController.text;
-  //       }
-  //       if (whatsappNumberController.text !=
-  //           portfolio.personalInfo.whatsappNumber) {
-  //         personalInfo['whatsappNumber'] = whatsappNumberController.text;
-  //       }
-
-  //       if (pickedProfileImage?.bytes != null) {
-  //         try {
-  //           final profileUploadResult = await PortfolioService.uploadImageFile(
-  //             pickedProfileImage!.bytes!,
-  //             pickedProfileImage!.name,
-  //           );
-  //           personalInfo['profilePicture'] = {
-  //             'name': profileUploadResult['name'] ?? '',
-  //             'key': profileUploadResult['key'] ?? '',
-  //             'size': profileUploadResult['size'] ?? 0,
-  //             'mimetype': profileUploadResult['mimetype'] ?? '',
-  //           };
-  //         } catch (e) {
-  //           logError('Error uploading profile: $e');
-  //         }
-  //       }
-  //       if (pickedBannerImage != null) {
-  //         final bannerUploadResult = await PortfolioService.uploadImageFile(
-  //           pickedBannerImage!.bytes!,
-  //           pickedBannerImage!.name,
-  //         );
-  //         personalInfo['bannerImage'] = {
-  //           'name': bannerUploadResult['name'] ?? '',
-  //           'key': bannerUploadResult['key'] ?? '',
-  //           'size': bannerUploadResult['size'] ?? 0,
-  //           'mimetype': bannerUploadResult['mimetype'] ?? '',
-  //         };
-  //       } else if (isBannerImageRemoved) {
-  //         personalInfo['bannerImage'] = null;
-  //       }
-
-  //       // if (pickedBannerImage?.bytes != null) {
-  //       //   final bannerUploadResult = await PortfolioService.uploadImageFile(
-  //       //     pickedBannerImage!.bytes!,
-  //       //     pickedBannerImage!.name,
-  //       //   );
-  //       //   personalInfo['bannerImage'] = {
-  //       //     'name': bannerUploadResult['name'] ?? '',
-  //       //     'key': bannerUploadResult['key'] ?? '',
-  //       //     'size': bannerUploadResult['size'] ?? 0,
-  //       //     'mimetype': bannerUploadResult['mimetype'] ?? '',
-  //       //   };
-  //       // } else if (isBannerImageRemoved) {
-  //       //   personalInfo['bannerImage'] = null; // <== force null to API
-  //       // }
-
-  //       // if (pickedBannerImage?.bytes != null) {
-  //       //   try {
-  //       //     final bannerUploadResult = await PortfolioService.uploadImageFile(
-  //       //       pickedBannerImage!.bytes!,
-  //       //       pickedBannerImage!.name,
-  //       //     );
-  //       //     personalInfo['bannerImage'] = {
-  //       //       'name': bannerUploadResult['name'] ?? '',
-  //       //       'key': bannerUploadResult['key'] ?? '',
-  //       //       'size': bannerUploadResult['size'] ?? 0,
-  //       //       'mimetype': bannerUploadResult['mimetype'] ?? '',
-  //       //     };
-  //       //   } catch (e) {
-  //       //     logError('Error uploading banner: $e');
-  //       //   }
-  //       // }
-  //       if (isBannerImageRemoved) {
-  //         personalInfo['bannerImage'] = null;
-  //       }
-  //       if (personalInfo.isNotEmpty || isBannerImageRemoved) {
-  //         updateData['personalInfo'] = personalInfo;
-  //       }
-
-  //       // if (personalInfo.isNotEmpty) {
-  //       //   updateData['personalInfo'] = personalInfo;
-  //       // }
-  //     } catch (e) {
-  //       logError('Error processing personalInfo: $e');
-  //     }
-  //     logSuccess('Final updateData being sent: ${jsonEncode(updateData)}');
-  //     try {
-  //       final Map<String, dynamic> workInfo = {};
-  //       if (companyNameController.text != portfolio.workInfo.companyName) {
-  //         workInfo['companyName'] = companyNameController.text;
-  //       }
-  //       if (designationcontroller.text != portfolio.workInfo.designation) {
-  //         workInfo['designation'] = designationcontroller.text;
-  //       }
-  //       if (workemailController.text != portfolio.workInfo.workEmail) {
-  //         workInfo['workEmail'] = workemailController.text;
-  //       }
-  //       if (primaryWebsiteController.text !=
-  //           portfolio.workInfo.primaryWebsite) {
-  //         workInfo['primaryWebsite'] = primaryWebsiteController.text;
-  //       }
-  //       if (secondaryWebsiteController.text !=
-  //           portfolio.workInfo.secondaryWebsite) {
-  //         workInfo['secondaryWebsite'] = secondaryWebsiteController.text;
-  //       }
-  //       if (pickedLogoImage != null) {
-  //         final logoUploadResult = await PortfolioService.uploadImageFile(
-  //           pickedLogoImage!.bytes!,
-  //           pickedLogoImage!.name,
-  //         );
-  //         workInfo['companyLogo'] = {
-  //           'name': logoUploadResult['name'] ?? '',
-  //           'key': logoUploadResult['key'] ?? '',
-  //           'size': logoUploadResult['size'] ?? 0,
-  //           'mimetype': logoUploadResult['mimetype'] ?? '',
-  //         };
-  //       } else if (isLogoImageRemoved) {
-  //         workInfo['companyLogo'] = null;
-  //       }
-
-  //       // if (pickedLogoImage?.bytes != null) {
-  //       //   final logoUploadResult = await PortfolioService.uploadImageFile(
-  //       //     pickedLogoImage!.bytes!,
-  //       //     pickedLogoImage!.name,
-  //       //   );
-  //       //   workInfo['companyLogo'] = {
-  //       //     'name': logoUploadResult['name'] ?? '',
-  //       //     'key': logoUploadResult['key'] ?? '',
-  //       //     'size': logoUploadResult['size'] ?? 0,
-  //       //     'mimetype': logoUploadResult['mimetype'] ?? '',
-  //       //   };
-  //       // } else if (isLogoImageRemoved) {
-  //       //   workInfo['companyLogo'] = null; // <== force null to API
-  //       // }
-
-  //       // if (pickedLogoImage?.bytes != null) {
-  //       //   try {
-  //       //     final logoUploadResult = await PortfolioService.uploadImageFile(
-  //       //       pickedLogoImage!.bytes!,
-  //       //       pickedLogoImage!.name,
-  //       //     );
-  //       //     workInfo['companyLogo'] = {
-  //       //       'name': logoUploadResult['name'] ?? '',
-  //       //       'key': logoUploadResult['key'] ?? '',
-  //       //       'size': logoUploadResult['size'] ?? 0,
-  //       //       'mimetype': logoUploadResult['mimetype'] ?? '',
-  //       //     };
-  //       //   } catch (e) {
-  //       //     logError('Error uploading logo: $e');
-  //       //   }
-  //       // }
-  //       if (isLogoImageRemoved) {
-  //         workInfo['companyLogo'] = null;
-  //       }
-  //       if (workInfo.isNotEmpty || isLogoImageRemoved) {
-  //         updateData['workInfo'] = workInfo;
-  //       }
-
-  //       // if (workInfo.isNotEmpty) {
-  //       //   updateData['workInfo'] = workInfo;
-  //       // }
-  //     } catch (e) {
-  //       logError('Error processing workInfo: $e');
-  //     }
-
-  //     try {
-  //       final Map<String, dynamic> addressInfo = {};
-  //       if (buildingNamecontroller.text != portfolio.addressInfo?.buildingName) {
-  //         addressInfo['buildingName'] = buildingNamecontroller.text;
-  //       }
-  //       if (areaController.text != portfolio.addressInfo?.area) {
-  //         addressInfo['area'] = areaController.text;
-  //       }
-  //       if (pincodeController.text != portfolio.addressInfo?.pincode) {
-  //         addressInfo['pincode'] = pincodeController.text;
-  //       }
-  //       if (districtController.text != portfolio.addressInfo?.district) {
-  //         addressInfo['district'] = districtController.text;
-  //       }
-  //       if (stateController.text != portfolio.addressInfo?.state) {
-  //         addressInfo['state'] = stateController.text;
-  //       }
-
-  //       if (addressInfo?.isNotEmpty) {
-  //         updateData['addressInfo'] = addressInfo;
-  //       }
-  //     } catch (e) {
-  //       logError('Error processing addressInfo: $e');
-  //     }
-
-  //     try {
-  //       final Map<String, dynamic> about = {};
-  //       if (headingcontroller.text != portfolio.about.heading) {
-  //         about['heading'] = headingcontroller.text;
-  //       }
-  //       if (descriptioncontroller.text != portfolio.about.description) {
-  //         about['description'] = descriptioncontroller.text;
-  //       }
-
-  //       if (about.isNotEmpty) {
-  //         updateData['about'] = about;
-  //       }
-  //     } catch (e) {
-  //       logError('Error processing about: $e');
-  //     }
-
-  //     try {
-  //       if (serviceHeadController.text != portfolio.serviceHeading) {
-  //         updateData['serviceHeading'] = serviceHeadController.text;
-  //       }
-  //     } catch (e) {
-  //       logError('Error processing serviceHeading: $e');
-  //     }
-
-  //     try {
-  //       if (theFetchedPortfolio?.socialMedia != null) {
-  //         final socialMediaList =
-  //             theFetchedPortfolio!.socialMedia
-  //                 .where((social) => social != null)
-  //                 .map((social) => social.toJson())
-  //                 .toList();
-
-  //         if (socialMediaList.isNotEmpty) {
-  //           updateData['socialMedia'] = socialMediaList;
-  //         }
-  //       }
-  //     } catch (e) {
-  //       logError('Error processing socialMedia: $e');
-  //     }
-
-  //     if (updateData.isNotEmpty) {
-  //       logSuccess('Sending update with changed fields: $updateData');
-
-  //       await PortfolioService.editPortfolio(
-  //         userid: widget.user.id,
-  //         portfolioEditedData: updateData,
-  //       );
-
-  //       if (mounted) {
-  //         SnackbarHelper.showSuccess(context, 'Portfolio updated successfully');
-  //       }
-  //     } else {
-  //       if (mounted) {
-  //         SnackbarHelper.showInfo(context, 'No changes to update');
-  //       }
-  //     }
-  //   } catch (e, stackTrace) {
-  //     logError('Error editing portfolio: $e');
-  //     logError('Stack trace: $stackTrace');
-  //     if (mounted) {
-  //       SnackbarHelper.showError(context, 'Failed to update portfolio: $e');
-  //     }
-  //   }
-  // }
 
   bool isLoading = false;
 
@@ -750,8 +489,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
     }
   }
 
-  // final ScrollController _scrollController = ScrollController();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -771,10 +508,19 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                     locationKey.currentState?.validateMapUrlField();
                     final hasErrorMapUrl =
                         locationKey.currentState?.mapUrlErrorText != null;
+                    final isGstinValid =
+                        profileKey.currentState?.validateGstinField() ?? true;
                     if (hasErrorMapUrl) {
                       SnackbarHelper.showError(
                         context,
                         'Please correct the map URL',
+                      );
+                      return;
+                    }
+                    if (!isGstinValid) {
+                      SnackbarHelper.showError(
+                        context,
+                        'The GSTIN entered is not in a valid format. Please correct it before proceeding.',
                       );
                       return;
                     }
@@ -846,6 +592,8 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
               child: Row(
                 children: [
                   ProfileContainer(
+                    key: profileKey,
+                    gstinController: gstinController,
                     designationController: designationcontroller,
                     companyController: companyNameController,
                     workEmailController: workemailController,
@@ -1019,7 +767,6 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                                         } else {
                                           pickedServiceImage = null;
                                         }
-                                        // pickedServiceImage = service.image;
                                       });
                                     },
                                     onDelete: () async {
