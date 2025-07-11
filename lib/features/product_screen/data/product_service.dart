@@ -245,4 +245,19 @@ class ProductService with ErrorExceptionHandler {
       rethrow;
     }
   }
+
+  static Future<dynamic> addProductCategory({String? categoryName}) async {
+    try {
+      final response = await DioHelper().post(
+        '/product-category',
+        type: ApiType.baseUrl,
+        data: {"name": categoryName},
+      );
+      logSuccess(response.data);
+      return response.data;
+    } catch (e) {
+      logError('error: $e');
+      return {'message': 'Something went wrong'};
+    }
+  }
 }

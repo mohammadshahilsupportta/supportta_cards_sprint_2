@@ -12,6 +12,7 @@ import 'package:taproot_admin/features/product_screen/widgets/product_id_contain
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
+import 'package:taproot_admin/widgets/snakbar_helper.dart';
 
 class AddProduct extends StatefulWidget {
   final VoidCallback onBack;
@@ -126,6 +127,11 @@ class _AddProductState extends State<AddProduct> {
     }
   }
 
+  String capitalize(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1);
+  }
+
   Future<void> fetchProductCategories() async {
     try {
       final response = await ProductService.getProductCategory();
@@ -145,6 +151,130 @@ class _AddProductState extends State<AddProduct> {
     fetchProductCategories();
     // TODO: implement initState
     super.initState();
+  }
+
+  void _showCategoryDropdownList(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: CustomColors.secondaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(CustomPadding.paddingLarge.v),
+          ),
+          child: Container(
+            width: SizeUtils.width * 0.3,
+
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: CustomColors.buttonColor1,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(CustomPadding.paddingLarge.v),
+                    ),
+                  ),
+                  width: SizeUtils.width * 0.3,
+                  height: 50,
+
+                  child: Center(
+                    child: Text(
+                      'Select Category',
+                      style: context.inter50018.copyWith(
+                        color: CustomColors.secondaryColor,
+                      ),
+                    ),
+                  ),
+                ),
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: 3 * 60),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: productCategories.length,
+                    itemBuilder: (context, index) {
+                      final category = productCategories[index];
+                      return ListTile(
+                        title: Text(capitalize(category.name)),
+                        onTap: () {
+                          setState(() {
+                            selectedCategory = category;
+                          });
+                          Navigator.pop(context);
+                        },
+                      );
+                    },
+                  ),
+                ),
+                Divider(),
+                // Add Category Button
+                MiniGradientBorderButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    showAddCategoryDialog(context);
+                  },
+                  text: 'Add Category',
+                  icon: Icons.add_circle_outline,
+                ),
+                Gap(CustomPadding.padding.v),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void showAddCategoryDialog(BuildContext context) {
+    String newCategoryName = '';
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: CustomColors.secondaryColor,
+          title: Text('Category'),
+          contentPadding: EdgeInsets.only(
+            top: CustomPadding.paddingLarge,
+            bottom: CustomPadding.paddingXL,
+            left: CustomPadding.padding,
+            right: CustomPadding.padding,
+          ),
+          content: TextFormContainer(
+            labelText: 'Category name',
+            onChanged: (value) {
+              newCategoryName = value;
+            },
+          ),
+          actions: [
+            MiniGradientBorderButton(
+              text: 'Cancel',
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            MiniLoadingButton(
+              text: 'Add',
+              onPressed: () async {
+                final response = await ProductService.addProductCategory(
+                  categoryName: newCategoryName,
+                );
+                if (context.mounted) {
+                  fetchProductCategories();
+                  Navigator.pop(context);
+                  SnackbarHelper.showSuccess(
+                    context,
+                    response['message'] ?? 'Category added',
+                  );
+                }
+              },
+              needRow: false,
+              useGradient: true,
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -202,6 +332,8 @@ class _AddProductState extends State<AddProduct> {
                   Gap(CustomPadding.paddingXL.v),
                 ],
               ),
+              Gap(CustomPadding.paddingXL.v),
+
               Container(
                 padding: EdgeInsets.symmetric(
                   horizontal: CustomPadding.paddingLarge.v,
@@ -250,6 +382,7 @@ class _AddProductState extends State<AddProduct> {
                     Row(
                       children: [
                         Expanded(
+                          flex: 8,
                           child: TextFormContainer(
                             controller: _templateNameController,
                             initialValue: '',
@@ -267,33 +400,76 @@ class _AddProductState extends State<AddProduct> {
                             },
                           ),
                         ),
+                        Gap(CustomPadding.paddingLarge),
+                        Text('Category'),
                         Expanded(
-                          child: TextFormContainer(
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                RegExp(r'^\d*\.?\d{0,2}'),
+                          flex: 7,
+                          child: GestureDetector(
+                            onTap: () {
+                              _showCategoryDropdownList(context);
+                            },
+                            // onTapDown: (details) {
+                            //   _showCustomDropdown(
+                            //     context,
+                            //     details.globalPosition,
+                            //   );
+                            // },
+                            child: Container(
+                              height: 50.v,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: CustomPadding.paddingLarge.v,
                               ),
-                              LengthLimitingTextInputFormatter(5),
-                            ],
-                            controller: _discountPriceController,
-                            suffixText: '%',
-                            initialValue: '',
-                            labelText: 'Discount Percentage',
-                            onChanged: (value) {
-                              discountPrice = value;
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter a discount percentage';
-                              }
-                              final percentage = double.tryParse(value);
-                              if (percentage == null ||
-                                  percentage < 1 ||
-                                  percentage > 99) {
-                                return 'Please enter a percentage between 1 and 99';
-                              }
-                              return null;
-                            },
+                              margin: EdgeInsets.symmetric(
+                                horizontal: CustomPadding.paddingLarge.v,
+                              ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(
+                                  CustomPadding.paddingSmall.v,
+                                ),
+                                border: Border.all(
+                                  color: CustomColors.textColorLightGrey,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    capitalize(
+                                      selectedCategory?.name ??
+                                          'Select Category',
+                                    ),
+                                  ),
+                                  Icon(Icons.keyboard_arrow_down),
+                                ],
+                              ),
+                              // child: DropdownButtonHideUnderline(
+                              //   child: DropdownButton<ProductCategory>(
+                              //     underline: null,
+                              //     icon: Icon(Icons.keyboard_arrow_down),
+                              //     isExpanded: true,
+                              //     borderRadius: BorderRadius.circular(
+                              //       CustomPadding.padding.v,
+                              //     ),
+                              //     value: selectedCategory,
+                              //     items:
+                              //         productCategories.map((category) {
+                              //           return DropdownMenuItem(
+                              //             value: category,
+                              //             child: Text(category.name),
+                              //           );
+                              //         }).toList(),
+
+                              //     onChanged: (ProductCategory? newValue) {
+                              //       setState(() {
+                              //         selectedCategory = newValue;
+                              //       });
+                              //       logSuccess('Selected: ${newValue!.name}');
+                              //       logSuccess('Selected ID: ${newValue.id}');
+                              //     },
+                              //   ),
+                              // ),
+                            ),
                           ),
                         ),
                       ],
@@ -322,61 +498,92 @@ class _AddProductState extends State<AddProduct> {
                               ),
                               Row(
                                 children: [
-                                  Gap(CustomPadding.paddingLarge.v),
-                                  Text('Design Type'),
+                                  // Gap(CustomPadding.paddingLarge.v),
                                   Expanded(
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal:
-                                            CustomPadding.paddingLarge.v,
-                                      ),
-                                      margin: EdgeInsets.symmetric(
-                                        horizontal:
-                                            CustomPadding.paddingLarge.v,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(
-                                          CustomPadding.paddingSmall.v,
+                                    child: TextFormContainer(
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                          RegExp(r'^\d*\.?\d{0,2}'),
                                         ),
-                                        border: Border.all(
-                                          color:
-                                              CustomColors.textColorLightGrey,
-                                        ),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<ProductCategory>(
-                                          underline: null,
-                                          icon: Icon(Icons.keyboard_arrow_down),
-                                          isExpanded: true,
-                                          borderRadius: BorderRadius.circular(
-                                            CustomPadding.padding.v,
-                                          ),
-                                          value: selectedCategory,
-                                          items:
-                                              productCategories.map((category) {
-                                                return DropdownMenuItem(
-                                                  value: category,
-                                                  child: Text(category.name),
-                                                );
-                                              }).toList(),
-
-                                          onChanged: (
-                                            ProductCategory? newValue,
-                                          ) {
-                                            setState(() {
-                                              selectedCategory = newValue;
-                                            });
-                                            logSuccess(
-                                              'Selected: ${newValue!.name}',
-                                            );
-                                            logSuccess(
-                                              'Selected ID: ${newValue.id}',
-                                            );
-                                          },
-                                        ),
-                                      ),
+                                        LengthLimitingTextInputFormatter(5),
+                                      ],
+                                      controller: _discountPriceController,
+                                      suffixText: '%',
+                                      initialValue: '',
+                                      labelText: 'Discount Percentage',
+                                      onChanged: (value) {
+                                        discountPrice = value;
+                                      },
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter a discount percentage';
+                                        }
+                                        final percentage = double.tryParse(
+                                          value,
+                                        );
+                                        if (percentage == null ||
+                                            percentage < 1 ||
+                                            percentage > 99) {
+                                          return 'Please enter a percentage between 1 and 99';
+                                        }
+                                        return null;
+                                      },
                                     ),
                                   ),
+                                  // Text('Design Type'),
+                                  // Expanded(
+                                  //   child: Container(
+                                  //     padding: EdgeInsets.symmetric(
+                                  //       horizontal:
+                                  //           CustomPadding.paddingLarge.v,
+                                  //     ),
+                                  //     margin: EdgeInsets.symmetric(
+                                  //       horizontal:
+                                  //           CustomPadding.paddingLarge.v,
+                                  //     ),
+                                  //     decoration: BoxDecoration(
+                                  //       borderRadius: BorderRadius.circular(
+                                  //         CustomPadding.paddingSmall.v,
+                                  //       ),
+                                  //       border: Border.all(
+                                  //         color:
+                                  //             CustomColors.textColorLightGrey,
+                                  //       ),
+                                  //     ),
+                                  //     child: DropdownButtonHideUnderline(
+                                  //       child: DropdownButton<ProductCategory>(
+                                  //         underline: null,
+                                  //         icon: Icon(Icons.keyboard_arrow_down),
+                                  //         isExpanded: true,
+                                  //         borderRadius: BorderRadius.circular(
+                                  //           CustomPadding.padding.v,
+                                  //         ),
+                                  //         value: selectedCategory,
+                                  //         items:
+                                  //             productCategories.map((category) {
+                                  //               return DropdownMenuItem(
+                                  //                 value: category,
+                                  //                 child: Text(category.name),
+                                  //               );
+                                  //             }).toList(),
+
+                                  //         onChanged: (
+                                  //           ProductCategory? newValue,
+                                  //         ) {
+                                  //           setState(() {
+                                  //             selectedCategory = newValue;
+                                  //           });
+                                  //           logSuccess(
+                                  //             'Selected: ${newValue!.name}',
+                                  //           );
+                                  //           logSuccess(
+                                  //             'Selected ID: ${newValue.id}',
+                                  //           );
+                                  //         },
+                                  //       ),
+                                  //     ),
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ],
@@ -417,6 +624,7 @@ class _AddProductState extends State<AddProduct> {
     Navigator.pop(context);
   }
 }
+
 class AddImageContainer extends StatelessWidget {
   final double height;
   final VoidCallback removeImage;
@@ -452,59 +660,69 @@ class AddImageContainer extends StatelessWidget {
             color: CustomColors.hoverColor,
             borderRadius: BorderRadius.circular(CustomPadding.padding.v),
           ),
-          child: isImageView
-              ? Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                        CustomPadding.padding.v,
-                      ),
-                      child: (path != null && path!.isNotEmpty)
-                          ? Image.network(
-                              '$baseUrlImage/products/$path',
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  Center(child: Icon(Icons.broken_image)),
-                            )
-                          : Center(child: Icon(Icons.image_not_supported)),
-                    ),
-                    _buildControls(context),
-                  ],
-                )
-              : Center(
-                  child: selectedImage == null
-                      ? Icon(
-                          Icons.add,
-                          size: 40.v,
-                          color: CustomColors.greenDark,
-                        )
-                      : Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                CustomPadding.padding.v,
-                              ),
-                              child: (imagekey != null && imagekey!.isNotEmpty)
-                                  ? Image.network(
-                                      '$baseUrlImage/products/$imagekey',
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) =>
-                                              Center(
-                                                  child: Icon(
-                                                      Icons.broken_image)),
-                                    )
-                                  : Image.file(
-                                      selectedImage!,
-                                      fit: BoxFit.cover,
-                                    ),
-                            ),
-                            _buildControls(context),
-                          ],
+          child:
+              isImageView
+                  ? Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                          CustomPadding.padding.v,
                         ),
-                ),
+                        child:
+                            (path != null && path!.isNotEmpty)
+                                ? Image.network(
+                                  '$baseUrlImage/products/$path',
+                                  fit: BoxFit.cover,
+                                  errorBuilder:
+                                      (context, error, stackTrace) => Center(
+                                        child: Icon(Icons.broken_image),
+                                      ),
+                                )
+                                : Center(
+                                  child: Icon(Icons.image_not_supported),
+                                ),
+                      ),
+                      _buildControls(context),
+                    ],
+                  )
+                  : Center(
+                    child:
+                        selectedImage == null
+                            ? Icon(
+                              Icons.add,
+                              size: 40.v,
+                              color: CustomColors.greenDark,
+                            )
+                            : Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(
+                                    CustomPadding.padding.v,
+                                  ),
+                                  child:
+                                      (imagekey != null && imagekey!.isNotEmpty)
+                                          ? Image.network(
+                                            '$baseUrlImage/products/$imagekey',
+                                            fit: BoxFit.cover,
+                                            errorBuilder:
+                                                (context, error, stackTrace) =>
+                                                    Center(
+                                                      child: Icon(
+                                                        Icons.broken_image,
+                                                      ),
+                                                    ),
+                                          )
+                                          : Image.file(
+                                            selectedImage!,
+                                            fit: BoxFit.cover,
+                                          ),
+                                ),
+                                _buildControls(context),
+                              ],
+                            ),
+                  ),
         ),
       ),
     );
