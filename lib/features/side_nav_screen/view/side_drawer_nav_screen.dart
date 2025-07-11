@@ -1,6 +1,5 @@
 import 'package:easy_sidemenu/easy_sidemenu.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:one_clock/one_clock.dart';
@@ -43,7 +42,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
     'Dashboard',
     'Orders',
     'NFC Card',
-    'Portfolio Product',
+    'Templates',
     'Users',
     'Expense',
     'Leads',

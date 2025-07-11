@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:taproot_admin/features/product_screen/data/product_model.dart';
+import 'package:taproot_admin/features/portfolio_product_screen/data/template_model.dart';
+import 'package:taproot_admin/features/portfolio_product_screen/widgets/template_detail_row.dart';
 import 'package:taproot_admin/features/product_screen/data/product_service.dart';
-import 'package:taproot_admin/features/product_screen/widgets/product_detail_row.dart';
 
 import '../../../exporter/exporter.dart';
 
@@ -10,7 +10,7 @@ class PortfolioProductCard extends StatefulWidget {
   final VoidCallback refreshCartItem;
   final int enabledIndex;
   final List<bool> enabledList;
-  final Product productCard;
+  final Template productCard;
 
   const PortfolioProductCard({
     super.key,
@@ -51,7 +51,8 @@ class _PortfolioProductCardState extends State<PortfolioProductCard> {
                 borderRadius: BorderRadius.circular(CustomPadding.padding.v),
                 child: CachedNetworkImage(
                   imageUrl:
-                      '$baseUrlImage/products/${widget.productCard.productImages!.first.key}',
+                      '$baseUrlImage/templates/${widget.productCard.thumbnail!.key}',
+                  // '$baseUrlImage/products/${widget.productCard.productImages!.first.key}',
                   fit: BoxFit.fill,
                   placeholder:
                       (context, url) => Shimmer.fromColors(
@@ -79,10 +80,10 @@ class _PortfolioProductCardState extends State<PortfolioProductCard> {
                   style: context.inter50014,
                 ),
                 Gap(CustomPadding.paddingLarge.v),
-                ProductDetaileRow(
-                  cardType: widget.productCard.category!.name ?? '',
-                  price: widget.productCard.actualPrice.toString(),
-                  offerPrice: widget.productCard.salePrice.toString(),
+                TemplateDetailRow(
+                  cardType: widget.productCard.category!.name!,
+                  // price: widget.productCard.actualPrice.toString(),
+                  // offerPrice: widget.productCard.salePrice.toString(),
                 ),
                 CustomGap.gapLarge,
                 Spacer(),

@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/portfolio_product_screen/data/template_category_models.dart';
+import 'package:taproot_admin/features/portfolio_product_screen/data/template_model.dart';
+import 'package:taproot_admin/features/portfolio_product_screen/data/template_service.dart';
 import 'package:taproot_admin/features/portfolio_product_screen/widgets/add_portfolio_product.dart';
 import 'package:taproot_admin/features/portfolio_product_screen/widgets/portfolio_product_card.dart';
 import 'package:taproot_admin/features/portfolio_product_screen/widgets/portfolio_product_container.dart';
 import 'package:taproot_admin/features/portfolio_product_screen/widgets/view_portfolio_product.dart';
-import 'package:taproot_admin/features/product_screen/data/product_category_model.dart';
-import 'package:taproot_admin/features/product_screen/data/product_model.dart';
-import 'package:taproot_admin/features/product_screen/data/product_service.dart';
 import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
 import 'package:taproot_admin/features/product_screen/widgets/sort_button.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
@@ -34,15 +34,19 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
   Timer? _searchDebounce;
   String _currentSearchQuery = '';
 
-  List<Product> _filteredProducts = [];
+  // List<Product> _filteredProducts = [];
+  List<Template> _filteredTemplates = [];
 
-  List<Map<String, Object>> products = [];
-  ProductResponse? product;
-  List<ProductCategory> productCategory = [];
+  // List<Map<String, Object>> products = [];
+  List<Map<String, Object>> templates = [];
+  // ProductResponse? product;
+  TemplateResponse? template;
+  // List<ProductCategory> productCategory = [];
+  List<TemplateCategory> templateCategory = [];
   late TabController _tabController;
   void addProducts(Map<String, Object> product) {
     setState(() {
-      products.add(product);
+      templates.add(product);
       enabledList.add(true);
     });
   }
@@ -57,7 +61,7 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
     super.initState();
     fetchInitialData();
 
-    enabledList = List.generate(products.length, (index) => true);
+    enabledList = List.generate(templates.length, (index) => true);
 
     _scrollController.addListener(_scrollListener);
   }
@@ -69,26 +73,28 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
         _hasMoreData) {
       _isLoadingMore = true;
       _currentPage++;
-      fetchProduct(page: _currentPage);
+      fetchTemplate(page: _currentPage);
+      // fetchProduct(page: _currentPage);
     }
   }
 
   Future<void> fetchInitialData() async {
     await fetchProductCategory();
     _tabController = TabController(
-      length: productCategory.length + 1,
+      length: templateCategory.length + 1,
       vsync: this,
     );
     logSuccess('TabController length: ${_tabController.length}');
-    logSuccess(productCategory.length + 1);
+    logSuccess(templateCategory.length + 1);
 
     for (int i = 1; i <= 5; i++) {
-      await fetchProduct(page: i);
+      await fetchTemplate(page: i);
+      // await fetchProduct(page: i);
       if (!_hasMoreData) break;
     }
   }
 
-  Future<void> fetchProduct({int page = 1}) async {
+  Future<void> fetchTemplate({int page = 1}) async {
     if (_isLoading) return;
 
     try {
@@ -101,7 +107,7 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
         });
       }
 
-      final response = await ProductService.getProduct(
+      final response = await TemplateService.getTemplates(
         page: page,
         searchQuery: _currentSearchQuery,
         sort: _currentSort.apiParameter,
@@ -110,18 +116,19 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
       if (mounted) {
         setState(() {
           if (page == 1) {
-            product = response;
-            _filteredProducts = response.results;
+            template = response;
+            _filteredTemplates = response.results;
 
             enabledList =
-                response.results.map((p) => p.status == "Active").toList();
+                response.results.map((t) => t.status == "Active").toList();
           } else {
-            product!.results.addAll(response.results);
-            _filteredProducts = product!.results;
+            template!.results.addAll(response.results);
+            _filteredTemplates = template!.results;
 
             enabledList =
-                product!.results.map((p) => p.status == "Active").toList();
+                template!.results.map((t) => t.status == "Active").toList();
           }
+
           _hasMoreData = response.results.isNotEmpty;
           _isLoadingMore = false;
           _isLoading = false;
@@ -134,30 +141,82 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
           _isLoadingMore = false;
         });
       }
-      logError('Error fetching products: $e');
+      logError('Error fetching templates: $e');
     }
   }
+
+  // Future<void> fetchProduct({int page = 1}) async {
+  //   if (_isLoading) return;
+
+  //   try {
+  //     if (page == 1) {
+  //       setState(() {
+  //         _isLoading = true;
+  //         _isLoadingMore = false;
+  //         _hasMoreData = true;
+  //         _currentPage = 1;
+  //       });
+  //     }
+
+  //     final response = await ProductService.getProduct(
+  //       page: page,
+  //       searchQuery: _currentSearchQuery,
+  //       sort: _currentSort.apiParameter,
+  //     );
+
+  //     if (mounted) {
+  //       setState(() {
+  //         if (page == 1) {
+  //           product = response;
+  //           _filteredProducts = response.results;
+
+  //           enabledList =
+  //               response.results.map((p) => p.status == "Active").toList();
+  //         } else {
+  //           product!.results.addAll(response.results);
+  //           _filteredProducts = product!.results;
+
+  //           enabledList =
+  //               product!.results.map((p) => p.status == "Active").toList();
+  //         }
+  //         _hasMoreData = response.results.isNotEmpty;
+  //         _isLoadingMore = false;
+  //         _isLoading = false;
+  //       });
+  //     }
+  //   } catch (e) {
+  //     if (mounted) {
+  //       setState(() {
+  //         _isLoading = false;
+  //         _isLoadingMore = false;
+  //       });
+  //     }
+  //     logError('Error fetching products: $e');
+  //   }
+  // }
 
   void _handleSort(SortOption sortOption) async {
     setState(() {
       _currentSort = sortOption;
       _currentPage = 1;
       _hasMoreData = true;
-      product = null;
-      _filteredProducts = [];
+      template = null;
+      _filteredTemplates = [];
+      // _filteredProducts = [];
     });
 
     for (int i = 1; i <= 5; i++) {
-      await fetchProduct(page: i);
+      await fetchTemplate(page: i);
+      // await fetchProduct(page: i);
       if (!_hasMoreData) break;
     }
   }
 
   Future<void> fetchProductCategory() async {
     try {
-      final response = await ProductService.getProductCategory();
+      final response = await TemplateService.getTemplateCategory();
       setState(() {
-        productCategory = response;
+        templateCategory = response;
       });
     } catch (e) {
       logError('Error fetching product categories: $e');
@@ -165,7 +224,8 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
   }
 
   Future<void> refreshProducts() async {
-    await fetchProduct(page: 1);
+    await fetchTemplate(page: 1);
+    // await fetchProduct(page: 1);
   }
 
   void _handleSearch(String query) {
@@ -176,7 +236,8 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
         _currentPage = 1;
         _hasMoreData = true;
       });
-      fetchProduct(page: 1);
+      fetchTemplate(page: 1);
+      // fetchProduct(page: 1);
     });
   }
 
@@ -193,7 +254,7 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
   Widget build(BuildContext context) {
     return Scaffold(
       body:
-          product == null
+          template == null
               ? Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
                 child: Column(
@@ -255,7 +316,7 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
 
                             tabs: [
                               const Tab(text: 'All'),
-                              ...productCategory.map(
+                              ...templateCategory.map(
                                 (category) => Tab(
                                   text:
                                       category.name[0].toUpperCase() +
@@ -269,11 +330,13 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
                             child: TabBarView(
                               controller: _tabController,
                               children: [
-                                buildProductGrid(_filteredProducts),
+                                buildProductGrid(_filteredTemplates),
 
-                                ...productCategory.map((category) {
+                                // buildProductGrid(_filteredProducts),
+                                ...templateCategory.map((category) {
                                   final categoryFilteredProducts =
-                                      _filteredProducts
+                                      _filteredTemplates
+                                          // _filteredProducts
                                           .where(
                                             (product) =>
                                                 product.category?.id ==
@@ -296,14 +359,14 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
     );
   }
 
-  Widget buildProductGrid(List<Product> products) {
-    if (products.isEmpty) {
+  Widget buildProductGrid(List<Template> templates) {
+    if (templates.isEmpty) {
       return NotFoundWidget();
     }
 
     return GridView.builder(
       controller: _scrollController,
-      itemCount: products.length + (_hasMoreData ? 1 : 0),
+      itemCount: templates.length + (_hasMoreData ? 1 : 0),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         childAspectRatio: 2,
         crossAxisCount: 2,
@@ -311,20 +374,26 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
         crossAxisSpacing: CustomPadding.paddingXL.v,
       ),
       itemBuilder: (context, index) {
-        if (index == products.length) {
+        if (index == templates.length) {
           return _isLoadingMore
               ? Center(child: CircularProgressIndicator())
               : SizedBox.shrink();
         }
 
-        final productcard = products[index];
+        final productcard = templates[index];
         return GestureDetector(
           onTap: () async {
             final updated = await Navigator.of(context).push(
+              // MaterialPageRoute(
+              //   builder: (context) {
+              //     return SizedBox();
+              //   },
+              // ),
               MaterialPageRoute(
                 builder:
                     (context) => ViewPortfolioProduct(
-                      product: productcard,
+                      template: productcard,
+                      // product: productcard,
                       onBack: () => Navigator.pop(context),
                       onEdit: () => refreshProducts(),
                     ),

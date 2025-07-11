@@ -627,6 +627,7 @@ class _AddProductState extends State<AddProduct> {
 
 class AddImageContainer extends StatelessWidget {
   final double height;
+  final String imageBasePath;
   final VoidCallback removeImage;
   final VoidCallback pickImage;
   final File? selectedImage;
@@ -645,6 +646,7 @@ class AddImageContainer extends StatelessWidget {
     this.file,
     this.imagekey,
     this.height = 150,
+    this.imageBasePath = 'products',
   });
 
   @override
@@ -672,7 +674,7 @@ class AddImageContainer extends StatelessWidget {
                         child:
                             (path != null && path!.isNotEmpty)
                                 ? Image.network(
-                                  '$baseUrlImage/products/$path',
+                                  '$baseUrlImage/$imageBasePath/$path',
                                   fit: BoxFit.cover,
                                   errorBuilder:
                                       (context, error, stackTrace) => Center(
@@ -704,7 +706,7 @@ class AddImageContainer extends StatelessWidget {
                                   child:
                                       (imagekey != null && imagekey!.isNotEmpty)
                                           ? Image.network(
-                                            '$baseUrlImage/products/$imagekey',
+                                            '$baseUrlImage/$imageBasePath/$imagekey',
                                             fit: BoxFit.cover,
                                             errorBuilder:
                                                 (context, error, stackTrace) =>

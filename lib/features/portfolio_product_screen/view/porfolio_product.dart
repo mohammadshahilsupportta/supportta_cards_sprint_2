@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:taproot_admin/features/portfolio_product_screen/data/template_model.dart';
 import 'package:taproot_admin/features/portfolio_product_screen/widgets/add_portfolio_product.dart';
 import 'package:taproot_admin/features/portfolio_product_screen/widgets/portfolio_product_page.dart';
-import 'package:taproot_admin/features/portfolio_product_screen/widgets/view_portfolio_product.dart';
 
-import '../../product_screen/data/product_model.dart';
 
 class PorfolioProduct extends StatefulWidget {
   const PorfolioProduct({super.key});
@@ -15,7 +14,8 @@ class PorfolioProduct extends StatefulWidget {
 class _PorfolioProductState extends State<PorfolioProduct> {
   bool addProduct = false;
   bool viewProduct = false;
-  Product? selectedProduct;
+  // Product? selectedProduct;
+  Template? selectedTemplate;
 
   void openAddProduct() {
     setState(() {
@@ -23,9 +23,9 @@ class _PorfolioProductState extends State<PorfolioProduct> {
     });
   }
 
-  void openViewProduct(Product product) {
+  void openViewProduct(Template template) {
     setState(() {
-      selectedProduct = product;
+      selectedTemplate = template;
       viewProduct = true;
     });
   }
@@ -34,7 +34,7 @@ class _PorfolioProductState extends State<PorfolioProduct> {
     setState(() {
       addProduct = false;
       viewProduct = false;
-      selectedProduct = null;
+      selectedTemplate = null;
     });
   }
 
@@ -44,13 +44,13 @@ class _PorfolioProductState extends State<PorfolioProduct> {
       return AddPortfolioProduct(onBack: closeCurrentView);
     }
 
-    if (viewProduct && selectedProduct != null) {
-      return ViewPortfolioProduct(
-        product: selectedProduct!,
-        onBack: closeCurrentView,
-        onEdit: () {},
-      );
-    }
+    // if (viewProduct && selectedProduct != null) {
+    //   return ViewPortfolioProduct(
+    //     product: selectedProduct!,
+    //     onBack: closeCurrentView,
+    //     onEdit: () {},
+    //   );
+    // }
 
     return PortfolioProductPage(addTap: openAddProduct, viewTap: () {});
   }
