@@ -1,9 +1,12 @@
+import 'dart:typed_data';
+
+import 'package:dio/dio.dart' as dio;
+import 'package:http_parser/http_parser.dart';
 import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
 import 'package:taproot_admin/core/logger.dart';
 import 'package:taproot_admin/features/portfolio_product_screen/data/template_category_models.dart';
 import 'package:taproot_admin/features/portfolio_product_screen/data/template_model.dart';
-import 'package:taproot_admin/features/product_screen/data/product_model.dart';
 
 import '../../../core/api/base_url_constant.dart';
 
@@ -37,16 +40,16 @@ class TemplateService with ErrorExceptionHandler {
     }
   }
 
-  static Future<Template> getTemplateById(String productId) async {
+  static Future<Template> getTemplateById({String? templateId}) async {
     try {
       final response = await DioHelper().get(
-        '/product/$productId',
+        '/template/$templateId',
         type: ApiType.baseUrl,
       );
 
       if (response.statusCode == 200) {
         logSuccess("Response Data: ${response.data}");
-        return Template.fromJson(response.data['results']);
+        return Template.fromJson(response.data['result']);
       } else {
         throw Exception('Failed to load product');
       }
@@ -78,28 +81,127 @@ class TemplateService with ErrorExceptionHandler {
   static Future<SingleTemplateResponse> editTemplate({
     required String templateId,
     required String name,
-    required double actualPrice,
-    required double discountPrice,
-    required double discountPercentage,
-    required List<ProductImage> productImages,
-    required String description,
+
+    required Thumbnail thumbnail,
     required String categoryId,
   }) async {
     final body = {
       "name": name,
-      "actualPrice": actualPrice,
-      "discountPrice": discountPrice,
-      "discountPercentage": discountPercentage,
-      "description": description,
-      "categoryId": categoryId,
-      "productImages": productImages.map((img) => img.toJson()).toList(),
+
+      "category": categoryId,
+      "thumbnail": thumbnail.toJson(),
     };
 
     final response = await DioHelper().patch(
       '/template/$templateId',
       data: body,
+      type: ApiType.baseUrl,
     );
 
     return SingleTemplateResponse.fromJson(response.data);
+  }
+
+  static Future<SingleTemplateResponse> addTemplate({
+    required Template template,
+  }) async {
+    try {
+      final body = template.toAddJson();
+      logInfo(" Sending body: $body");
+
+      final response = await DioHelper().post(
+        '/template',
+        data: body,
+        type: ApiType.baseUrl,
+      );
+
+      logSuccess(" Template added: ${response.data}");
+      return SingleTemplateResponse.fromJson(response.data);
+    } catch (e, s) {
+      logError(" Error adding template: $e");
+      logError(" Stacktrace: $s");
+      rethrow;
+    }
+  }
+
+  static Future<Map<String, dynamic>> uploadImageFile(
+    Uint8List imageBytes,
+    String filename,
+  ) async {
+    try {
+      final formData = dio.FormData.fromMap({
+        'image': dio.MultipartFile.fromBytes(
+          imageBytes,
+          filename: filename,
+          contentType: MediaType('image', 'jpeg'),
+        ),
+      });
+
+      final response = await DioHelper().post(
+        '/template/upload',
+        type: ApiType.baseUrl,
+        data: formData,
+        options: dio.Options(headers: {'Content-Type': 'multipart/form-data'}),
+      );
+
+      if (response.data != null && response.data['result'] != null) {
+        final result = response.data['result'] as Map<String, dynamic>;
+        logSuccess('Upload success: $result');
+        return result;
+      } else {
+        throw Exception('Invalid upload response');
+      }
+    } catch (e) {
+      logError('Upload failed: $e');
+      throw TemplateService().handleError('Upload failed: $e');
+    }
+  }
+
+  static Future<dynamic> addTemplateCategory({String? categoryName}) async {
+    try {
+      final response = await DioHelper().post(
+        '/template-category',
+        type: ApiType.baseUrl,
+        data: {"name": categoryName},
+      );
+      logSuccess(response.data);
+      return response.data;
+    } catch (e) {
+      logError('error: $e');
+      return {'message': 'Something went wrong'};
+    }
+  }
+static Future<dynamic> updateTemplateCategory({
+  required String categoryId,
+  required String categoryName,
+}) async {
+  try {
+    final response = await DioHelper().patch(
+      '/template-category/$categoryId',
+      type: ApiType.baseUrl,
+      data: {"name": categoryName},
+    );
+    logSuccess(response.data);
+    return response.data;
+  } catch (e) {
+    logError('error: $e');
+    return {'message': 'Something went wrong'};
+  }
+}
+
+  static Future<bool> isTemplateEnable({required String templateId}) async {
+    try {
+      final response = await DioHelper().patch(
+        '/template/change-status/$templateId',
+        type: ApiType.baseUrl,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      logError('Template status update failed: $e');
+      rethrow;
+    }
   }
 }

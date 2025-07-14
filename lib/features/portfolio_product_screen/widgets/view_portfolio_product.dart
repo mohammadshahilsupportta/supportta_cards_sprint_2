@@ -38,17 +38,27 @@ class _ViewPortfolioProductState extends State<ViewPortfolioProduct> {
   }
 
   Future<void> refreshProduct() async {
+    logSuccess('Refreshing product...');
+
     try {
       setState(() => isLoading = true);
-      final updated = await TemplateService.getTemplateById(widget.template.id.toString());
+      final updated = await TemplateService.getTemplateById(
+        templateId: widget.template.id.toString(),
+      );
       setState(() {
         currentProduct = updated;
         isLoading = false;
       });
+      logSuccess('Product refreshed: ${updated.name}');
     } catch (e) {
       logError('Refresh error: $e');
       setState(() => isLoading = false);
     }
+  }
+
+  String capitalize(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1);
   }
 
   @override
@@ -88,9 +98,10 @@ class _ViewPortfolioProductState extends State<ViewPortfolioProduct> {
                       // MaterialPageRoute(builder: (context) => SizedBox()),
                       MaterialPageRoute(
                         builder:
-                            (_) => EditTemplateProduct(template: template,
+                            (_) => EditTemplateProduct(
+                              template: template,
                               // product: template,
-                              onRefreshProduct: () {},
+                              onRefreshProduct: refreshProduct,
                             ),
                       ),
                     );
@@ -158,7 +169,7 @@ class _ViewPortfolioProductState extends State<ViewPortfolioProduct> {
                       children: [
                         CardRow(
                           prefixText: 'Template Name',
-                          suffixText: template.name.toString(),
+                          suffixText: capitalize(template.name.toString()),
                         ),
                         // CardRow(
                         //   prefixText: 'Price',
@@ -170,7 +181,13 @@ class _ViewPortfolioProductState extends State<ViewPortfolioProduct> {
                         // ),
                         CardRow(
                           prefixText: 'Category',
-                          suffixText: template.category!.name.toString(),
+                          suffixText: capitalize(
+                            template.category!.name.toString(),
+                          ),
+                        ),
+                        CardRow(
+                          prefixText: 'Template Id',
+                          suffixText: template.id.toString(),
                         ),
                         // CardRow(
                         //   prefixText: 'Description',

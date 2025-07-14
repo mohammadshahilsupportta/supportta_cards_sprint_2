@@ -295,10 +295,10 @@ class _PortfolioProductPageState extends State<PortfolioProductPage>
                                 onChanged: _handleSearch,
                               ),
                               Spacer(),
-                              SortButton(
-                                currentSort: _currentSort,
-                                onSortChanged: _handleSort,
-                              ),
+                              // SortButton(
+                              //   currentSort: _currentSort,
+                              //   onSortChanged: _handleSort,
+                              // ),
                             ],
                           ),
                           Gap(CustomPadding.paddingLarge.v),

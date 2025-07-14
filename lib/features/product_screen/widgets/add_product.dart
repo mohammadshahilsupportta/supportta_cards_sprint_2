@@ -202,6 +202,24 @@ class _AddProductState extends State<AddProduct> {
                           });
                           Navigator.pop(context);
                         },
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                showAddCategoryDialog(
+                                  context,
+                                  category: category,
+                                );
+                              },
+                              icon: Icon(Icons.edit),
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: Icon(Icons.delete, color: CustomColors.red),
+                            ),
+                          ],
+                        ),
                       );
                     },
                   ),
@@ -225,15 +243,21 @@ class _AddProductState extends State<AddProduct> {
     );
   }
 
-  void showAddCategoryDialog(BuildContext context) {
+  void showAddCategoryDialog(
+    BuildContext context, {
+    ProductCategory? category,
+  }) {
     String newCategoryName = '';
+    final TextEditingController _controller = TextEditingController(
+      text: category?.name ?? '',
+    );
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           backgroundColor: CustomColors.secondaryColor,
-          title: Text('Category'),
+          title: Text(category == null ? 'Add Category' : 'Edit Category'),
           contentPadding: EdgeInsets.only(
             top: CustomPadding.paddingLarge,
             bottom: CustomPadding.paddingXL,
@@ -241,6 +265,7 @@ class _AddProductState extends State<AddProduct> {
             right: CustomPadding.padding,
           ),
           content: TextFormContainer(
+            controller: _controller,
             labelText: 'Category name',
             onChanged: (value) {
               newCategoryName = value;
@@ -254,17 +279,37 @@ class _AddProductState extends State<AddProduct> {
               },
             ),
             MiniLoadingButton(
-              text: 'Add',
+              text: category == null ? 'Add' : 'Update',
               onPressed: () async {
-                final response = await ProductService.addProductCategory(
-                  categoryName: newCategoryName,
-                );
+                final name = _controller.text.trim();
+                if (name.isEmpty) return;
+
+                late final Map<String, dynamic> response;
+                if (category == null) {
+                  response = await ProductService.addProductCategory(
+                    categoryName: name,
+                  );
+                } else {
+                  response = await ProductService.updateProductCategory(
+                    categoryId: category.id,
+                    categoryName: name,
+                  );
+                }
+                // final response = await ProductService.addProductCategory(
+                //   categoryName: newCategoryName,
+                // );
                 if (context.mounted) {
-                  fetchProductCategories();
                   Navigator.pop(context);
+                  Navigator.pop(context);
+
+                  await fetchProductCategories();
+                  _showCategoryDropdownList(context);
                   SnackbarHelper.showSuccess(
                     context,
-                    response['message'] ?? 'Category added',
+                    response['message'] ??
+                        (category == null
+                            ? 'Category added successfully'
+                            : 'Category updated successfully'),
                   );
                 }
               },

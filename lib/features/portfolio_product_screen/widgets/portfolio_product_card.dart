@@ -1,8 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:taproot_admin/features/portfolio_product_screen/data/template_model.dart';
+import 'package:taproot_admin/features/portfolio_product_screen/data/template_service.dart';
 import 'package:taproot_admin/features/portfolio_product_screen/widgets/template_detail_row.dart';
-import 'package:taproot_admin/features/product_screen/data/product_service.dart';
 
 import '../../../exporter/exporter.dart';
 
@@ -25,6 +25,11 @@ class PortfolioProductCard extends StatefulWidget {
 }
 
 class _PortfolioProductCardState extends State<PortfolioProductCard> {
+  String capitalize(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -76,12 +81,12 @@ class _PortfolioProductCardState extends State<PortfolioProductCard> {
                 Gap(CustomPadding.paddingXL.v),
 
                 Text(
-                  widget.productCard.name.toString(),
+                  capitalize(widget.productCard.name.toString()),
                   style: context.inter50014,
                 ),
                 Gap(CustomPadding.paddingLarge.v),
                 TemplateDetailRow(
-                  cardType: widget.productCard.category!.name!,
+                  cardType: capitalize(widget.productCard.category!.name!),
                   // price: widget.productCard.actualPrice.toString(),
                   // offerPrice: widget.productCard.salePrice.toString(),
                 ),
@@ -117,8 +122,8 @@ class _PortfolioProductCardState extends State<PortfolioProductCard> {
                             );
 
                             final success =
-                                await ProductService.isProductEnable(
-                                  productId: widget.productCard.id ?? '',
+                                await TemplateService.isTemplateEnable(
+                                  templateId: widget.productCard.id ?? '',
                                 );
 
                             if (dialogContext.mounted) {
@@ -136,7 +141,7 @@ class _PortfolioProductCardState extends State<PortfolioProductCard> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
-                                      'Product status updated successfully',
+                                      'Template status updated successfully',
                                     ),
                                     backgroundColor: Colors.green,
                                   ),
@@ -149,7 +154,7 @@ class _PortfolioProductCardState extends State<PortfolioProductCard> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
-                                      'Failed to update product status',
+                                      'Failed to update template status',
                                     ),
                                     backgroundColor: Colors.red,
                                   ),
@@ -162,7 +167,7 @@ class _PortfolioProductCardState extends State<PortfolioProductCard> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(
-                                    'Error updating product status: $e',
+                                    'Error updating template status: $e',
                                   ),
                                   backgroundColor: Colors.red,
                                 ),
