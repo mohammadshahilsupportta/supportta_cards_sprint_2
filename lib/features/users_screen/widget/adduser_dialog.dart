@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/textform_container.dart';
 import 'package:taproot_admin/features/users_screen/data/user_service.dart';
@@ -73,13 +72,14 @@ class _AddUserDialogState extends State<AddUserDialog> {
                 height: 70.v,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(CustomPadding.paddingLarge.v),
-                    topRight: Radius.circular(CustomPadding.paddingLarge.v),
+                    topLeft: Radius.circular(CustomPadding.paddingXL.v),
+                    topRight: Radius.circular(CustomPadding.paddingXL.v),
                   ),
                   color: CustomColors.buttonColor1,
                 ),
                 child: Row(
                   children: [
+                    Gap(CustomPadding.paddingXXL.v),
                     Spacer(),
 
                     Text(

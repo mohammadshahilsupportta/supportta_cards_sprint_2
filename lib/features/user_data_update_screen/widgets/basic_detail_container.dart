@@ -83,54 +83,22 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
     }
   }
 
-  // String getIsoCodeFromDialCode(String dialCode) {
-  //   const dialCodeToIso = {
-  //     '+91': 'IN',
-  //     '+1': 'US',
-  //     '+44': 'GB',
-  //     '+971': 'AE',
-  //     '+61': 'AU',
-  //     '+93': 'AF',
-  //     '+81': 'JP',
-  //     '+49': 'DE',
-  //     '+33': 'FR',
-  //     '+966': 'SA',
-  //     '+974': 'QA',
-  //     '+965': 'KW',
-  //     '+968': 'OM',
-  //     '+880': 'BD',
-  //     '+94': 'LK',
-  //     '+254': 'KE',
-  //     '+27': 'ZA',
-  //     '+43': 'AT',
-  //   };
-
-  //   return dialCodeToIso[dialCode] ??
-  //       'IN';
-  // }
-
   Map<String, String> splitPhoneNumber(String fullNumber) {
-    final regExp = RegExp(r'^\+(\d{1,2})(\d{6,})$');
-    final match = regExp.firstMatch(fullNumber);
-    if (match != null && match.groupCount == 2) {
-      return {'countryCode': '+${match.group(1)}', 'number': match.group(2)!};
+    final sortedCodes =
+        GetCountryCode.dialCodeToIso.keys.toList()
+          ..sort((a, b) => b.length.compareTo(a.length));
+
+    for (final code in sortedCodes) {
+      if (fullNumber.startsWith(code)) {
+        return {
+          'countryCode': code,
+          'number': fullNumber.substring(code.length),
+        };
+      }
     }
+
     return {'countryCode': '+91', 'number': fullNumber};
   }
-
-  // void _initializePhoneFields() {
-  //   final phone = widget.portfolio?.personalInfo.phoneNumber ?? '';
-  //   final whatsapp = widget.portfolio?.personalInfo.whatsappNumber ?? '';
-
-  //   final phoneSplit = splitPhoneNumber(phone);
-  //   final whatsappSplit = splitPhoneNumber(whatsapp);
-
-  //   widget.countryCodephoneController?.text = phoneSplit['countryCode']!;
-  //   widget.phoneController?.text = phoneSplit['number']!;
-
-  //   widget.countryCodewhatsappController?.text = whatsappSplit['countryCode']!;
-  //   widget.whatsappController?.text = whatsappSplit['number']!;
-  // }
 
   String getPhone() {
     final phone = widget.portfolio?.personalInfo.phoneNumber;
@@ -152,13 +120,13 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
       ' Phone dial code in controller: ${widget.countryCodephoneController?.text}',
     );
     logError(
-      '🌍 ISO for initialSelection: ${GetCountryCode().getIsoCodeFromDialCode(widget.countryCodephoneController?.text ?? "+91")}',
+      '🌍 ISO for initialSelection: ${GetCountryCode().getIsoCodeFromFullNumber(widget.countryCodephoneController?.text ?? "+91")}',
     );
     logError(
       ' whatsapp dial code in controller: ${widget.countryCodewhatsappController?.text}',
     );
     logError(
-      '🌍 ISO for initialSelection: ${GetCountryCode().getIsoCodeFromDialCode(widget.countryCodephoneController?.text ?? "+91")}',
+      '🌍 ISO for initialSelection: ${GetCountryCode().getIsoCodeFromFullNumber(widget.countryCodephoneController?.text ?? "+91")}',
     );
     return CommonUserContainer(
       height: SizeUtils.height * .55,
@@ -216,10 +184,13 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               countryCodeWidget: CountryCodePicker(
                 dialogSize: Size(SizeUtils.width * 0.4, SizeUtils.height * 0.7),
-
-                initialSelection: GetCountryCode().getIsoCodeFromDialCode(
-                  widget.countryCodephoneController?.text ?? '+91',
+                initialSelection: GetCountryCode().getIsoCodeFromFullNumber(
+                  '${widget.countryCodephoneController?.text ?? '+91'}${widget.phoneController?.text ?? ''}',
                 ),
+
+                // initialSelection: GetCountryCode().getIsoCodeFromDialCode(
+                //   widget.countryCodephoneController?.text ?? '+91',
+                // ),
                 onChanged: (value) {
                   widget.countryCodephoneController?.text = value.dialCode!;
                 },
@@ -257,9 +228,13 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               countryCodeWidget: CountryCodePicker(
                 dialogSize: Size(SizeUtils.width * 0.4, SizeUtils.height * 0.7),
-                initialSelection: GetCountryCode().getIsoCodeFromDialCode(
-                  widget.countryCodewhatsappController?.text ?? '+91',
+                // initialSelection: GetCountryCode().getIsoCodeFromDialCode(
+                //   widget.countryCodewhatsappController?.text ?? '+91',
+                // ),
+                initialSelection: GetCountryCode().getIsoCodeFromFullNumber(
+                  '${widget.countryCodewhatsappController?.text ?? '+91'}${widget.whatsappController?.text ?? ''}',
                 ),
+
                 // initialSelection: getIsoCodeFromDialCode(
                 //   widget.countryCodewhatsappController?.text ?? '+91',
                 // ),
