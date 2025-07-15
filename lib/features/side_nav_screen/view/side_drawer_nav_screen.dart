@@ -6,6 +6,7 @@ import 'package:one_clock/one_clock.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/Dashboard_screen/view/dashboard_screen.dart';
 import 'package:taproot_admin/features/Expense_screen/view/expense_view.dart';
+import 'package:taproot_admin/features/Referral_screen/view/refer_screen.dart';
 import 'package:taproot_admin/features/auth_screen/data/auth_service.dart';
 import 'package:taproot_admin/features/leads_screen.dart/view/leads.dart';
 import 'package:taproot_admin/features/order_screen/view/order_screen.dart';
@@ -36,6 +37,8 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
 
   final GlobalKey<NavigatorState> _innerNavigatorKey =
       GlobalKey<NavigatorState>();
+  final GlobalKey<NavigatorState> _innerReferNavigatorKey =
+      GlobalKey<NavigatorState>();
   final GlobalKey<NavigatorState> _innerOrderNavigatorKey =
       GlobalKey<NavigatorState>();
   final List<String> _pageTitles = [
@@ -46,6 +49,7 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
     'Users',
     'Expense',
     'Leads',
+    'Wallet',
   ];
 
   @override
@@ -277,6 +281,21 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                             NavControllers.sideMenuController.changePage(index);
                           },
                         ),
+                        SideMenuItem(
+                          title: 'Wallets',
+                          iconWidget: SideMenuLucideIcon(
+                            icon: LucideIcons.usersRound,
+                            index: 7,
+                            currentIndex: _currentIndex,
+                          ),
+                          onTap: (index, _) {
+                            setState(() {
+                              _currentIndex = index;
+                            });
+
+                            NavControllers.sideMenuController.changePage(index);
+                          },
+                        ),
                       ],
                       footer: Padding(
                         padding: EdgeInsets.only(
@@ -378,6 +397,18 @@ class _SideDrawerNavScreenState extends State<SideDrawerNavScreen> {
                   onGenerateRoute: (settings) {
                     return MaterialPageRoute(
                       builder: (_) => LeadScreen(),
+                      settings: settings,
+                    );
+                  },
+                ),
+                Navigator(
+                  key: _innerReferNavigatorKey,
+                  onGenerateRoute: (settings) {
+                    return MaterialPageRoute(
+                      builder:
+                          (_) => ReferScreen(
+                            innerNavigatorKey: _innerReferNavigatorKey,
+                          ),
                       settings: settings,
                     );
                   },
