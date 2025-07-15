@@ -36,6 +36,7 @@ class AddUserLocation extends StatefulWidget {
 
 class _AddUserLocationState extends State<AddUserLocation> {
   Timer? _debounce;
+  String selectedCountry = 'India';
 
   @override
   void initState() {
@@ -51,7 +52,7 @@ class _AddUserLocationState extends State<AddUserLocation> {
 
     _debounce = Timer(const Duration(milliseconds: 500), () {
       if (text.length == 6 && RegExp(r'^[1-9][0-9]{5}$').hasMatch(text)) {
-        getPincodeData(text);
+        selectedCountry == 'India' ? getPincodeData(text) : null;
       }
     });
   }
@@ -104,34 +105,86 @@ class _AddUserLocationState extends State<AddUserLocation> {
   @override
   Widget build(BuildContext context) {
     return CommonUserContainer(
-      height: SizeUtils.height * .57,
+      height: SizeUtils.height * .42,
 
       title: 'Location',
       children: [
         Gap(CustomPadding.paddingLarge.v),
-        TextFormContainer(
-          controller: widget.buildingcontroller,
-          initialValue: '',
-          labelText: 'Building Name',
-          user: widget.user,
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return 'Building Name is required';
-            }
-            return null;
-          },
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: CustomPadding.paddingLarge.v,
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Select Country',
+                      labelStyle: TextStyle(
+                        color: CustomColors.textColorDarkGrey,
+                      ),
+                    ),
+
+                    value: selectedCountry,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedCountry = value!;
+                      });
+                      logWarning('Selected value: $value');
+                    },
+                    items: [
+                      DropdownMenuItem<String>(
+                        value: 'India',
+                        child: Text('India'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'Others',
+                        child: Text('Others'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Expanded(child: SizedBox()),
+
+            // Gap(CustomPadding.paddingLarge.v),
+          ],
         ),
-        TextFormContainer(
-          controller: widget.areacontroller,
-          initialValue: '',
-          labelText: 'Area',
-          user: widget.user,
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return 'Area is required';
-            }
-            return null;
-          },
+        Gap(CustomPadding.paddingLarge.v),
+
+        Row(
+          children: [
+            Expanded(
+              child: TextFormContainer(
+                controller: widget.buildingcontroller,
+                initialValue: '',
+                labelText: 'Building Name',
+                user: widget.user,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Building Name is required';
+                  }
+                  return null;
+                },
+              ),
+            ),
+            Expanded(
+              child: TextFormContainer(
+                controller: widget.areacontroller,
+                initialValue: '',
+                labelText: 'Area',
+                user: widget.user,
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'Area is required';
+                  }
+                  return null;
+                },
+              ),
+            ),
+          ],
         ),
         Row(
           children: [
@@ -139,7 +192,10 @@ class _AddUserLocationState extends State<AddUserLocation> {
               child: TextFormContainer(
                 controller: widget.pincodecontroller,
                 initialValue: '',
-                labelText: 'Pin code',
+                labelText:
+                    selectedCountry == 'India'
+                        ? 'Pin code'
+                        : 'Pincode (Optional)',
                 user: widget.user,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
@@ -159,7 +215,10 @@ class _AddUserLocationState extends State<AddUserLocation> {
             Expanded(
               child: TextFormContainer(
                 controller: widget.districtcontroller,
-                labelText: 'District',
+                labelText:
+                    selectedCountry == 'India'
+                        ? 'District'
+                        : 'District/City (Optional)',
                 user: widget.user,
               ),
             ),
@@ -171,14 +230,17 @@ class _AddUserLocationState extends State<AddUserLocation> {
               child: TextFormContainer(
                 controller: widget.statecontroller,
 
-                labelText: 'State',
+                labelText:
+                    selectedCountry == 'India'
+                        ? 'State'
+                        : 'State/Province (Optional)',
                 user: widget.user,
               ),
             ),
             Expanded(
               child: TextFormContainer(
                 controller: widget.countrycontroller,
-                readonly: true,
+                // readonly: true,
                 // initialValue: 'India',
                 labelText: 'Country',
                 user: widget.user,
@@ -186,13 +248,13 @@ class _AddUserLocationState extends State<AddUserLocation> {
             ),
           ],
         ),
-        TextFormContainer(
-          labelText: 'Map Url',
-          controller: widget.mapUrlController,
-          initialValue: '',
-          user: widget.user,
-          validator: validateGoogleMapsUrl,
-        ),
+        // TextFormContainer(
+        //   labelText: 'Map Url',
+        //   controller: widget.mapUrlController,
+        //   initialValue: '',
+        //   user: widget.user,
+        //   validator: validateGoogleMapsUrl,
+        // ),
       ],
     );
   }

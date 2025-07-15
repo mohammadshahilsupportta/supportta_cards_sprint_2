@@ -46,6 +46,7 @@ class LocationContainer extends StatefulWidget {
 class LocationContainerState extends State<LocationContainer> {
   Timer? _debounce;
   String? mapUrlErrorText;
+  String selectedCountry = 'India';
 
   @override
   void initState() {
@@ -62,14 +63,16 @@ class LocationContainerState extends State<LocationContainer> {
 
     _debounce = Timer(const Duration(milliseconds: 500), () {
       if (text.length == 6 && RegExp(r'^[1-9][0-9]{5}$').hasMatch(text)) {
-        PincodeHelper.fetchAndSetLocationData(
-          pincode: text,
-          districtController: widget.districtController!,
-          stateController: widget.stateController!,
-          countryController: widget.countryController!,
-          logSuccess: logSuccess,
-          logError: logError,
-        );
+        selectedCountry == 'India'
+            ? PincodeHelper.fetchAndSetLocationData(
+              pincode: text,
+              districtController: widget.districtController!,
+              stateController: widget.stateController!,
+              countryController: widget.countryController!,
+              logSuccess: logSuccess,
+              logError: logError,
+            )
+            : null;
       }
     });
   }
@@ -117,13 +120,48 @@ class LocationContainerState extends State<LocationContainer> {
   @override
   Widget build(BuildContext context) {
     return CommonUserContainer(
-      height: SizeUtils.height * .57,
+      height: SizeUtils.height * .65,
 
       title: 'Location',
       children:
           widget.isEdit
               ? [
                 Gap(CustomPadding.paddingLarge.v),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: CustomPadding.paddingLarge.v,
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButtonFormField<String>(
+                      decoration: InputDecoration(
+                        labelText: 'Select Country',
+                        labelStyle: TextStyle(
+                          color: CustomColors.textColorDarkGrey,
+                        ),
+                      ),
+
+                      value: selectedCountry,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCountry = value!;
+                        });
+                        logWarning('Selected value: $value');
+                      },
+                      items: [
+                        DropdownMenuItem<String>(
+                          value: 'India',
+                          child: Text('India'),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: 'Others',
+                          child: Text('Others'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Gap(CustomPadding.paddingLarge.v),
+
                 TextFormContainer(
                   controller: widget.buildingNamecontroller,
                   // initialValue: portfolio!.addressInfo.buildingName,
@@ -143,7 +181,10 @@ class LocationContainerState extends State<LocationContainer> {
                       child: TextFormContainer(
                         // initialValue: portfolio!.addressInfo.pincode,
                         controller: widget.pincodeController,
-                        labelText: 'Pin code',
+                        labelText:
+                            selectedCountry == 'India'
+                                ? 'Pin code'
+                                : 'Pincode (Optional)',
                         user: widget.user,
                       ),
                     ),
@@ -151,7 +192,10 @@ class LocationContainerState extends State<LocationContainer> {
                       child: TextFormContainer(
                         controller: widget.districtController,
                         // initialValue: portfolio!.addressInfo.district,
-                        labelText: 'District',
+                        labelText:
+                            selectedCountry == 'India'
+                                ? 'District'
+                                : 'District/City (Optional)',
                         user: widget.user,
                       ),
                     ),
@@ -163,7 +207,10 @@ class LocationContainerState extends State<LocationContainer> {
                       child: TextFormContainer(
                         controller: widget.stateController,
                         // initialValue: portfolio!.addressInfo.state,
-                        labelText: 'State',
+                        labelText:
+                            selectedCountry == 'India'
+                                ? 'State'
+                                : 'State/Province (Optional)',
                         user: widget.user,
                       ),
                     ),

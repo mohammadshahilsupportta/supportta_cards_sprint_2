@@ -140,5 +140,23 @@ class AppTheme {
         borderSide: BorderSide(color: CustomColors.textColorLightGrey),
       ),
     ),
+    dropdownMenuTheme: DropdownMenuThemeData(
+      inputDecorationTheme: InputDecorationTheme(
+
+        // floatingLabelStyle: TextStyle(color: CustomColors.textColorLightGrey),
+        // activeIndicatorBorder: ,
+        labelStyle: TextStyle(color: CustomColors.textColorLightGrey),
+        border: OutlineInputBorder(),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: CustomColors.textColorLightGrey),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: CustomColors.textColorLightGrey),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: CustomColors.textColorLightGrey),
+        ),
+      ),
+    ),
   );
 }

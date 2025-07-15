@@ -1,4 +1,3 @@
-
 import 'package:taproot_admin/core/api/base_url_constant.dart';
 import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
@@ -10,8 +9,6 @@ import 'package:taproot_admin/features/order_screen/data/order_status_model.dart
 import 'package:taproot_admin/features/order_screen/data/order_user_model.dart';
 import 'package:taproot_admin/features/product_screen/data/product_model.dart';
 import 'package:taproot_admin/features/users_screen/data/user_paginated_model.dart';
-
-
 
 class OrderService with ErrorExceptionHandler {
   static Future<OrderResponse> getAllOrder({
@@ -267,6 +264,4 @@ class OrderService with ErrorExceptionHandler {
 
     return null;
   }
-
- 
 }

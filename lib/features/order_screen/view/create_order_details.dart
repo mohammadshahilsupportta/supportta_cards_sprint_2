@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
@@ -318,7 +317,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
     stateController.text = portfolio?.addressInfo?.state ?? '';
     pincodeController.text = portfolio?.addressInfo?.pincode ?? '';
     districtController.text = portfolio?.addressInfo?.district ?? '';
-    countryController.text=portfolio?.addressInfo?.country??'';
+    countryController.text = portfolio?.addressInfo?.country ?? '';
     fullNameController.text = portfolio?.personalInfo.name ?? '';
   }
 
@@ -539,7 +538,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
         pincode: pincodeController.text,
         district: districtController.text,
         state: stateController.text,
-        country: countryController.text
+        country: countryController.text,
         // country: 'India',
       );
 
@@ -990,7 +989,7 @@ class _CreateOrderDetailsState extends State<CreateOrderDetails> {
                   pincodecontroller: pincodeController,
                   districtcontroller: districtController,
                   statecontroller: stateController,
-                  countrycontroller: countryController ,
+                  countrycontroller: countryController,
                 ),
               ],
             ),
