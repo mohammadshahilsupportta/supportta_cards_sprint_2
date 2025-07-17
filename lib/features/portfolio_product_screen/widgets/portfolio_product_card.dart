@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:taproot_admin/features/portfolio_product_screen/data/template_model.dart';
 import 'package:taproot_admin/features/portfolio_product_screen/data/template_service.dart';
 import 'package:taproot_admin/features/portfolio_product_screen/widgets/template_detail_row.dart';
+import 'package:taproot_admin/widgets/mini_gradient_border.dart';
+import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
 import '../../../exporter/exporter.dart';
 
@@ -28,6 +30,101 @@ class _PortfolioProductCardState extends State<PortfolioProductCard> {
   String capitalize(String text) {
     if (text.isEmpty) return text;
     return text[0].toUpperCase() + text.substring(1);
+  }
+
+  void _showConfirmDialog(BuildContext context, bool newValue) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: CustomColors.secondaryColor,
+          title: Text('Confirm Action'),
+          content: Text(
+            'Are you sure you want to ${newValue ? 'enable' : 'disable'} this template?',
+          ),
+          actions: <Widget>[
+            MiniGradientBorderButton(
+              text: 'Cancel',
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            MiniLoadingButton(
+              useGradient: true,
+              needRow: false,
+              onPressed: () async {
+                Navigator.of(context).pop();
+
+                await _updateTemplateStatus(newValue);
+              },
+              text: 'Confirm',
+              gradientColors: CustomColors.borderGradient.colors,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _updateTemplateStatus(bool newValue) async {
+    try {
+      BuildContext dialogContext = context;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext ctx) {
+          dialogContext = ctx;
+          return const Center(child: CircularProgressIndicator());
+        },
+      );
+
+      final success = await TemplateService.isTemplateEnable(
+        templateId: widget.productCard.id ?? '',
+      );
+
+      if (dialogContext.mounted) {
+        Navigator.of(dialogContext).pop();
+      }
+
+      if (!mounted) return;
+
+      if (success) {
+        setState(() {
+          widget.enabledList[widget.enabledIndex] = newValue;
+        });
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Template status updated successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+
+        widget.refreshCartItem();
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Failed to update template status'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error updating template status: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -102,80 +199,88 @@ class _PortfolioProductCardState extends State<PortfolioProductCard> {
                       Gap(CustomPadding.paddingLarge.v),
                       Switch(
                         value: widget.enabledList[widget.enabledIndex],
-                        onChanged: (value) async {
+                        onChanged: (value) {
                           if (!mounted) return;
 
-                          try {
-                            BuildContext dialogContext = context;
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (BuildContext ctx) {
-                                // setState(() {
-                                dialogContext = ctx;
-                                // });
-
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              },
-                            );
-
-                            final success =
-                                await TemplateService.isTemplateEnable(
-                                  templateId: widget.productCard.id ?? '',
-                                );
-
-                            if (dialogContext.mounted) {
-                              Navigator.of(dialogContext).pop();
-                            }
-
-                            if (!mounted) return;
-
-                            if (success) {
-                              setState(() {
-                                widget.enabledList[widget.enabledIndex] = value;
-                              });
-
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Template status updated successfully',
-                                    ),
-                                    backgroundColor: Colors.green,
-                                  ),
-                                );
-                              }
-
-                              widget.refreshCartItem;
-                            } else {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Failed to update template status',
-                                    ),
-                                    backgroundColor: Colors.red,
-                                  ),
-                                );
-                              }
-                            }
-                          } catch (e) {
-                            if (context.mounted) {
-                              Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Error updating template status: $e',
-                                  ),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
-                          }
+                          _showConfirmDialog(context, value);
                         },
                       ),
+                      // Switch(
+                      //   value: widget.enabledList[widget.enabledIndex],
+                      //   onChanged: (value) async {
+                      //     if (!mounted) return;
+
+                      //     try {
+                      //       BuildContext dialogContext = context;
+                      //       showDialog(
+                      //         context: context,
+                      //         barrierDismissible: false,
+                      //         builder: (BuildContext ctx) {
+                      //           // setState(() {
+                      //           dialogContext = ctx;
+                      //           // });
+
+                      //           return const Center(
+                      //             child: CircularProgressIndicator(),
+                      //           );
+                      //         },
+                      //       );
+
+                      //       final success =
+                      //           await TemplateService.isTemplateEnable(
+                      //             templateId: widget.productCard.id ?? '',
+                      //           );
+
+                      //       if (dialogContext.mounted) {
+                      //         Navigator.of(dialogContext).pop();
+                      //       }
+
+                      //       if (!mounted) return;
+
+                      //       if (success) {
+                      //         setState(() {
+                      //           widget.enabledList[widget.enabledIndex] = value;
+                      //         });
+
+                      //         if (context.mounted) {
+                      //           ScaffoldMessenger.of(context).showSnackBar(
+                      //             const SnackBar(
+                      //               content: Text(
+                      //                 'Template status updated successfully',
+                      //               ),
+                      //               backgroundColor: Colors.green,
+                      //             ),
+                      //           );
+                      //         }
+
+                      //         widget.refreshCartItem;
+                      //       } else {
+                      //         if (context.mounted) {
+                      //           ScaffoldMessenger.of(context).showSnackBar(
+                      //             const SnackBar(
+                      //               content: Text(
+                      //                 'Failed to update template status',
+                      //               ),
+                      //               backgroundColor: Colors.red,
+                      //             ),
+                      //           );
+                      //         }
+                      //       }
+                      //     } catch (e) {
+                      //       if (context.mounted) {
+                      //         Navigator.of(context).pop();
+                      //         ScaffoldMessenger.of(context).showSnackBar(
+                      //           SnackBar(
+                      //             content: Text(
+                      //               'Error updating template status: $e',
+                      //             ),
+                      //             backgroundColor: Colors.red,
+                      //           ),
+                      //         );
+                      //       }
+                      //     }
+                      //   },
+                      // ),
                       Gap(CustomPadding.padding.v),
                       Text(
                         widget.enabledList[widget.enabledIndex]
