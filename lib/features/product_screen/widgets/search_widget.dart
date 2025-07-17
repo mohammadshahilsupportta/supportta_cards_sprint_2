@@ -4,20 +4,23 @@ import 'package:taproot_admin/exporter/exporter.dart';
 
 class SearchWidget extends StatelessWidget {
   final String hintText;
+  final Color? iconColor;
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
   const SearchWidget({
     super.key,
     required this.hintText,
-     this.controller,
+    this.controller,
     this.onChanged,
+    this.iconColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: SizeUtils.width / 3.h,
-      child: TextFormField(controller: controller,
+      child: TextFormField(
+        controller: controller,
         onChanged: onChanged,
         decoration: InputDecoration(
           hintText: hintText,
@@ -28,7 +31,7 @@ class SearchWidget extends StatelessWidget {
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(color: CustomColors.textColorLightGrey),
           ),
-          suffixIcon: Icon(LucideIcons.search),
+          suffixIcon: Icon(LucideIcons.search, color: iconColor),
         ),
       ),
     );

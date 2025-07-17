@@ -48,6 +48,7 @@ extension BuildContextExtension on BuildContext {
   TextStyle get inter50018 => displayMedium.copyWith(fontSize: 18);
   TextStyle get inter50024 => displayMedium.copyWith(fontSize: 24);
   TextStyle get inter70016 => displayLarge.copyWith(fontSize: 16);
+  TextStyle get inter70030 => displayLarge.copyWith(fontSize: 30);
 
   TextStyle get inter60024 => titleMedium.copyWith(fontSize: 24);
   TextStyle get inter60012 => titleMedium.copyWith(fontSize: 12);

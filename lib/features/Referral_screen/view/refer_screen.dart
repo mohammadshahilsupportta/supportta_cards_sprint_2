@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
+import 'package:taproot_admin/features/Referral_screen/view/refer_user_details.dart';
+import 'package:taproot_admin/features/Referral_screen/widgets/referal_settings_dialog_box.dart';
+import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
@@ -44,7 +47,26 @@ class _ReferScreenState extends State<ReferScreen> {
                   MiniGradientBorderButton(
                     text: 'Settings',
                     icon: LucideIcons.settings,
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (context) {
+                          return ReferalSettingsDialogBox();
+                          // return Dialog(
+                          //   child: Column(
+                          //     children: [
+                          //       Row(
+                          //         children: [
+                          //           Text('Wallet', style: context.inter60014),
+                          //         ],
+                          //       ),
+                          //     ],
+                          //   ),
+                          // );
+                        },
+                      );
+                    },
 
                     gradient: LinearGradient(
                       colors: CustomColors.borderGradient.colors,
@@ -75,6 +97,20 @@ class _ReferScreenState extends State<ReferScreen> {
                   ),
                 ),
                 child: PaginatedDataTable(
+                  dividerThickness: 0.6,
+                  header: Row(
+                    children: [
+                      SearchWidget(
+                        hintText: 'Search User ID, Name, Number',
+                        iconColor: CustomColors.buttonColor1,
+                      ),
+                    ],
+                  ),
+                  rowsPerPage: 7,
+                  showFirstLastButtons: true,
+                  arrowHeadColor: CustomColors.borderGradient.colors.first,
+                  dataRowMaxHeight: 57.h,
+
                   columns: [
                     DataColumn(
                       label: Text('Full Name', style: headingTextStyle),
@@ -86,7 +122,12 @@ class _ReferScreenState extends State<ReferScreen> {
                     DataColumn(label: Text('Count', style: headingTextStyle)),
 
                     DataColumn(
-                      label: Text('Total Amount', style: headingTextStyle),
+                      label: Column(
+                        children: [
+                          Text('Total Amount', style: headingTextStyle),
+                          Text('(Earned)', style: headingTextStyle),
+                        ],
+                      ),
                     ),
 
                     DataColumn(
@@ -94,7 +135,12 @@ class _ReferScreenState extends State<ReferScreen> {
                     ),
 
                     DataColumn(
-                      label: Text('Wallet Amount', style: headingTextStyle),
+                      label: Column(
+                        children: [
+                          Text('Wallet Amount', style: headingTextStyle),
+                          Text('(Balance)', style: headingTextStyle),
+                        ],
+                      ),
                     ),
                   ],
                   source: ReferDataTableSource(
@@ -131,12 +177,9 @@ class ReferDataTableSource extends DataTableSource {
     // final user = users[actualIndex];
 
     void handleRowTap() {
-      // logWarning('Row tapped: ${user.fullName}');
-      // innerNavigatorKey?.currentState?.push(
-      //   MaterialPageRoute(
-      //     builder: (context) => UserDataUpdateScreen(user: user),
-      //   ),
-      // );
+      innerNavigatorKey?.currentState?.push(
+        MaterialPageRoute(builder: (context) => ReferUserDetails()),
+      );
     }
 
     return DataRow(
@@ -145,7 +188,13 @@ class ReferDataTableSource extends DataTableSource {
           InkWell(
             onTap: handleRowTap,
             child: Center(
-              child: Text("q", style: TextStyle(fontSize: 16.fSize)),
+              child: Text(
+                "Patrick",
+                style: context.inter50016.copyWith(
+                  color: CustomColors.buttonColor1,
+                  fontSize: 16.fSize,
+                ),
+              ),
             ),
           ),
         ),
@@ -153,7 +202,13 @@ class ReferDataTableSource extends DataTableSource {
           InkWell(
             onTap: handleRowTap,
             child: Center(
-              child: Text("q", style: TextStyle(fontSize: 16.fSize)),
+              child: Text(
+                "6873464366",
+                style: context.inter50016.copyWith(
+                  fontSize: 16.fSize,
+                  color: CustomColors.textColorDark,
+                ),
+              ),
             ),
           ),
         ),
@@ -162,7 +217,13 @@ class ReferDataTableSource extends DataTableSource {
           InkWell(
             onTap: handleRowTap,
             child: Center(
-              child: Text("q", style: TextStyle(fontSize: 16.fSize)),
+              child: Text(
+                "10",
+                style: context.inter50016.copyWith(
+                  color: CustomColors.textColorDark,
+                  fontSize: 16.fSize,
+                ),
+              ),
             ),
           ),
         ),
@@ -170,7 +231,24 @@ class ReferDataTableSource extends DataTableSource {
           InkWell(
             onTap: handleRowTap,
             child: Center(
-              child: Text("q", style: TextStyle(fontSize: 16.fSize)),
+              child: Container(
+                width: 100.h,
+                height: 40.v,
+
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(CustomPadding.padding),
+                  color: Color(0xffF4F5F6),
+                ),
+                child: Center(
+                  child: Text(
+                    "₹400.00",
+                    style: context.inter50014.copyWith(
+                      fontSize: 14.fSize,
+                      color: CustomColors.textColorDarkGrey,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ),
@@ -178,7 +256,13 @@ class ReferDataTableSource extends DataTableSource {
           InkWell(
             onTap: handleRowTap,
             child: Center(
-              child: Text("q", style: TextStyle(fontSize: 16.fSize)),
+              child: Text(
+                "₹250.00",
+                style: context.inter50016.copyWith(
+                  color: CustomColors.green,
+                  fontSize: 16.fSize,
+                ),
+              ),
             ),
           ),
         ),
@@ -192,7 +276,24 @@ class ReferDataTableSource extends DataTableSource {
           InkWell(
             onTap: handleRowTap,
             child: Center(
-              child: Text("q", style: TextStyle(fontSize: 16.fSize)),
+              child: Container(
+                width: 100.h,
+                height: 40.v,
+
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(CustomPadding.padding),
+                  color: Color(0xffDCEEF0),
+                ),
+                child: Center(
+                  child: Text(
+                    "₹150.00",
+                    style: context.inter50014.copyWith(
+                      color: CustomColors.buttonColor1,
+                      fontSize: 14.fSize,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ),
