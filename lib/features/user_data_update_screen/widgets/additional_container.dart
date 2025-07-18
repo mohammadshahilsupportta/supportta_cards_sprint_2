@@ -128,6 +128,8 @@ class _AdditionalContainerState extends State<AdditionalContainer> {
   @override
   Widget build(BuildContext context) {
     return CommonUserContainer(
+      height: SizeUtils.height * .34,
+
       title: 'Additional Details',
       children: [
         Row(

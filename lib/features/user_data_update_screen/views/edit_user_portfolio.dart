@@ -185,221 +185,148 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
   Future<void> editPortfolio() async {
     try {
       final portfolio = widget.portfolio!;
-      final Map<String, dynamic> updateData = {};
 
-      try {
-        final Map<String, dynamic> personalInfo = {};
+      // Personal Info updates
+      final personalInfo = PersonalInfo(
+        name:
+            nameController.text != portfolio.personalInfo.name
+                ? nameController.text
+                : portfolio.personalInfo.name,
+        email:
+            emailController.text != portfolio.personalInfo.email
+                ? emailController.text
+                : portfolio.personalInfo.email,
+        phoneNumber:
+            phoneNumberController.text.trim().isNotEmpty
+                ? '${countryCodePhoneController.text}${phoneNumberController.text.trim()}'
+                : portfolio.personalInfo.phoneNumber,
+        whatsappNumber:
+            whatsappNumberController.text.trim().isNotEmpty
+                ? '${countryCodeWhatsappController.text}${whatsappNumberController.text.trim()}'
+                : portfolio.personalInfo.whatsappNumber,
+        alternateNumber:
+            alternateNumberController.text.trim().isNotEmpty
+                ? '${countryCodeAlternativeController.text}${alternateNumberController.text.trim()}'
+                : portfolio.personalInfo.alternateNumber,
+        profilePicture:
+            pickedProfileImage != null
+                ? await _uploadImage(pickedProfileImage!)
+                : portfolio.personalInfo.profilePicture,
+        bannerImage:
+            pickedBannerImage != null
+                ? await _uploadImage(pickedBannerImage!)
+                : portfolio.personalInfo.bannerImage,
+      );
 
-        if (pickedProfileImage?.bytes != null) {
-          try {
-            final profileUploadResult = await PortfolioService.uploadImageFile(
-              pickedProfileImage!.bytes!,
-              pickedProfileImage!.name,
-            );
-            personalInfo['profilePicture'] = {
-              'name': profileUploadResult['name'] ?? '',
-              'key': profileUploadResult['key'] ?? '',
-              'size': profileUploadResult['size'] ?? 0,
-              'mimetype': profileUploadResult['mimetype'] ?? '',
-            };
-          } catch (e) {
-            logError('Error uploading profile: $e');
-          }
-        }
+      // Work Info updates
+      final workInfo = WorkInfo(
+        companyName:
+            companyNameController.text.isNotEmpty
+                ? companyNameController.text
+                : (portfolio.workInfo?.companyName ?? ''),
+        designation:
+            designationcontroller.text.isNotEmpty
+                ? designationcontroller.text
+                : (portfolio.workInfo?.designation ?? ''),
+        workEmail:
+            workemailController.text.isNotEmpty
+                ? workemailController.text
+                : (portfolio.workInfo?.workEmail ?? ''),
+        gstin:
+            gstinController.text.isNotEmpty
+                ? gstinController.text
+                : (portfolio.workInfo?.gstin ?? ''),
+        primaryWebsite:
+            primaryWebsiteController.text.isNotEmpty
+                ? primaryWebsiteController.text
+                : (portfolio.workInfo?.primaryWebsite ?? ''),
+        secondaryWebsite:
+            secondaryWebsiteController.text.isNotEmpty
+                ? secondaryWebsiteController.text
+                : (portfolio.workInfo?.secondaryWebsite ?? ''),
+        companyLogo:
+            pickedLogoImage != null
+                ? await _uploadImage(pickedLogoImage!)
+                : portfolio.workInfo?.companyLogo,
+      );
 
-        if (pickedBannerImage?.bytes != null) {
-          try {
-            final bannerUploadResult = await PortfolioService.uploadImageFile(
-              pickedBannerImage!.bytes!,
-              pickedBannerImage!.name,
-            );
-            personalInfo['bannerImage'] = {
-              'name': bannerUploadResult['name'] ?? '',
-              'key': bannerUploadResult['key'] ?? '',
-              'size': bannerUploadResult['size'] ?? 0,
-              'mimetype': bannerUploadResult['mimetype'] ?? '',
-            };
-          } catch (e) {
-            logError('Error uploading banner: $e');
-          }
-        } else if (isBannerImageRemoved) {
-          personalInfo['bannerImage'] = null;
-        }
+      // Address Info updates
+      final addressInfo = AddressInfo(
+        buildingName:
+            buildingNamecontroller.text != portfolio.addressInfo?.buildingName
+                ? buildingNamecontroller.text
+                : portfolio.addressInfo?.buildingName,
+        area:
+            areaController.text != portfolio.addressInfo?.area
+                ? areaController.text
+                : portfolio.addressInfo?.area,
+        pincode:
+            pincodeController.text != portfolio.addressInfo?.pincode
+                ? pincodeController.text
+                : portfolio.addressInfo?.pincode,
+        district:
+            districtController.text != portfolio.addressInfo?.district
+                ? districtController.text
+                : portfolio.addressInfo?.district,
+        state:
+            stateController.text != portfolio.addressInfo?.state
+                ? stateController.text
+                : portfolio.addressInfo?.state,
+        country:
+            countryController.text != portfolio.addressInfo?.country
+                ? countryController.text
+                : portfolio.addressInfo?.country,
+        mapUrl:
+            mapUrlController.text != portfolio.addressInfo?.mapUrl
+                ? mapUrlController.text
+                : portfolio.addressInfo?.mapUrl,
+      );
 
-        if (nameController.text != portfolio.personalInfo.name) {
-          personalInfo['name'] = nameController.text;
-        }
-        if (emailController.text != portfolio.personalInfo.email) {
-          personalInfo['email'] = emailController.text;
-        }
-        final String phoneCountryCode = countryCodePhoneController.text.trim();
-        final String phoneLocal = phoneNumberController.text.trim();
-        if (phoneLocal.isNotEmpty && phoneCountryCode.isNotEmpty) {
-          final fullPhone = '$phoneCountryCode$phoneLocal';
-          if (fullPhone != portfolio.personalInfo.phoneNumber) {
-            personalInfo['phoneNumber'] = fullPhone;
-          }
-        }
+      // About Info updates
+      final about = About(
+        heading:
+            headingcontroller.text != portfolio.about.heading
+                ? headingcontroller.text
+                : portfolio.about.heading,
+        description:
+            descriptioncontroller.text != portfolio.about.description
+                ? descriptioncontroller.text
+                : portfolio.about.description,
+      );
 
-        final String whatsappCountryCode =
-            countryCodeWhatsappController.text.trim();
-        final String whatsappLocal = whatsappNumberController.text.trim();
-        if (whatsappLocal.isNotEmpty && whatsappCountryCode.isNotEmpty) {
-          final fullWhatsapp = '$whatsappCountryCode$whatsappLocal';
-          if (fullWhatsapp != portfolio.personalInfo.whatsappNumber) {
-            personalInfo['whatsappNumber'] = fullWhatsapp;
-          }
-        }
+      // Social Media updates (if any)
+      // final socialMediaList =
+      //     (theFetchedPortfolio?.socialMedia ?? [])
+      //         .map((social) => SocialMedia.fromJson(social.toJson()))
+      //         .toList();
+      final updatedSocialLinks =
+          socialLinks.isNotEmpty ? socialLinks : portfolio.socialMedia;
+      // Prepare final update data using model classes
+      final updateData = PortfolioDataModel(
+        id: portfolio.id,
+        personalInfo: personalInfo,
+        workInfo: workInfo,
+        addressInfo: addressInfo,
+        about: about,
+        user: portfolio.user,
+        socialMedia: updatedSocialLinks,
+        serviceHeading:
+            serviceHeadController.text != portfolio.serviceHeading
+                ? serviceHeadController.text
+                : portfolio.serviceHeading,
+        services:
+            portfolio.services, // Assuming no service changes, modify as needed
+      );
 
-        final String alternateCountryCode =
-            countryCodeAlternativeController.text.trim();
-        final String alternateLocal = alternateNumberController.text.trim();
-        if (alternateLocal.isNotEmpty && alternateCountryCode.isNotEmpty) {
-          final fullAlternate = '$alternateCountryCode$alternateLocal';
-          if (fullAlternate != portfolio.personalInfo.alternateNumber) {
-            personalInfo['alternateNumber'] = fullAlternate;
-          }
-        }
-
-        updateData['personalInfo'] = {
-          ...personalInfo,
-          if (isBannerImageRemoved && pickedBannerImage == null)
-            'bannerImage': null,
-          if (isProfileImageRemoved && pickedProfileImage == null)
-            'profilePicture': null,
-        };
-      } catch (e) {
-        logError('Error processing personalInfo: $e');
-      }
-
-      try {
-        final Map<String, dynamic> workInfo = {};
-
-        if (pickedLogoImage?.bytes != null) {
-          try {
-            final logoUploadResult = await PortfolioService.uploadImageFile(
-              pickedLogoImage!.bytes!,
-              pickedLogoImage!.name,
-            );
-            workInfo['companyLogo'] = {
-              'name': logoUploadResult['name'] ?? '',
-              'key': logoUploadResult['key'] ?? '',
-              'size': logoUploadResult['size'] ?? 0,
-              'mimetype': logoUploadResult['mimetype'] ?? '',
-            };
-          } catch (e) {
-            logError('Error uploading logo: $e');
-          }
-        } else if (isLogoImageRemoved) {
-          workInfo['companyLogo'] = null;
-        }
-
-        if (companyNameController.text != portfolio.workInfo?.companyName) {
-          workInfo['companyName'] = companyNameController.text;
-        }
-        if (designationcontroller.text != portfolio.workInfo?.designation) {
-          workInfo['designation'] = designationcontroller.text;
-        }
-        if (workemailController.text != portfolio.workInfo?.workEmail) {
-          workInfo['workEmail'] = workemailController.text;
-        }
-        if (gstinController.text != portfolio.workInfo?.gstin) {
-          workInfo['gstin'] = gstinController.text;
-        }
-        if (primaryWebsiteController.text !=
-            portfolio.workInfo?.primaryWebsite) {
-          workInfo['primaryWebsite'] = primaryWebsiteController.text;
-        }
-        if (secondaryWebsiteController.text !=
-            portfolio.workInfo?.secondaryWebsite) {
-          workInfo['secondaryWebsite'] = secondaryWebsiteController.text;
-        }
-        updateData['workInfo'] = {
-          ...workInfo,
-          if (isLogoImageRemoved && pickedLogoImage == null)
-            'companyLogo': null,
-        };
-      } catch (e) {
-        logError('Error processing workInfo: $e');
-      }
-
-      try {
-        final Map<String, dynamic> addressInfo = {};
-        if (buildingNamecontroller.text !=
-            portfolio.addressInfo?.buildingName) {
-          addressInfo['buildingName'] = buildingNamecontroller.text;
-        }
-        if (areaController.text != portfolio.addressInfo?.area) {
-          addressInfo['area'] = areaController.text;
-        }
-        if (pincodeController.text != portfolio.addressInfo?.pincode) {
-          addressInfo['pincode'] = pincodeController.text;
-        }
-        if (districtController.text != portfolio.addressInfo?.district) {
-          addressInfo['district'] = districtController.text;
-        }
-        if (stateController.text != portfolio.addressInfo?.state) {
-          addressInfo['state'] = stateController.text;
-        }
-        if (countryController.text != portfolio.addressInfo?.country) {
-          addressInfo['country'] = countryController.text;
-        }
-        if (mapUrlController.text != portfolio.addressInfo?.mapUrl) {
-          addressInfo['mapUrl'] = mapUrlController.text;
-        }
-
-        if (addressInfo.isNotEmpty) {
-          updateData['addressInfo'] = addressInfo;
-        }
-      } catch (e) {
-        logError('Error processing addressInfo: $e');
-      }
-
-      try {
-        final Map<String, dynamic> about = {};
-        if (headingcontroller.text != portfolio.about.heading) {
-          about['heading'] = headingcontroller.text;
-        }
-        if (descriptioncontroller.text != portfolio.about.description) {
-          about['description'] = descriptioncontroller.text;
-        }
-
-        if (about.isNotEmpty) {
-          updateData['about'] = about;
-        }
-      } catch (e) {
-        logError('Error processing about: $e');
-      }
-
-      try {
-        if (serviceHeadController.text != portfolio.serviceHeading) {
-          updateData['serviceHeading'] = serviceHeadController.text;
-        }
-      } catch (e) {
-        logError('Error processing serviceHeading: $e');
-      }
-
-      try {
-        if (theFetchedPortfolio?.socialMedia != null) {
-          final socialMediaList =
-              theFetchedPortfolio!.socialMedia
-                  .map((social) => social.toJson())
-                  .toList();
-
-          if (socialMediaList.isNotEmpty) {
-            updateData['socialMedia'] = socialMediaList;
-          }
-        }
-      } catch (e) {
-        logError('Error processing socialMedia: $e');
-      }
-
-      if (updateData.isNotEmpty) {
-        logSuccess('Sending update with changed fields: $updateData');
-
+      // Send update if there are any changes
+      if (personalInfo != portfolio.personalInfo ||
+          workInfo != portfolio.workInfo ||
+          addressInfo != portfolio.addressInfo ||
+          about != portfolio.about ||
+          updatedSocialLinks != portfolio.socialMedia) {
         await PortfolioService.editPortfolio(
           userid: widget.user.id,
-          portfolioEditedData: updateData,
+          portfolioEditedData: updateData.toJson(),
         );
 
         if (mounted) {
@@ -418,6 +345,243 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       }
     }
   }
+
+  // Future<void> editPortfolio() async {
+  //   try {
+  //     final portfolio = widget.portfolio!;
+  //     final Map<String, dynamic> updateData = {};
+
+  //     try {
+  //       final Map<String, dynamic> personalInfo = {};
+
+  //       if (pickedProfileImage?.bytes != null) {
+  //         try {
+  //           final profileUploadResult = await PortfolioService.uploadImageFile(
+  //             pickedProfileImage!.bytes!,
+  //             pickedProfileImage!.name,
+  //           );
+  //           personalInfo['profilePicture'] = {
+  //             'name': profileUploadResult['name'] ?? '',
+  //             'key': profileUploadResult['key'] ?? '',
+  //             'size': profileUploadResult['size'] ?? 0,
+  //             'mimetype': profileUploadResult['mimetype'] ?? '',
+  //           };
+  //         } catch (e) {
+  //           logError('Error uploading profile: $e');
+  //         }
+  //       }
+
+  //       if (pickedBannerImage?.bytes != null) {
+  //         try {
+  //           final bannerUploadResult = await PortfolioService.uploadImageFile(
+  //             pickedBannerImage!.bytes!,
+  //             pickedBannerImage!.name,
+  //           );
+  //           personalInfo['bannerImage'] = {
+  //             'name': bannerUploadResult['name'] ?? '',
+  //             'key': bannerUploadResult['key'] ?? '',
+  //             'size': bannerUploadResult['size'] ?? 0,
+  //             'mimetype': bannerUploadResult['mimetype'] ?? '',
+  //           };
+  //         } catch (e) {
+  //           logError('Error uploading banner: $e');
+  //         }
+  //       } else if (isBannerImageRemoved) {
+  //         personalInfo['bannerImage'] = null;
+  //       }
+
+  //       if (nameController.text != portfolio.personalInfo.name) {
+  //         personalInfo['name'] = nameController.text;
+  //       }
+  //       if (emailController.text != portfolio.personalInfo.email) {
+  //         personalInfo['email'] = emailController.text;
+  //       }
+  //       final String phoneCountryCode = countryCodePhoneController.text.trim();
+  //       final String phoneLocal = phoneNumberController.text.trim();
+  //       if (phoneLocal.isNotEmpty && phoneCountryCode.isNotEmpty) {
+  //         final fullPhone = '$phoneCountryCode$phoneLocal';
+  //         if (fullPhone != portfolio.personalInfo.phoneNumber) {
+  //           personalInfo['phoneNumber'] = fullPhone;
+  //         }
+  //       }
+
+  //       final String whatsappCountryCode =
+  //           countryCodeWhatsappController.text.trim();
+  //       final String whatsappLocal = whatsappNumberController.text.trim();
+  //       if (whatsappLocal.isNotEmpty && whatsappCountryCode.isNotEmpty) {
+  //         final fullWhatsapp = '$whatsappCountryCode$whatsappLocal';
+  //         if (fullWhatsapp != portfolio.personalInfo.whatsappNumber) {
+  //           personalInfo['whatsappNumber'] = fullWhatsapp;
+  //         }
+  //       }
+
+  //       final String alternateCountryCode =
+  //           countryCodeAlternativeController.text.trim();
+  //       final String alternateLocal = alternateNumberController.text.trim();
+  //       if (alternateLocal.isNotEmpty && alternateCountryCode.isNotEmpty) {
+  //         final fullAlternate = '$alternateCountryCode$alternateLocal';
+  //         if (fullAlternate != portfolio.personalInfo.alternateNumber) {
+  //           personalInfo['alternateNumber'] = fullAlternate;
+  //         }
+  //       }
+
+  //       updateData['personalInfo'] = {
+  //         ...personalInfo,
+  //         if (isBannerImageRemoved && pickedBannerImage == null)
+  //           'bannerImage': null,
+  //         if (isProfileImageRemoved && pickedProfileImage == null)
+  //           'profilePicture': null,
+  //       };
+  //     } catch (e) {
+  //       logError('Error processing personalInfo: $e');
+  //     }
+
+  //     try {
+  //       final Map<String, dynamic> workInfo = {};
+
+  //       if (pickedLogoImage?.bytes != null) {
+  //         try {
+  //           final logoUploadResult = await PortfolioService.uploadImageFile(
+  //             pickedLogoImage!.bytes!,
+  //             pickedLogoImage!.name,
+  //           );
+  //           workInfo['companyLogo'] = {
+  //             'name': logoUploadResult['name'] ?? '',
+  //             'key': logoUploadResult['key'] ?? '',
+  //             'size': logoUploadResult['size'] ?? 0,
+  //             'mimetype': logoUploadResult['mimetype'] ?? '',
+  //           };
+  //         } catch (e) {
+  //           logError('Error uploading logo: $e');
+  //         }
+  //       } else if (isLogoImageRemoved) {
+  //         workInfo['companyLogo'] = null;
+  //       }
+
+  //       if (companyNameController.text != portfolio.workInfo?.companyName) {
+  //         workInfo['companyName'] = companyNameController.text;
+  //       }
+  //       if (designationcontroller.text != portfolio.workInfo?.designation) {
+  //         workInfo['designation'] = designationcontroller.text;
+  //       }
+  //       if (workemailController.text != portfolio.workInfo?.workEmail) {
+  //         workInfo['workEmail'] = workemailController.text;
+  //       }
+  //       if (gstinController.text != portfolio.workInfo?.gstin) {
+  //         workInfo['gstin'] = gstinController.text;
+  //       }
+  //       if (primaryWebsiteController.text !=
+  //           portfolio.workInfo?.primaryWebsite) {
+  //         workInfo['primaryWebsite'] = primaryWebsiteController.text;
+  //       }
+  //       if (secondaryWebsiteController.text !=
+  //           portfolio.workInfo?.secondaryWebsite) {
+  //         workInfo['secondaryWebsite'] = secondaryWebsiteController.text;
+  //       }
+  //       updateData['workInfo'] = {
+  //         ...workInfo,
+  //         if (isLogoImageRemoved && pickedLogoImage == null)
+  //           'companyLogo': null,
+  //       };
+  //     } catch (e) {
+  //       logError('Error processing workInfo: $e');
+  //     }
+
+  //     try {
+  //       final Map<String, dynamic> addressInfo = {};
+  //       if (buildingNamecontroller.text !=
+  //           portfolio.addressInfo?.buildingName) {
+  //         addressInfo['buildingName'] = buildingNamecontroller.text;
+  //       }
+  //       if (areaController.text != portfolio.addressInfo?.area) {
+  //         addressInfo['area'] = areaController.text;
+  //       }
+  //       if (pincodeController.text != portfolio.addressInfo?.pincode) {
+  //         addressInfo['pincode'] = pincodeController.text;
+  //       }
+  //       if (districtController.text != portfolio.addressInfo?.district) {
+  //         addressInfo['district'] = districtController.text;
+  //       }
+  //       if (stateController.text != portfolio.addressInfo?.state) {
+  //         addressInfo['state'] = stateController.text;
+  //       }
+  //       if (countryController.text != portfolio.addressInfo?.country) {
+  //         addressInfo['country'] = countryController.text;
+  //       }
+  //       if (mapUrlController.text != portfolio.addressInfo?.mapUrl) {
+  //         addressInfo['mapUrl'] = mapUrlController.text;
+  //       }
+
+  //       if (addressInfo.isNotEmpty) {
+  //         updateData['addressInfo'] = addressInfo;
+  //       }
+  //     } catch (e) {
+  //       logError('Error processing addressInfo: $e');
+  //     }
+
+  //     try {
+  //       final Map<String, dynamic> about = {};
+  //       if (headingcontroller.text != portfolio.about.heading) {
+  //         about['heading'] = headingcontroller.text;
+  //       }
+  //       if (descriptioncontroller.text != portfolio.about.description) {
+  //         about['description'] = descriptioncontroller.text;
+  //       }
+
+  //       if (about.isNotEmpty) {
+  //         updateData['about'] = about;
+  //       }
+  //     } catch (e) {
+  //       logError('Error processing about: $e');
+  //     }
+
+  //     try {
+  //       if (serviceHeadController.text != portfolio.serviceHeading) {
+  //         updateData['serviceHeading'] = serviceHeadController.text;
+  //       }
+  //     } catch (e) {
+  //       logError('Error processing serviceHeading: $e');
+  //     }
+
+  //     try {
+  //       if (theFetchedPortfolio?.socialMedia != null) {
+  //         final socialMediaList =
+  //             theFetchedPortfolio!.socialMedia
+  //                 .map((social) => social.toJson())
+  //                 .toList();
+
+  //         if (socialMediaList.isNotEmpty) {
+  //           updateData['socialMedia'] = socialMediaList;
+  //         }
+  //       }
+  //     } catch (e) {
+  //       logError('Error processing socialMedia: $e');
+  //     }
+
+  //     if (updateData.isNotEmpty) {
+  //       logSuccess('Sending update with changed fields: $updateData');
+
+  //       await PortfolioService.editPortfolio(
+  //         userid: widget.user.id,
+  //         portfolioEditedData: updateData,
+  //       );
+
+  //       if (mounted) {
+  //         SnackbarHelper.showSuccess(context, 'Portfolio updated successfully');
+  //       }
+  //     } else {
+  //       if (mounted) {
+  //         SnackbarHelper.showInfo(context, 'No changes to update');
+  //       }
+  //     }
+  //   } catch (e, stackTrace) {
+  //     logError('Error editing portfolio: $e');
+  //     logError('Stack trace: $stackTrace');
+  //     if (mounted) {
+  //       SnackbarHelper.showError(context, 'Failed to update portfolio: $e');
+  //     }
+  //   }
+  // }
 
   bool isLoading = false;
 
@@ -509,6 +673,24 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       if (mounted) {
         SnackbarHelper.showError(context, 'Error uploading profile image: $e');
       }
+    }
+  }
+
+  Future<ProductImage?> _uploadImage(PlatformFile pickedImage) async {
+    try {
+      final uploadResult = await PortfolioService.uploadImageFile(
+        pickedImage.bytes!,
+        pickedImage.name,
+      );
+      return ProductImage(
+        name: uploadResult['name'] ?? '',
+        key: uploadResult['key'] ?? '',
+        size: uploadResult['size'] ?? 0,
+        mimetype: uploadResult['mimetype'] ?? '',
+      );
+    } catch (e) {
+      logError('Error uploading image: $e');
+      return null;
     }
   }
 

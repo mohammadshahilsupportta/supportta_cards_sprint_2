@@ -168,7 +168,7 @@ class _UserProfileContainerState extends State<UserProfileContainer>
           borderRadius: BorderRadius.circular(CustomPadding.paddingLarge),
         ),
         // height: SizeUtils.height * 0.475,
-        height: SizeUtils.height * .55,
+        height: widget.isEdit ? SizeUtils.height * .55 : SizeUtils.height * .47,
 
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

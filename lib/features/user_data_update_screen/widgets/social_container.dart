@@ -8,6 +8,7 @@ import 'package:taproot_admin/features/user_data_update_screen/widgets/social_me
 import 'package:taproot_admin/features/users_screen/data/user_data_model.dart';
 import 'package:taproot_admin/gen/assets.gen.dart';
 import 'package:taproot_admin/services/size_utils.dart';
+
 import 'link_container.dart';
 
 class SocialContainer extends StatefulWidget {
@@ -37,6 +38,7 @@ class _SocialContainerState extends State<SocialContainer> {
     'linkedin',
     'behance',
     'youtube',
+    'threads',
   ];
 
   late List<SocialMedia> socialLinks;

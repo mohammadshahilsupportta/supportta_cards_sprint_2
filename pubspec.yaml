@@ -28,96 +28,74 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  animations: ^2.0.11
+  auto_size_text: ^3.0.0
+  build_runner: ^2.4.15
+  cached_network_image: ^3.4.1
+  connectivity_plus: ^6.1.4
+  country_code_picker: ^3.3.0
+  cupertino_icons: ^1.0.8
+  dartz: ^0.10.1
+  device_info_plus: ^11.3.3
+  dio: ^5.8.0+1
+  dio_cookie_manager: ^3.2.0
+  dotted_border: ^3.0.1
+  easy_sidemenu: ^0.6.1
+  file_picker: ^10.1.0
+  file_saver: ^0.2.14
+  firebase_analytics: ^11.4.5
   flutter:
     sdk: flutter
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
-  dio: ^5.8.0+1
-  dartz: ^0.10.1
-  flutter_spinkit: ^5.2.1
-  pinput: ^5.0.1
-  google_sign_in: ^6.3.0
-  country_code_picker: ^3.3.0
-  # firebase_auth: ^5.5.2
-  # firebase_core: ^3.13.0
-  firebase_analytics: ^11.4.5
-  flutter_svg: ^2.0.17
-  animations: ^2.0.11
-  jwt_decoder: ^2.0.1
-  get: ^4.7.2
-  hive: ^2.2.3
-  path_provider: ^2.1.5
   flutter_animate: ^4.5.2
-  # firebase_messaging: ^15.2.5
-  webview_flutter: ^4.10.0
-  # firebase_crashlytics: ^4.3.5
-  gap: ^3.0.1
-  lottie: ^3.3.1
-  device_info_plus: ^11.3.3
-  package_info_plus: ^8.3.0
-  file_picker: ^10.1.0
-  image_picker: ^1.1.2
-  image_cropper: ^9.1.0
-  url_launcher: ^6.3.1
-  # cloud_firestore: ^5.6.6
-  intl: "any"
-  # intl: ~0.19.0
-
-
-  # geolocator: ^13.0.4
-  # geocoding: ^3.0.0
-  dotted_border: ^3.0.1
-  cached_network_image: ^3.4.1
-  flutter_typeahead: ^5.2.0
-  infinite_scroll_pagination: ^5.0.0
-  fluttertoast: ^8.2.12
-  dio_cookie_manager: ^3.2.0
-  auto_size_text: ^3.0.0
-  connectivity_plus: ^6.1.4
-  flutter_local_notifications: ^19.0.0
-  permission_handler: ^12.0.0+1
-  google_maps_flutter: ^2.12.1
-  screen_protector: ^1.4.2+1
-  build_runner: ^2.4.15
-  flutter_gen: ^5.10.0
-  lucide_icons_flutter: ^2.0.3
-
-  easy_sidemenu: ^0.6.1
-  # used 0.6.1 version easy sidemenu when develop
-  lucide_icons: ^0.257.0
-  syncfusion_flutter_charts: ^29.1.40
-  flutter_regex: ^0.0.3
-  http_parser: ^4.1.2
-  searchable_listview: ^2.17.3
-  shimmer: ^3.0.0
-  qr_flutter: ^4.1.0
-  file_saver: ^0.2.14
-  window_size: ^0.1.0
-  one_clock: ^1.0.1
-  flutter_localizations_plus: ^0.2.7
+  flutter_gen: ^5.11.0
   flutter_local_network_ios: ^0.0.1
+  flutter_local_notifications: ^19.0.0
   flutter_localizations:
     sdk: flutter
+  flutter_localizations_plus: ^0.2.7
+  flutter_regex: ^0.0.3
+  flutter_spinkit: ^5.2.1
+  flutter_svg: ^2.0.17
+  flutter_typeahead: ^5.2.0
+  fluttertoast: ^8.2.12
+  gap: ^3.0.1
+  get: ^4.7.2
+  google_maps_flutter: ^2.12.1
+  google_sign_in: ^6.3.0
+  hive: ^2.2.3
+  http_parser: ^4.1.2
+  image_cropper: ^9.1.0
+  image_picker: ^1.1.2
+  infinite_scroll_pagination: ^5.0.0
+  intl: any
+  jwt_decoder: ^2.0.1
+  lottie: ^3.3.1
+  lucide_icons: ^0.257.0
+  lucide_icons_flutter: ^2.0.3
+  one_clock: ^1.0.1
+  package_info_plus: ^8.3.0
+  path_provider: ^2.1.5
+  permission_handler: ^12.0.0+1
+  pinput: ^5.0.1
   pretty_qr_code: ^3.4.0
-  
-  
+  qr_flutter: ^4.1.0
+  screen_protector: ^1.4.2+1
+  searchable_listview: ^2.17.3
+  shimmer: ^3.0.0
+  syncfusion_flutter_charts: ^29.1.40
+  url_launcher: ^6.3.1
+  webview_flutter: ^4.10.0
+  window_size: ^0.1.0
 
 dev_dependencies:
+  build_runner: ^2.6.0
+  flutter_gen: ^5.11.0
+  flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
-  flutter_lints: ^5.0.0
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter packages.
 flutter:
 
@@ -132,19 +110,15 @@ flutter:
     # - images/a_dot_ham.jpeg
     - assets/png/
   #   - images/a_dot_ham.jpeg
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
-
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/to/asset-from-package
-
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-
   fonts:
     - family: Inter
       fonts:
@@ -202,8 +176,5 @@ flutter:
         - asset: assets/fonts/Inter_28pt-SemiBoldItalic.ttf
         - asset: assets/fonts/Inter_28pt-Thin.ttf
         - asset: assets/fonts/Inter_28pt-ThinItalic.ttf
-        
-
-  #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

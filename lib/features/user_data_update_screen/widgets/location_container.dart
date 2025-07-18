@@ -120,7 +120,7 @@ class LocationContainerState extends State<LocationContainer> {
   @override
   Widget build(BuildContext context) {
     return CommonUserContainer(
-      height: SizeUtils.height * .65,
+      height: widget.isEdit ? SizeUtils.height * .65 : SizeUtils.height * .5,
 
       title: 'Location',
       children:

@@ -148,7 +148,7 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
       '🌍 ISO for initialSelection: ${GetCountryCode().getIsoCodeFromFullNumber(widget.countryCodephoneController?.text ?? "+91")}',
     );
     return CommonUserContainer(
-      height: SizeUtils.height * .55,
+      height: widget.isEdit ? SizeUtils.height * .55 : SizeUtils.height * .47,
 
       title: 'Basic Details',
       children: [

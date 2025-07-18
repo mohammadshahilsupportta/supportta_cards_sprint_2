@@ -88,7 +88,7 @@ class ProfileContainerState extends State<ProfileContainer> {
   @override
   Widget build(BuildContext context) {
     return CommonUserContainer(
-      height: SizeUtils.height * .57,
+      height: widget.isEdit ? SizeUtils.height * .65 : SizeUtils.height * .5,
 
       title: 'Profile',
       children: [
