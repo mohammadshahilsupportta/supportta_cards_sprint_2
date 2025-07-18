@@ -19,6 +19,10 @@ class BasicDetailContainer extends StatefulWidget {
   final TextEditingController? emailController;
   final TextEditingController? phoneController;
   final TextEditingController? whatsappController;
+  final TextEditingController? alternateController;
+
+  final TextEditingController? countryCodeAlternateController;
+
   final TextEditingController? countryCodephoneController;
   final TextEditingController? countryCodewhatsappController;
   final PortfolioDataModel? portfolio;
@@ -40,6 +44,8 @@ class BasicDetailContainer extends StatefulWidget {
     this.whatsappController,
     this.countryCodephoneController,
     this.countryCodewhatsappController,
+    this.alternateController,
+    this.countryCodeAlternateController,
   });
 
   @override
@@ -70,9 +76,11 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
 
       final phone = widget.portfolio?.personalInfo.phoneNumber ?? '';
       final whatsapp = widget.portfolio?.personalInfo.whatsappNumber ?? '';
+      final alternate = widget.portfolio?.personalInfo.alternateNumber ?? '';
 
       final phoneSplit = splitPhoneNumber(phone);
       final whatsappSplit = splitPhoneNumber(whatsapp);
+      final alternateSplit = splitPhoneNumber(alternate);
 
       widget.countryCodephoneController?.text = phoneSplit['countryCode']!;
       widget.phoneController?.text = phoneSplit['number']!;
@@ -80,6 +88,10 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
       widget.countryCodewhatsappController?.text =
           whatsappSplit['countryCode']!;
       widget.whatsappController?.text = whatsappSplit['number']!;
+
+      widget.countryCodeAlternateController?.text =
+          alternateSplit['countryCode']!;
+      widget.alternateController?.text = alternateSplit['number']!;
     }
   }
 
@@ -111,6 +123,13 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
     final whatsapp = widget.portfolio?.personalInfo.whatsappNumber;
     return (whatsapp != null && whatsapp.trim().isNotEmpty)
         ? whatsapp
+        : 'No Data Available';
+  }
+
+  String getAlternate() {
+    final alternate = widget.portfolio?.personalInfo.alternateNumber;
+    return (alternate != null && alternate.trim().isNotEmpty)
+        ? alternate
         : 'No Data Available';
   }
 
@@ -265,6 +284,32 @@ class _BasicDetailContainerState extends State<BasicDetailContainer> {
               //     widget.portfolio?.personalInfo.whatsappNumber ??
               //     'No Data Available',
             ),
+        widget.isEdit
+            ? TextFormContainer(
+              isNumberField: true,
+              controller: widget.alternateController,
+              labelText: 'Alternate Number',
+              user: widget.user,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              countryCodeWidget: CountryCodePicker(
+                dialogSize: Size(SizeUtils.width * 0.4, SizeUtils.height * 0.7),
+
+                initialSelection: GetCountryCode().getIsoCodeFromFullNumber(
+                  '${widget.countryCodeAlternateController?.text ?? '+91'}${widget.alternateController?.text ?? ''}',
+                ),
+
+                onChanged: (value) {
+                  widget.countryCodeAlternateController?.text = value.dialCode!;
+                },
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Phone number is required';
+                }
+                return null;
+              },
+            )
+            : DetailRow(label: 'Alternate Number', value: getAlternate()),
         widget.isEdit
             ? SizedBox()
             : DetailRowCopy(

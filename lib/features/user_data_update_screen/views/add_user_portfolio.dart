@@ -152,7 +152,7 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
 
       final portfolio = PortfolioDataModel(
         id: '',
-        personalInfo: PersonalInfo(
+        personalInfo: PersonalInfo(alternateNumber: '',
           profilePicture: profilePicture,
           bannerImage: bannerImage,
           name: nameController.text,

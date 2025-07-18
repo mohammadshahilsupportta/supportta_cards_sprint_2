@@ -79,6 +79,7 @@ class PersonalInfo {
   final String email;
   final String phoneNumber;
   final String whatsappNumber;
+  final String alternateNumber;
   final ProductImage? profilePicture;
   final ProductImage? bannerImage;
 
@@ -87,6 +88,7 @@ class PersonalInfo {
     required this.email,
     required this.phoneNumber,
     required this.whatsappNumber,
+    required this.alternateNumber,
     this.profilePicture,
     this.bannerImage,
   });
@@ -96,6 +98,7 @@ class PersonalInfo {
       email: json['email'] ?? '',
       phoneNumber: json['phoneNumber'] ?? '',
       whatsappNumber: json['whatsappNumber'] ?? '',
+      alternateNumber: json['alternateNumber']??'',
       profilePicture:
           json['profilePicture'] != null
               ? ProductImage.fromJson(json['profilePicture'])
@@ -112,6 +115,7 @@ class PersonalInfo {
     'email': email,
     'phoneNumber': phoneNumber,
     'whatsappNumber': whatsappNumber,
+    'alternateNumber':alternateNumber,
     'profilePicture': profilePicture?.toJson(),
     'bannerImage': bannerImage?.toJson(),
   };
@@ -173,8 +177,7 @@ class WorkInfo {
     required this.primaryWebsite,
     required this.secondaryWebsite,
     this.companyLogo,
-        required this.gstin,
-
+    required this.gstin,
   });
   factory WorkInfo.fromJson(Map<String, dynamic> json) {
     return WorkInfo(
@@ -187,7 +190,7 @@ class WorkInfo {
           json['companyLogo'] != null
               ? ProductImage.fromJson(json['companyLogo'])
               : null,
-      gstin: json['gstin'] ?? '',        
+      gstin: json['gstin'] ?? '',
     );
   }
 

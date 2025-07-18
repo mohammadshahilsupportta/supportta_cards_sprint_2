@@ -64,6 +64,11 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController whatsappNumberController =
       TextEditingController();
+  final TextEditingController alternateNumberController =
+      TextEditingController();
+  final TextEditingController countryCodeAlternativeController =
+      TextEditingController();
+
   final TextEditingController designationcontroller = TextEditingController();
   final TextEditingController companyNameController = TextEditingController();
   final TextEditingController workemailController = TextEditingController();
@@ -106,13 +111,13 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
     final fullPhone = theFetchedPortfolio?.personalInfo.phoneNumber ?? '';
     final phoneMatch = RegExp(r'^(\+\d{1,4})(\d+)$').firstMatch(fullPhone);
     if (phoneMatch != null) {
-      countryCodePhoneController.text = phoneMatch.group(1)!; // +971
-      phoneNumberController.text = phoneMatch.group(2)!; // 509999999
+      countryCodePhoneController.text = phoneMatch.group(1)!;
+      phoneNumberController.text = phoneMatch.group(2)!;
     } else if (fullPhone.startsWith('+')) {
-      countryCodePhoneController.text = fullPhone.substring(0, 4); // +971
-      phoneNumberController.text = fullPhone.substring(4); // rest
+      countryCodePhoneController.text = fullPhone.substring(0, 4);
+      phoneNumberController.text = fullPhone.substring(4);
     } else {
-      countryCodePhoneController.text = ''; // do not assume India
+      countryCodePhoneController.text = '';
       phoneNumberController.text = fullPhone;
     }
 
@@ -130,27 +135,22 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
       countryCodeWhatsappController.text = '';
       whatsappNumberController.text = fullWhatsapp;
     }
-    // final fullPhone = theFetchedPortfolio?.personalInfo.phoneNumber ?? '';
-    // final phoneMatch = RegExp(r'^(\+\d{1,4})(\d+)$').firstMatch(fullPhone);
-    // if (phoneMatch != null) {
-    //   countryCodePhoneController.text = phoneMatch.group(1)!;
-    //   phoneNumberController.text = phoneMatch.group(2)!;
-    // } else {
-    //   countryCodePhoneController.text = '';
-    //   phoneNumberController.text = fullPhone;
-    // }
 
-    // final fullWhatsapp = theFetchedPortfolio?.personalInfo.whatsappNumber ?? '';
-    // final whatsappMatch = RegExp(
-    //   r'^(\+\d{1,4})(\d+)$',
-    // ).firstMatch(fullWhatsapp);
-    // if (whatsappMatch != null) {
-    //   countryCodeWhatsappController.text = whatsappMatch.group(1)!;
-    //   whatsappNumberController.text = whatsappMatch.group(2)!;
-    // } else {
-    //   countryCodeWhatsappController.text = '';
-    //   whatsappNumberController.text = fullWhatsapp;
-    // }
+    final fullAlternate =
+        theFetchedPortfolio?.personalInfo.alternateNumber ?? '';
+    final alternateMatch = RegExp(
+      r'^(\+\d{1,4})(\d+)$',
+    ).firstMatch(fullAlternate);
+    if (alternateMatch != null) {
+      countryCodeAlternativeController.text = alternateMatch.group(1)!;
+      alternateNumberController.text = alternateMatch.group(2)!;
+    } else if (fullAlternate.startsWith('+')) {
+      countryCodeAlternativeController.text = fullAlternate.substring(0, 4);
+      alternateNumberController.text = fullAlternate.substring(4);
+    } else {
+      countryCodeAlternativeController.text = '';
+      alternateNumberController.text = fullAlternate;
+    }
 
     companyNameController.text =
         theFetchedPortfolio!.workInfo?.companyName ?? "";
@@ -251,19 +251,15 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
           }
         }
 
-        // if (countryCodePhoneController.text + phoneNumberController.text !=
-        //     portfolio.personalInfo.phoneNumber) {
-        //   personalInfo['phoneNumber'] =
-        //       countryCodePhoneController.text + phoneNumberController.text;
-        // }
-
-        // if (countryCodeWhatsappController.text +
-        //         whatsappNumberController.text !=
-        //     portfolio.personalInfo.whatsappNumber) {
-        //   personalInfo['whatsappNumber'] =
-        //       countryCodeWhatsappController.text +
-        //       whatsappNumberController.text;
-        // }
+        final String alternateCountryCode =
+            countryCodeAlternativeController.text.trim();
+        final String alternateLocal = alternateNumberController.text.trim();
+        if (alternateLocal.isNotEmpty && alternateCountryCode.isNotEmpty) {
+          final fullAlternate = '$alternateCountryCode$alternateLocal';
+          if (fullAlternate != portfolio.personalInfo.alternateNumber) {
+            personalInfo['alternateNumber'] = fullAlternate;
+          }
+        }
 
         updateData['personalInfo'] = {
           ...personalInfo,
@@ -602,6 +598,9 @@ class _EditUserPortfolioState extends State<EditUserPortfolio> {
                     emailController: emailController,
                     whatsappController: whatsappNumberController,
                     phoneController: phoneNumberController,
+                    alternateController: alternateNumberController,
+                    countryCodeAlternateController:
+                        countryCodeAlternativeController,
 
                     user: widget.user,
                     isEdit: true,
