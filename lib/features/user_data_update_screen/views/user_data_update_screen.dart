@@ -24,14 +24,13 @@ class UserDataUpdateScreen extends StatefulWidget {
   final dynamic user;
   // final PortfolioDataModel? userData;
   static const path = '/userDataUpdateScreen';
-  const UserDataUpdateScreen({super.key, required this.user, });
+  const UserDataUpdateScreen({super.key, required this.user});
 
   @override
   State<UserDataUpdateScreen> createState() => _UserDataUpdateScreenState();
 }
 
 class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
-
   // final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController refController = TextEditingController();
@@ -124,6 +123,165 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
     return null;
   }
 
+  bool _areRequiredFieldsComplete() {
+    if (portfolio == null) return false;
+
+    // Check profile image
+    bool hasProfileImage = portfolio!.personalInfo.profilePicture?.key != null;
+
+    // Check name
+    bool hasName = portfolio!.personalInfo.name?.isNotEmpty == true;
+
+    // Check email
+    bool hasEmail = portfolio!.personalInfo.email?.isNotEmpty == true;
+
+    // Check WhatsApp number
+    bool hasWhatsApp =
+        portfolio!.personalInfo.whatsappNumber?.isNotEmpty == true;
+
+    // Check designation
+    bool hasDesignation = portfolio!.workInfo?.designation?.isNotEmpty == true;
+
+    // Check at least one social media link
+    bool hasSocialMedia = _hasAtLeastOneSocialLink();
+
+    return hasProfileImage &&
+        hasName &&
+        hasEmail &&
+        hasWhatsApp &&
+        hasDesignation &&
+        hasSocialMedia;
+  }
+
+  bool _hasAtLeastOneSocialLink() {
+    if (portfolio?.socialMedia == null || portfolio!.socialMedia.isEmpty) {
+      return false;
+    }
+
+    // Check if any social media link has a non-empty link value
+    return portfolio!.socialMedia.any(
+      (socialMedia) =>
+          socialMedia.link.isNotEmpty && socialMedia.link.trim().isNotEmpty,
+    );
+  }
+
+  List<String> _getMissingFields() {
+    List<String> missingFields = [];
+
+    if (portfolio == null) return ['Portfolio data'];
+
+    if (portfolio!.personalInfo.profilePicture?.key == null) {
+      missingFields.add('Profile Image');
+    }
+
+    if (portfolio!.personalInfo.name?.isEmpty != false) {
+      missingFields.add('Name');
+    }
+
+    if (portfolio!.personalInfo.email?.isEmpty != false) {
+      missingFields.add('Email');
+    }
+
+    if (portfolio!.personalInfo.whatsappNumber?.isEmpty != false) {
+      missingFields.add('WhatsApp Number');
+    }
+
+    if (portfolio!.workInfo?.designation?.isEmpty != false) {
+      missingFields.add('Designation');
+    }
+
+    if (!_hasAtLeastOneSocialLink()) {
+      missingFields.add('At least one Social Media Link');
+    }
+
+    return missingFields;
+  }
+
+  void _showMissingFieldsAlert() {
+    final missingFields = _getMissingFields();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: CustomColors.secondaryColor,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
+              SizedBox(width: 8),
+              Text(
+                'Incomplete Profile',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                ' To proceed with payment, please complete the following fields: ',
+                style: TextStyle(fontSize: 14),
+              ),
+              SizedBox(height: 16),
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.red[50],
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.red[200]!),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children:
+                      missingFields
+                          .map(
+                            (field) => Padding(
+                              padding: EdgeInsets.only(bottom: 4),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.circle,
+                                    size: 6,
+                                    color: Colors.red[600],
+                                  ),
+                                  SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      field,
+                                      style: TextStyle(
+                                        color: Colors.red[700],
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                          .toList(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'OK',
+                style: TextStyle(
+                  color: CustomColors.buttonColor1,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -150,7 +308,6 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                           Spacer(),
                           userEdit
                               ? MiniLoadingButton(
-                                
                                 icon: Icons.save,
                                 text: 'Save',
                                 onPressed: () {},
@@ -186,7 +343,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                
+
                             gradient: LinearGradient(
                               colors: CustomColors.borderGradient.colors,
                             ),
@@ -195,7 +352,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       ),
                     ),
                     Gap(CustomPadding.paddingLarge.v),
-                
+
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: CustomPadding.paddingLarge,
@@ -222,7 +379,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       ),
                     ),
                     Gap(CustomPadding.paddingXL.v),
-                
+
                     Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: CustomPadding.paddingLarge,
@@ -235,7 +392,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                             portfolio: portfolio,
                           ),
                           Gap(CustomPadding.paddingXL.v),
-                
+
                           LocationContainer(
                             user: user,
                             isEdit: userEdit,
@@ -252,9 +409,8 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       child: Row(
                         children: [
                           AdditionalContainer(
-                            logoImageUrl: portfolio?.workInfo?.getCompanyLogoUrl(
-                              baseUrl,
-                            ),
+                            logoImageUrl: portfolio?.workInfo
+                                ?.getCompanyLogoUrl(baseUrl),
                             bannerImageUrl: portfolio?.personalInfo
                                 .getBannerImageUrl(baseUrl),
                             user: user,
@@ -296,7 +452,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       ),
                     ),
                     Gap(CustomPadding.paddingXL.v),
-                
+
                     Visibility(
                       visible: !(portfolio?.services.isEmpty ?? true),
                       child: CommonProductContainer(
@@ -327,7 +483,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                               scrollDirection: Axis.horizontal,
                               itemCount: (portfolio?.services.length ?? 0)
                                   .clamp(0, 3),
-                
+
                               itemBuilder: (context, index) {
                                 return Padding(
                                   padding: EdgeInsets.only(
@@ -351,15 +507,32 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                       ),
                     ),
                     Gap(CustomPadding.paddingLarge),
+
                     // if (isPortfolioPaid == false)
                     if (isPortfolioPaid == false &&
                         portfolioProductModel != null)
-                      PorfolioPaymentWidget(
-                        portfolioProductModel: portfolioProductModel!,
-                        user: user,
-                        onProceed: () => fetchPortfolio(),
+                      GestureDetector(
+                        onTap:
+                            _areRequiredFieldsComplete()
+                                ? null
+                                : _showMissingFieldsAlert,
+                        child: AbsorbPointer(
+                          absorbing: !_areRequiredFieldsComplete(),
+                          child: PorfolioPaymentWidget(
+                            portfolioProductModel: portfolioProductModel!,
+                            user: user,
+                            onProceed: () => fetchPortfolio(),
+                          ),
+                        ),
                       ),
-                
+
+                    // if (isPortfolioPaid == false &&
+                    //     portfolioProductModel != null)
+                    //   PorfolioPaymentWidget(
+                    //     portfolioProductModel: portfolioProductModel!,
+                    //     user: user,
+                    //     onProceed: () => fetchPortfolio(),
+                    //   ),
                     Gap(CustomPadding.paddingXXL.v),
                   ],
                 ),
