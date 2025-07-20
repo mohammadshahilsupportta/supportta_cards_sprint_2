@@ -1,3 +1,5 @@
+// dart format width=80
+
 /// GENERATED CODE - DO NOT MODIFY BY HAND
 /// *****************************************************
 ///  FlutterGen
@@ -5,7 +7,7 @@
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
-// ignore_for_file: directives_ordering,unnecessary_import,implicit_dynamic_list_literal,deprecated_member_use
+// ignore_for_file: deprecated_member_use,directives_ordering,implicit_dynamic_list_literal,unnecessary_import
 
 import 'package:flutter/widgets.dart';
 
@@ -55,11 +57,17 @@ class $AssetsPngGen {
 class $AssetsSvgGen {
   const $AssetsSvgGen();
 
+  /// File path: assets/svg/3.svg
+  String get a3 => 'assets/svg/3.svg';
+
   /// File path: assets/svg/addround.svg
   String get addround => 'assets/svg/addround.svg';
 
   /// File path: assets/svg/behance.svg
   String get behance => 'assets/svg/behance.svg';
+
+  /// File path: assets/svg/error.svg
+  String get error => 'assets/svg/error.svg';
 
   /// File path: assets/svg/facebook.svg
   String get facebook => 'assets/svg/facebook.svg';
@@ -99,8 +107,10 @@ class $AssetsSvgGen {
 
   /// List of all assets
   List<String> get values => [
+    a3,
     addround,
     behance,
+    error,
     facebook,
     github,
     instagram,
@@ -124,12 +134,18 @@ class Assets {
 }
 
 class AssetGenImage {
-  const AssetGenImage(this._assetName, {this.size, this.flavors = const {}});
+  const AssetGenImage(
+    this._assetName, {
+    this.size,
+    this.flavors = const {},
+    this.animation,
+  });
 
   final String _assetName;
 
   final Size? size;
   final Set<String> flavors;
+  final AssetGenImageAnimation? animation;
 
   Image image({
     Key? key,
@@ -191,4 +207,16 @@ class AssetGenImage {
   String get path => _assetName;
 
   String get keyName => _assetName;
+}
+
+class AssetGenImageAnimation {
+  const AssetGenImageAnimation({
+    required this.isAnimation,
+    required this.duration,
+    required this.frames,
+  });
+
+  final bool isAnimation;
+  final Duration duration;
+  final int frames;
 }

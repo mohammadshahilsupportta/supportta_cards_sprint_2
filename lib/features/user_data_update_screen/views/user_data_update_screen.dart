@@ -130,17 +130,17 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
     bool hasProfileImage = portfolio!.personalInfo.profilePicture?.key != null;
 
     // Check name
-    bool hasName = portfolio!.personalInfo.name?.isNotEmpty == true;
+    bool hasName = portfolio!.personalInfo.name.isNotEmpty == true;
 
     // Check email
-    bool hasEmail = portfolio!.personalInfo.email?.isNotEmpty == true;
+    bool hasEmail = portfolio!.personalInfo.email.isNotEmpty == true;
 
     // Check WhatsApp number
     bool hasWhatsApp =
-        portfolio!.personalInfo.whatsappNumber?.isNotEmpty == true;
+        portfolio!.personalInfo.whatsappNumber.isNotEmpty == true;
 
     // Check designation
-    bool hasDesignation = portfolio!.workInfo?.designation?.isNotEmpty == true;
+    bool hasDesignation = portfolio!.workInfo?.designation.isNotEmpty == true;
 
     // Check at least one social media link
     bool hasSocialMedia = _hasAtLeastOneSocialLink();
@@ -174,19 +174,19 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
       missingFields.add('Profile Image');
     }
 
-    if (portfolio!.personalInfo.name?.isEmpty != false) {
+    if (portfolio!.personalInfo.name.isEmpty != false) {
       missingFields.add('Name');
     }
 
-    if (portfolio!.personalInfo.email?.isEmpty != false) {
+    if (portfolio!.personalInfo.email.isEmpty != false) {
       missingFields.add('Email');
     }
 
-    if (portfolio!.personalInfo.whatsappNumber?.isEmpty != false) {
+    if (portfolio!.personalInfo.whatsappNumber.isEmpty != false) {
       missingFields.add('WhatsApp Number');
     }
 
-    if (portfolio!.workInfo?.designation?.isEmpty != false) {
+    if (portfolio!.workInfo?.designation.isEmpty != false) {
       missingFields.add('Designation');
     }
 
@@ -201,6 +201,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
     final missingFields = _getMissingFields();
 
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -228,9 +229,9 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
               Container(
                 padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.red[50],
+                  // color: Colors.red[50],
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.red[200]!),
+                  // border: Border.all(color: Colors.red[200]!),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,19 +242,17 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
                               padding: EdgeInsets.only(bottom: 4),
                               child: Row(
                                 children: [
+                                  // SvgPicture.asset(Assets.svg.error),
                                   Icon(
-                                    Icons.circle,
-                                    size: 6,
+                                    Icons.close_rounded,
+                                    size: 30,
                                     color: Colors.red[600],
                                   ),
                                   SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
                                       field,
-                                      style: TextStyle(
-                                        color: Colors.red[700],
-                                        fontSize: 13,
-                                      ),
+                                      style: context.inter50014,
                                     ),
                                   ),
                                 ],
@@ -266,15 +265,16 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
             ],
           ),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                'OK',
-                style: TextStyle(
-                  color: CustomColors.buttonColor1,
-                  fontWeight: FontWeight.w600,
-                ),
+            Center(
+              child: MiniLoadingButton(
+                onPressed: () => Navigator.of(context).pop(),
+                text: 'OK',
+                needRow: false,
+                useGradient: true,
+                gradientColors: CustomColors.borderGradient.colors,
               ),
+
+              //
             ),
           ],
         );
