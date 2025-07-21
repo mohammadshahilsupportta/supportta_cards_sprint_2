@@ -152,7 +152,8 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
 
       final portfolio = PortfolioDataModel(
         id: '',
-        personalInfo: PersonalInfo(alternateNumber: '',
+        personalInfo: PersonalInfo(
+          alternateNumber: '',
           profilePicture: profilePicture,
           bannerImage: bannerImage,
           name: nameController.text,
@@ -163,7 +164,8 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
               countryCodewhatsappController.text + whatsappController.text,
           // '+91${whatsappController.text}',
         ),
-        workInfo: WorkInfo(gstin: gstinController.text,
+        workInfo: WorkInfo(
+          gstin: gstinController.text,
           companyLogo: companyLogo,
           companyName: companyController.text,
           designation: designationController.text,
@@ -179,7 +181,6 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
           state: stateController.text,
           country: countryController.text,
           mapUrl: mapController.text,
-
         ),
         about: About(
           heading: aboutHeadingController.text,
@@ -357,7 +358,6 @@ class _AddUserPortfolioState extends State<AddUserPortfolio> {
                     statecontroller: stateController,
                     countrycontroller: countryController,
                     mapUrlController: mapController,
-
                   ),
                 ],
               ),
