@@ -5,6 +5,7 @@ import 'package:taproot_admin/core/logger.dart';
 import 'package:taproot_admin/features/Referral_screen/data/bank_detail_model.dart';
 import 'package:taproot_admin/features/Referral_screen/data/refer_detail_model.dart';
 import 'package:taproot_admin/features/Referral_screen/data/refer_model.dart';
+import 'package:taproot_admin/features/Referral_screen/data/referral_settings_model.dart';
 import 'package:taproot_admin/features/Referral_screen/data/transaction_wallet_model.dart';
 
 class ReferService with ErrorExceptionHandler {
@@ -72,6 +73,49 @@ class ReferService with ErrorExceptionHandler {
     } catch (e) {
       logError('Error fetching transactions: $e');
       return null;
+    }
+  }
+
+  static Future<ReferralSettingsResponse> getCommission() async {
+    try {
+      final response = await DioHelper().get(
+        '/referral-settings',
+        type: ApiType.baseUrl,
+      );
+      return ReferralSettingsResponse.fromJson(response.data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<ReferralSetting> createReferralSetting(
+    ReferralSetting setting,
+  ) async {
+    try {
+      final response = await DioHelper().post(
+        '/referral-settings',
+        data: setting.toCreateJson(),
+        type: ApiType.baseUrl,
+      );
+      return ReferralSetting.fromJson(response.data['result'] ?? response.data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<ReferralSetting> updateReferralSetting(
+    String id,
+    ReferralSetting setting,
+  ) async {
+    try {
+      final response = await DioHelper().patch(
+        '/referral-settings/$id',
+        data: setting.toUpdateJson(),
+        type: ApiType.baseUrl,
+      );
+      return ReferralSetting.fromJson(response.data['result'] ?? response.data);
+    } catch (e) {
+      rethrow;
     }
   }
 }

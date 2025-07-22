@@ -3,6 +3,8 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/Referral_screen/data/refer_model.dart';
+import 'package:taproot_admin/features/Referral_screen/data/refer_service.dart';
+import 'package:taproot_admin/features/Referral_screen/data/referral_settings_model.dart';
 import 'package:taproot_admin/features/Referral_screen/view/refer_user_details.dart';
 import 'package:taproot_admin/features/Referral_screen/widgets/referal_settings_dialog_box.dart';
 import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
@@ -27,6 +29,43 @@ class _ReferScreenState extends State<ReferScreen> {
   bool isSearching = false;
   String searchQuery = "";
   List<Wallet> wallets = [];
+  ReferralSetting? currentReferralSetting;
+  String referralSettingsError = '';
+  bool isLoadingReferralSettings = false;
+  Future<void> fetchReferralSettings() async {
+    try {
+      setState(() {
+        isLoadingReferralSettings = true;
+        referralSettingsError = '';
+      });
+
+      final response = await ReferService.getCommission();
+
+      if (response.success && response.results.isNotEmpty) {
+        // Get the first active setting
+        final activeSetting = response.results.firstWhere(
+          (setting) => setting.status == 'Active' && !setting.isDeleted,
+          orElse: () => response.results.first,
+        );
+
+        setState(() {
+          currentReferralSetting = activeSetting;
+        });
+      } else {
+        setState(() {
+          referralSettingsError = 'No referral settings found';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        referralSettingsError = 'Failed to load referral settings: $e';
+      });
+    } finally {
+      setState(() {
+        isLoadingReferralSettings = false;
+      });
+    }
+  }
 
   Future<void> fetchWalletData() async {
     try {
@@ -79,6 +118,7 @@ class _ReferScreenState extends State<ReferScreen> {
     // TODO: implement initState
     super.initState();
     fetchWalletData();
+    fetchReferralSettings();
   }
 
   @override
@@ -114,7 +154,9 @@ class _ReferScreenState extends State<ReferScreen> {
                         barrierDismissible: false,
                         context: context,
                         builder: (context) {
-                          return ReferalSettingsDialogBox();
+                          return ReferalSettingsDialogBox(
+                            existingSetting: currentReferralSetting,
+                          );
                           // return Dialog(
                           //   child: Column(
                           //     children: [
