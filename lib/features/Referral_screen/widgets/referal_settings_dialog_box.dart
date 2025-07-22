@@ -664,22 +664,23 @@ class _ReferalSettingsDialogBoxState extends State<ReferalSettingsDialogBox> {
     if (widget.existingSetting != null) {
       final setting = widget.existingSetting!;
 
-      // Load commission settings - check which value exists
-      if (setting.commissionPercentage != null) {
-        selectedCommissionType = 0;
-        commissionController.text = setting.commissionPercentage!.toString();
-      } else if (setting.commissionAmount != null) {
+      // Load commission settings based on parsed commissionType
+      if (setting.commissionType == CommissionType.Flat) {
         selectedCommissionType = 1;
-        commissionController.text = setting.commissionAmount!.toString();
+        commissionController.text = setting.commissionAmount?.toString() ?? '';
+      } else {
+        selectedCommissionType = 0;
+        commissionController.text =
+            setting.commissionPercentage?.toString() ?? '';
       }
 
-      // Load discount settings - check which value exists
-      if (setting.discountPercentage != null) {
-        selectedDiscountType = 0;
-        discountController.text = setting.discountPercentage!.toString();
-      } else if (setting.discountAmount != null) {
+      // Load discount settings based on parsed discountType
+      if (setting.discountType == DiscountType.Flat) {
         selectedDiscountType = 1;
-        discountController.text = setting.discountAmount!.toString();
+        discountController.text = setting.discountAmount?.toString() ?? '';
+      } else {
+        selectedDiscountType = 0;
+        discountController.text = setting.discountPercentage?.toString() ?? '';
       }
     }
   }
@@ -758,36 +759,50 @@ class _ReferalSettingsDialogBoxState extends State<ReferalSettingsDialogBox> {
   }
 
   ReferralSetting _createReferralSetting() {
-    // Only set the value based on selected type, leave others null
+    // Initialize values based on selected types
     double? commissionPercentage;
     double? commissionAmount;
     double? discountPercentage;
     double? discountAmount;
 
-    // Set commission values based on type
+    CommissionType commissionType;
+    DiscountType discountType;
+
+    // Set commission values and type based on selection
     if (selectedCommissionType == 0) {
+      // Percentage
       commissionPercentage = double.tryParse(commissionController.text);
-      commissionAmount = null; // Explicitly null the other type
+      commissionAmount = null;
+      commissionType = CommissionType.Percentage;
     } else {
+      // Flat
       commissionAmount = double.tryParse(commissionController.text);
-      commissionPercentage = null; // Explicitly null the other type
+      commissionPercentage = null;
+      commissionType = CommissionType.Flat;
     }
 
-    // Set discount values based on type
+    // Set discount values and type based on selection
     if (selectedDiscountType == 0) {
+      // Percentage
       discountPercentage = double.tryParse(discountController.text);
-      discountAmount = null; // Explicitly null the other type
+      discountAmount = null;
+      discountType = DiscountType.Percentage;
     } else {
+      // Flat
       discountAmount = double.tryParse(discountController.text);
-      discountPercentage = null; // Explicitly null the other type
+      discountPercentage = null;
+      discountType = DiscountType.Flat;
     }
 
     return ReferralSetting(
       id: widget.existingSetting?.id,
+      type: widget.existingSetting?.type ?? 'Account',
       commissionPercentage: commissionPercentage,
       commissionAmount: commissionAmount,
+      commissionType: commissionType,
       discountPercentage: discountPercentage,
       discountAmount: discountAmount,
+      discountType: discountType,
       status: 'Active',
       isDeleted: false,
       createdAt: widget.existingSetting?.createdAt,

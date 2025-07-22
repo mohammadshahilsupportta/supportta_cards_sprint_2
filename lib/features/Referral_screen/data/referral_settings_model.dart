@@ -32,10 +32,13 @@ class ReferralSettingsResponse {
 
 class ReferralSetting {
   final String? id;
+  final String? type; // "Account" from API
   final double? discountPercentage;
   final double? commissionPercentage;
   final double? discountAmount;
   final double? commissionAmount;
+  final DiscountType discountType; // Parse from API
+  final CommissionType commissionType; // Parse from API
   final String status;
   final bool isDeleted;
   final DateTime? createdAt;
@@ -44,30 +47,19 @@ class ReferralSetting {
 
   ReferralSetting({
     this.id,
+    this.type,
     this.discountPercentage,
     this.commissionPercentage,
     this.discountAmount,
     this.commissionAmount,
+    required this.discountType,
+    required this.commissionType,
     this.status = 'Active',
     this.isDeleted = false,
     this.createdAt,
     this.updatedAt,
     this.version,
   });
-
-  // Auto-determine discount type based on which value is provided
-  DiscountType get discountType {
-    if (discountPercentage != null) return DiscountType.Percentage;
-    if (discountAmount != null) return DiscountType.Flat;
-    return DiscountType.Percentage; // default
-  }
-
-  // Auto-determine commission type based on which value is provided
-  CommissionType get commissionType {
-    if (commissionPercentage != null) return CommissionType.Percentage;
-    if (commissionAmount != null) return CommissionType.Flat;
-    return CommissionType.Percentage; // default
-  }
 
   // Check if discount type has changed
   bool hasDiscountTypeChanged(ReferralSetting? previous) {
@@ -82,12 +74,31 @@ class ReferralSetting {
   }
 
   factory ReferralSetting.fromJson(Map<String, dynamic> json) {
+    // Parse discount type from API
+    DiscountType discountType = DiscountType.Percentage; // default
+    if (json['discountType'] != null) {
+      discountType = json['discountType'].toString().toLowerCase() == 'flat' 
+          ? DiscountType.Flat 
+          : DiscountType.Percentage;
+    }
+
+    // Parse commission type from API
+    CommissionType commissionType = CommissionType.Percentage; // default
+    if (json['commissionType'] != null) {
+      commissionType = json['commissionType'].toString().toLowerCase() == 'flat' 
+          ? CommissionType.Flat 
+          : CommissionType.Percentage;
+    }
+
     return ReferralSetting(
       id: json['_id'],
+      type: json['type'],
       discountPercentage: json['discountPercentage']?.toDouble(),
       commissionPercentage: json['commissionPercentage']?.toDouble(),
       discountAmount: json['discountAmount']?.toDouble(),
       commissionAmount: json['commissionAmount']?.toDouble(),
+      discountType: discountType,
+      commissionType: commissionType,
       status: json['status'] ?? 'Active',
       isDeleted: json['isDeleted'] ?? false,
       createdAt:
@@ -107,6 +118,7 @@ class ReferralSetting {
     };
 
     if (id != null) data['_id'] = id;
+    if (type != null) data['type'] = type;
     if (discountPercentage != null) data['discountPercentage'] = discountPercentage;
     if (commissionPercentage != null) data['commissionPercentage'] = commissionPercentage;
     if (discountAmount != null) data['discountAmount'] = discountAmount;
@@ -121,22 +133,23 @@ class ReferralSetting {
   // For POST requests (creating new referral settings)
   Map<String, dynamic> toCreateJson() {
     final Map<String, dynamic> data = {
+      'type': type ?? 'Account',
       'discountType': discountType.name,
       'commissionType': commissionType.name,
       'status': status,
       'isDeleted': isDeleted,
     };
 
-    // Include only the relevant value based on what's provided
-    if (discountPercentage != null) {
+    // Include the relevant value based on type
+    if (discountType == DiscountType.Percentage && discountPercentage != null) {
       data['discountPercentage'] = discountPercentage;
-    } else if (discountAmount != null) {
+    } else if (discountType == DiscountType.Flat && discountAmount != null) {
       data['discountAmount'] = discountAmount;
     }
 
-    if (commissionPercentage != null) {
+    if (commissionType == CommissionType.Percentage && commissionPercentage != null) {
       data['commissionPercentage'] = commissionPercentage;
-    } else if (commissionAmount != null) {
+    } else if (commissionType == CommissionType.Flat && commissionAmount != null) {
       data['commissionAmount'] = commissionAmount;
     }
 
@@ -147,49 +160,46 @@ class ReferralSetting {
   Map<String, dynamic> toUpdateJson(ReferralSetting? previousSetting) {
     final Map<String, dynamic> data = {};
 
-    // Only include type if it has changed
-    if (hasDiscountTypeChanged(previousSetting)) {
-      data['discountType'] = discountType.name;
-    }
-
-    if (hasCommissionTypeChanged(previousSetting)) {
-      data['commissionType'] = commissionType.name;
-    }
-
-    // Always include status
+    // Always include type fields
+    data['discountType'] = discountType.name;
+    data['commissionType'] = commissionType.name;
     data['status'] = status;
     data['isDeleted'] = isDeleted;
 
-    // Handle discount values
-    if (discountPercentage != null) {
-      data['discountPercentage'] = discountPercentage;
-      // If type changed from Flat to Percentage, null out the amount
-      if (hasDiscountTypeChanged(previousSetting) && 
-          previousSetting?.discountAmount != null) {
+    // Handle discount values - send the appropriate value and null the other
+    if (discountType == DiscountType.Percentage) {
+      if (discountPercentage != null) {
+        data['discountPercentage'] = discountPercentage;
+      }
+      // Null out the amount if switching from Flat to Percentage
+      if (hasDiscountTypeChanged(previousSetting)) {
         data['discountAmount'] = null;
       }
-    } else if (discountAmount != null) {
-      data['discountAmount'] = discountAmount;
-      // If type changed from Percentage to Flat, null out the percentage
-      if (hasDiscountTypeChanged(previousSetting) && 
-          previousSetting?.discountPercentage != null) {
+    } else {
+      if (discountAmount != null) {
+        data['discountAmount'] = discountAmount;
+      }
+      // Null out the percentage if switching from Percentage to Flat
+      if (hasDiscountTypeChanged(previousSetting)) {
         data['discountPercentage'] = null;
       }
     }
 
-    // Handle commission values
-    if (commissionPercentage != null) {
-      data['commissionPercentage'] = commissionPercentage;
-      // If type changed from Flat to Percentage, null out the amount
-      if (hasCommissionTypeChanged(previousSetting) && 
-          previousSetting?.commissionAmount != null) {
+    // Handle commission values - send the appropriate value and null the other
+    if (commissionType == CommissionType.Percentage) {
+      if (commissionPercentage != null) {
+        data['commissionPercentage'] = commissionPercentage;
+      }
+      // Null out the amount if switching from Flat to Percentage
+      if (hasCommissionTypeChanged(previousSetting)) {
         data['commissionAmount'] = null;
       }
-    } else if (commissionAmount != null) {
-      data['commissionAmount'] = commissionAmount;
-      // If type changed from Percentage to Flat, null out the percentage
-      if (hasCommissionTypeChanged(previousSetting) && 
-          previousSetting?.commissionPercentage != null) {
+    } else {
+      if (commissionAmount != null) {
+        data['commissionAmount'] = commissionAmount;
+      }
+      // Null out the percentage if switching from Percentage to Flat
+      if (hasCommissionTypeChanged(previousSetting)) {
         data['commissionPercentage'] = null;
       }
     }
@@ -200,10 +210,13 @@ class ReferralSetting {
   // Copy with method for easy updates
   ReferralSetting copyWith({
     String? id,
+    String? type,
     double? discountPercentage,
     double? commissionPercentage,
     double? discountAmount,
     double? commissionAmount,
+    DiscountType? discountType,
+    CommissionType? commissionType,
     String? status,
     bool? isDeleted,
     DateTime? createdAt,
@@ -212,10 +225,13 @@ class ReferralSetting {
   }) {
     return ReferralSetting(
       id: id ?? this.id,
+      type: type ?? this.type,
       discountPercentage: discountPercentage ?? this.discountPercentage,
       commissionPercentage: commissionPercentage ?? this.commissionPercentage,
       discountAmount: discountAmount ?? this.discountAmount,
       commissionAmount: commissionAmount ?? this.commissionAmount,
+      discountType: discountType ?? this.discountType,
+      commissionType: commissionType ?? this.commissionType,
       status: status ?? this.status,
       isDeleted: isDeleted ?? this.isDeleted,
       createdAt: createdAt ?? this.createdAt,
