@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
-import 'package:shimmer/shimmer.dart';
-
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/Dashboard_screen/data/chart_data.dart';
 import 'package:taproot_admin/features/Dashboard_screen/data/dashboard_model.dart';
@@ -34,6 +31,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     'Last Week': 'lastWeek',
     'This Month': 'thisMonth',
     'Last Month': 'lastMonth',
+    'All Time': 'allTime',
   };
   String getDropdownLabel(String value) {
     return dateFilters.entries.firstWhere((entry) => entry.value == value).key;
