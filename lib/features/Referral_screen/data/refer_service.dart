@@ -103,19 +103,21 @@ class ReferService with ErrorExceptionHandler {
     }
   }
 
-  static Future<ReferralSetting> updateReferralSetting(
-    String id,
-    ReferralSetting setting,
-  ) async {
-    try {
-      final response = await DioHelper().patch(
-        '/referral-settings/$id',
-        data: setting.toUpdateJson(),
-        type: ApiType.baseUrl,
-      );
-      return ReferralSetting.fromJson(response.data['result'] ?? response.data);
-    } catch (e) {
-      rethrow;
-    }
+ static Future<ReferralSetting> updateReferralSetting(
+  String id,
+  ReferralSetting setting,
+  ReferralSetting? previousSetting, // Add this parameter
+) async {
+  try {
+    final response = await DioHelper().patch(
+      '/referral-settings/$id',
+      data: setting.toUpdateJson(previousSetting), // Pass the previous setting
+      type: ApiType.baseUrl,
+    );
+    return ReferralSetting.fromJson(response.data['result'] ?? response.data);
+  } catch (e) {
+    rethrow;
   }
+}
+
 }

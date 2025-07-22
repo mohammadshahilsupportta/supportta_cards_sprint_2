@@ -113,6 +113,22 @@ class _ReferScreenState extends State<ReferScreen> {
     fetchWalletData();
   }
 
+  Future<void> _openSettingsDialog() async {
+    final result = await showDialog<bool>(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return ReferalSettingsDialogBox(
+          existingSetting: currentReferralSetting,
+        );
+      },
+    );
+
+    if (result == true) {
+      await fetchReferralSettings();
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -149,29 +165,31 @@ class _ReferScreenState extends State<ReferScreen> {
                   MiniGradientBorderButton(
                     text: 'Settings',
                     icon: LucideIcons.settings,
-                    onPressed: () {
-                      showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (context) {
-                          return ReferalSettingsDialogBox(
-                            existingSetting: currentReferralSetting,
-                          );
-                          // return Dialog(
-                          //   child: Column(
-                          //     children: [
-                          //       Row(
-                          //         children: [
-                          //           Text('Wallet', style: context.inter60014),
-                          //         ],
-                          //       ),
-                          //     ],
-                          //   ),
-                          // );
-                        },
-                      );
-                    },
+                    onPressed: _openSettingsDialog,
 
+                    //  onPressed: isLoadingReferralSettings ? null : _openSettingsDialog,
+                    // onPressed: () {
+                    //   showDialog(
+                    //     barrierDismissible: false,
+                    //     context: context,
+                    //     builder: (context) {
+                    //       return ReferalSettingsDialogBox(
+                    //         existingSetting: currentReferralSetting,
+                    //       );
+                    //       // return Dialog(
+                    //       //   child: Column(
+                    //       //     children: [
+                    //       //       Row(
+                    //       //         children: [
+                    //       //           Text('Wallet', style: context.inter60014),
+                    //       //         ],
+                    //       //       ),
+                    //       //     ],
+                    //       //   ),
+                    //       // );
+                    //     },
+                    //   );
+                    // },
                     gradient: LinearGradient(
                       colors: CustomColors.borderGradient.colors,
                     ),
