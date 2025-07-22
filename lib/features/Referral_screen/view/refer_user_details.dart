@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/Referral_screen/data/bank_detail_model.dart';
 import 'package:taproot_admin/features/Referral_screen/data/refer_detail_model.dart';
 import 'package:taproot_admin/features/Referral_screen/data/refer_service.dart';
+import 'package:taproot_admin/features/Referral_screen/data/transaction_wallet_model.dart';
 import 'package:taproot_admin/features/Referral_screen/widgets/common_details_container.dart';
 import 'package:taproot_admin/features/Referral_screen/widgets/refer_detail_widget.dart';
 import 'package:taproot_admin/features/Referral_screen/widgets/shimmer.dart';
@@ -25,6 +27,8 @@ class _ReferUserDetailsState extends State<ReferUserDetails>
   late AnimationController _shimmerController;
   WalletDetailsResponse? walletResult;
   PaymentDetailsResponse? paymentResult;
+  SimpleTransactionResponse? simpleTransactions;
+  final DateFormat dateFormat = DateFormat('dd MMM yyyy');
 
   @override
   void initState() {
@@ -41,26 +45,55 @@ class _ReferUserDetailsState extends State<ReferUserDetails>
     super.dispose();
   }
 
-
   Future<void> fetchData() async {
     try {
-      // Fetch both wallet and payment details in parallel
-      final futures = await Future.wait([
-        ReferService.fetchWalletDetails(widget.userId),
-        ReferService.fetchPaymentDetails(widget.userId),
-      ]);
+      setState(() {
+        isLoading = true;
+      });
 
+      // Initialize variables to store API responses
+      WalletDetailsResponse? walletResponse;
+      PaymentDetailsResponse? paymentResponse;
+      SimpleTransactionResponse? transactionsResponse;
+
+      // Fetch wallet details
+      try {
+        walletResponse = await ReferService.fetchWalletDetails(widget.userId);
+        logInfo('Wallet details fetched successfully');
+      } catch (e) {
+        logError('Error fetching wallet details: $e');
+      }
+
+      // Fetch payment details
+      try {
+        paymentResponse = await ReferService.fetchPaymentDetails(widget.userId);
+        logInfo('Payment details fetched successfully');
+      } catch (e) {
+        logError('Error fetching payment details: $e');
+      }
+
+      // Fetch transactions
+      try {
+        transactionsResponse = await ReferService.fetchSimpleTransactions(
+          widget.userId,
+        );
+        logInfo('Transactions fetched successfully');
+      } catch (e) {
+        logError('Error fetching transactions: $e');
+      }
+
+      // Check if widget is still mounted
       if (!mounted) return;
 
-      Future.microtask(() {
-        setState(() {
-          walletResult = futures[0] as WalletDetailsResponse;
-          paymentResult = futures[1] as PaymentDetailsResponse;
-          isLoading = false;
-        });
+      // Update state with whatever data we have
+      setState(() {
+        walletResult = walletResponse;
+        paymentResult = paymentResponse;
+        simpleTransactions = transactionsResponse;
+        isLoading = false;
       });
     } catch (e) {
-      logError('Error fetching data: $e');
+      logError('Error in fetchData: $e');
       if (!mounted) return;
 
       setState(() {
@@ -68,6 +101,35 @@ class _ReferUserDetailsState extends State<ReferUserDetails>
       });
     }
   }
+
+  // Future<void> fetchData() async {
+  //   try {
+  //     // Fetch both wallet and payment details in parallel
+  //     final futures = await Future.wait([
+  //       ReferService.fetchWalletDetails(widget.userId),
+  //       ReferService.fetchPaymentDetails(widget.userId),
+  //       ReferService.fetchSimpleTransactions('686cb1f6a15833d5297c7b13'),
+  //     ]);
+
+  //     if (!mounted) return;
+
+  //     Future.microtask(() {
+  //       setState(() {
+  //         walletResult = futures[0] as WalletDetailsResponse;
+  //         paymentResult = futures[1] as PaymentDetailsResponse;
+  //         simpleTransactions = futures[2] as SimpleTransactionResponse;
+  //         isLoading = false;
+  //       });
+  //     });
+  //   } catch (e) {
+  //     logError('Error fetching data: $e');
+  //     if (!mounted) return;
+
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -335,6 +397,50 @@ class _ReferUserDetailsState extends State<ReferUserDetails>
                               : CommonDetailsContainer(
                                 key: ValueKey('loaded-transactions'),
                                 title: 'Transactions',
+                                children: [
+                                  SizedBox(
+                                    height: SizeUtils.height * .4,
+                                    child:
+                                        simpleTransactions
+                                                    ?.transactions
+                                                    .isEmpty ??
+                                                true
+                                            ? Center(
+                                              child: Text(
+                                                'No transactions found',
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                              ),
+                                            )
+                                            : ListView.separated(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal:
+                                                    CustomPadding.paddingLarge,
+                                              ),
+                                              separatorBuilder: (
+                                                context,
+                                                index,
+                                              ) {
+                                                return Divider();
+                                              },
+                                              itemCount:
+                                                  simpleTransactions
+                                                      ?.transactions
+                                                      .length ??
+                                                  0,
+                                              itemBuilder: (context, index) {
+                                                final transaction =
+                                                    simpleTransactions!
+                                                        .transactions[index];
+                                                return TransactionListItem(
+                                                  transaction: transaction,
+                                                );
+                                              },
+                                            ),
+                                  ),
+                                ],
                               ),
                     ),
                   ),
@@ -349,3 +455,136 @@ class _ReferUserDetailsState extends State<ReferUserDetails>
     );
   }
 }
+
+class TransactionListItem extends StatelessWidget {
+  final SimpleTransaction transaction;
+  final DateFormat dateFormat = DateFormat('dd MMM yyyy');
+
+  TransactionListItem({super.key, required this.transaction});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: CustomPadding.padding,
+        horizontal: CustomPadding.paddingSmall,
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Transaction icon
+
+          // Transaction details
+          Text(
+            transaction.getDisplayCode(),
+            style: context.inter40016.copyWith(
+              // color: CustomColors.textColorDarkGrey,
+              color: transaction.getAmountColor(),
+            ),
+          ),
+          Text(
+            dateFormat.format(transaction.date),
+            style: context.inter40016.copyWith(
+              color: transaction.getAmountColor(),
+              // CustomColors.textColorDarkGrey,
+            ),
+          ),
+
+          // Date and amount
+          Text(
+            transaction.getFormattedAmount(),
+            style: context.inter60014.copyWith(
+              color: transaction.getAmountColor(),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// class TransactionListItem extends StatelessWidget {
+//   final SimpleTransaction transaction;
+//   final DateFormat dateFormat = DateFormat('dd MMM yyyy');
+
+//   TransactionListItem({required this.transaction});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: EdgeInsets.symmetric(
+//         vertical: CustomPadding.padding,
+//         horizontal: CustomPadding.paddingSmall,
+//       ),
+//       child: Row(
+//         children: [
+//           // Transaction icon
+//           Container(
+//             width: 40,
+//             height: 40,
+//             decoration: BoxDecoration(
+//               shape: BoxShape.circle,
+//               color:
+//                   transaction.isCredit
+//                       ? CustomColors.green.withAlpha(26)
+//                       : CustomColors.textColorDarkGrey.withAlpha(26),
+//             ),
+//             child: Icon(
+//               transaction.isCredit
+//                   ? LucideIcons.arrowDownLeft
+//                   : LucideIcons.arrowUpRight,
+//               color: transaction.getAmountColor(),
+//               size: 20,
+//             ),
+//           ),
+
+//           Gap(CustomPadding.padding),
+
+//           // Transaction details
+//           Expanded(
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Text(
+//                   transaction.getDescription(),
+//                   style: context.inter60014.copyWith(
+//                     fontWeight: FontWeight.w600,
+//                   ),
+//                 ),
+//                 Gap(4),
+//                 Text(
+//                   transaction.getDisplayCode(),
+//                   style: context.inter40016.copyWith(
+//                     color: CustomColors.textColorDarkGrey,
+//                   ),
+//                 ),
+//               ],
+//             ),
+//           ),
+
+//           // Date and amount
+//           Column(
+//             crossAxisAlignment: CrossAxisAlignment.end,
+//             children: [
+//               Text(
+//                 transaction.getFormattedAmount(),
+//                 style: context.inter60014.copyWith(
+//                   color: transaction.getAmountColor(),
+//                   fontWeight: FontWeight.w600,
+//                 ),
+//               ),
+//               Gap(4),
+//               Text(
+//                 dateFormat.format(transaction.date),
+//                 style: context.inter40016.copyWith(
+//                   color: CustomColors.textColorDarkGrey,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

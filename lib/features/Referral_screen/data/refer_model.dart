@@ -1,9 +1,12 @@
+import 'package:taproot_admin/core/logger.dart';
+
 class Wallet {
   final String id;
   final double balance;
   final DateTime createdAt;
   final bool isDeleted;
   final double totalEarned;
+  final double totalWithdrawn;
   final UserData userData;
   final String phoneNumber;
   final int referralCount;
@@ -14,26 +17,29 @@ class Wallet {
     required this.createdAt,
     required this.isDeleted,
     required this.totalEarned,
+    required this.totalWithdrawn,
     required this.userData,
     required this.phoneNumber,
     required this.referralCount,
   });
 
-  // Factory method to create a Wallet object from JSON
   factory Wallet.fromJson(Map<String, dynamic> json) {
     return Wallet(
-      id: json['_id'],
-      balance: json['balance'].toDouble(),
-      createdAt: DateTime.parse(json['createdAt']),
-      isDeleted: json['isDeleted'],
-      totalEarned: json['totalEarned'].toDouble(),
-      userData: UserData.fromJson(json['userData']),
-      phoneNumber: json['phoneNumber'],
-      referralCount: json['referralCount'],
+      id: json['_id'] ?? '',
+      balance: (json['balance'] ?? 0).toDouble(),
+      createdAt:
+          json['createdAt'] != null
+              ? DateTime.parse(json['createdAt'])
+              : DateTime.now(),
+      isDeleted: json['isDeleted'] ?? false,
+      totalEarned: (json['totalEarned'] ?? 0).toDouble(),
+      totalWithdrawn: (json['totalWithdrawn'] ?? 0).toDouble(),
+      userData: UserData.fromJson(json['userData'] ?? {}),
+      phoneNumber: json['phoneNumber'] ?? '',
+      referralCount: json['referralCount'] ?? 0,
     );
   }
 
-  // Method to convert a Wallet object to JSON
   Map<String, dynamic> toJson() {
     return {
       '_id': id,
@@ -41,6 +47,7 @@ class Wallet {
       'createdAt': createdAt.toIso8601String(),
       'isDeleted': isDeleted,
       'totalEarned': totalEarned,
+      'totalWithdrawn': totalWithdrawn,
       'userData': userData.toJson(),
       'phoneNumber': phoneNumber,
       'referralCount': referralCount,
@@ -51,17 +58,20 @@ class Wallet {
 class UserData {
   final String id;
   final String name;
+  final String code;
 
-  UserData({required this.id, required this.name});
+  UserData({required this.id, required this.name, required this.code});
 
-  // Factory method to create a UserData object from JSON
   factory UserData.fromJson(Map<String, dynamic> json) {
-    return UserData(id: json['_id'], name: json['name']);
+    return UserData(
+      id: json['_id'] ?? '',
+      name: json['name'] ?? 'Unknown',
+      code: json['code'] ?? '',
+    );
   }
 
-  // Method to convert a UserData object to JSON
   Map<String, dynamic> toJson() {
-    return {'_id': id, 'name': name};
+    return {'_id': id, 'name': name, 'code': code};
   }
 }
 
@@ -84,22 +94,34 @@ class WalletResponse {
     required this.totalPages,
   });
 
-  // Factory method to create a WalletResponse object from JSON
   factory WalletResponse.fromJson(Map<String, dynamic> json) {
-    return WalletResponse(
-      success: json['success'],
-      message: json['message'],
-      currentPage: json['currentPage'],
-      results: List<Wallet>.from(
-        json['results'].map((x) => Wallet.fromJson(x)),
-      ),
-      latestCount: json['latestCount'],
-      totalCount: json['totalCount'],
-      totalPages: json['totalPages'],
-    );
+    try {
+      final resultsList = json['results'] as List<dynamic>? ?? [];
+      final wallets = resultsList.map((x) => Wallet.fromJson(x)).toList();
+
+      return WalletResponse(
+        success: json['success'] ?? false,
+        message: json['message'] ?? '',
+        currentPage: json['currentPage'] ?? 1,
+        results: wallets,
+        latestCount: json['latestCount'] ?? 0,
+        totalCount: json['totalCount'] ?? 0,
+        totalPages: json['totalPages'] ?? 1,
+      );
+    } catch (e) {
+      logError('Error parsing WalletResponse: $e');
+      return WalletResponse(
+        success: false,
+        message: 'Error parsing response: $e',
+        currentPage: 1,
+        results: [],
+        latestCount: 0,
+        totalCount: 0,
+        totalPages: 1,
+      );
+    }
   }
 
-  // Method to convert a WalletResponse object to JSON
   Map<String, dynamic> toJson() {
     return {
       'success': success,

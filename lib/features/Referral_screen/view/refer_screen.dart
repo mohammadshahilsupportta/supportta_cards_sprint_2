@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
 import 'package:taproot_admin/features/Referral_screen/data/refer_model.dart';
-import 'package:taproot_admin/features/Referral_screen/data/refer_service.dart';
 import 'package:taproot_admin/features/Referral_screen/view/refer_user_details.dart';
 import 'package:taproot_admin/features/Referral_screen/widgets/referal_settings_dialog_box.dart';
 import 'package:taproot_admin/features/product_screen/widgets/search_widget.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 import 'package:taproot_admin/widgets/not_found_widget.dart';
+
+import '../../../core/api/base_url_constant.dart';
 
 class ReferScreen extends StatefulWidget {
   final GlobalKey<NavigatorState>? innerNavigatorKey;
@@ -31,18 +33,35 @@ class _ReferScreenState extends State<ReferScreen> {
       setState(() {
         isLoading = true;
       });
-      WalletResponse response = await ReferService.fetchReferUser(
-        1,
-        searchQuery,
+
+      final responseWallet = await DioHelper().get(
+        '/wallet',
+        type: ApiType.baseUrl,
+        queryParameters: {
+          'page': 1,
+          if (searchQuery.isNotEmpty) 'search': searchQuery,
+        },
       );
+
+      WalletResponse response = WalletResponse.fromJson(responseWallet.data);
+
       setState(() {
         wallets = response.results;
         isLoading = false;
       });
     } catch (e) {
-      // Handle the error, maybe show a snack bar
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to load wallet data: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+
       setState(() {
         isLoading = false;
+        wallets = [];
       });
     }
   }

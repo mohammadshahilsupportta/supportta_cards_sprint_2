@@ -1,6 +1,7 @@
 import 'package:taproot_admin/core/api/base_url_constant.dart';
 import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
+import 'package:taproot_admin/core/logger.dart';
 import 'package:taproot_admin/features/Referral_screen/data/bank_detail_model.dart';
 import 'package:taproot_admin/features/Referral_screen/data/refer_detail_model.dart';
 import 'package:taproot_admin/features/Referral_screen/data/refer_model.dart';
@@ -57,7 +58,7 @@ class ReferService with ErrorExceptionHandler {
     }
   }
 
-  static Future<WalletTransactionResponse> fetchTransactionDetails(
+  static Future<SimpleTransactionResponse?> fetchSimpleTransactions(
     String userId,
   ) async {
     try {
@@ -66,9 +67,11 @@ class ReferService with ErrorExceptionHandler {
         type: ApiType.baseUrl,
         queryParameters: {'user': userId},
       );
-      return WalletTransactionResponse.fromJson(response.data);
+
+      return SimpleTransactionResponse.fromJson(response.data);
     } catch (e) {
-      rethrow;
+      logError('Error fetching transactions: $e');
+      return null;
     }
   }
 }

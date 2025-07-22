@@ -42,9 +42,9 @@ class InstagramShimmer {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            baseColor.withOpacity(0.0),
-                            highlightColor.withOpacity(0.4),
-                            baseColor.withOpacity(0.0),
+                            baseColor.withAlpha(0), 
+  highlightColor.withAlpha(102),  
+  baseColor.withAlpha(0),  
                           ],
                           stops: [0.1, 0.5, 0.9],
                           begin: Alignment.centerLeft,

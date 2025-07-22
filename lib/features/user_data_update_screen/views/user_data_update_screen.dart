@@ -367,7 +367,7 @@ class _UserDataUpdateScreenState extends State<UserDataUpdateScreen> {
 
 class ServiceCardWidget extends StatelessWidget {
   final PortfolioDataModel? portfolio;
-  final baseUrl;
+  final dynamic baseUrl;
   final Service service;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
@@ -375,7 +375,7 @@ class ServiceCardWidget extends StatelessWidget {
 
   const ServiceCardWidget({
     super.key,
-    required this.portfolio,
+    this.portfolio,
     required this.baseUrl,
     required this.service,
     this.onEdit,
@@ -385,32 +385,40 @@ class ServiceCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageUrl =
-        '$baseUrlImage/portfolios/portfolio_services/${service.image!.key}';
-    logSuccess('Full Image URL: $imageUrl');
+    // Safely construct image URL with null checks
+    String? imageUrl;
+    if (baseUrl != null && service.image?.key != null) {
+      imageUrl =
+          '$baseUrlImage/portfolios/portfolio_services/${service.image!.key}';
+      logSuccess('Full Image URL: $imageUrl');
+    }
+
     return Card(
       color: Colors.white,
       elevation: 8,
       surfaceTintColor: CustomColors.secondaryColor,
-
-      shadowColor: Colors.black.withValues(alpha: 0.6),
+      // Replace deprecated withValues with Color.fromRGBO
+      shadowColor: Color.fromRGBO(0, 0, 0, 0.6),
       child: Container(
         padding: EdgeInsets.all(CustomPadding.paddingLarge.v),
         width: 350,
         height: 400,
-
         child: Stack(
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(service.heading, style: context.inter50014),
+                // Handle null heading
+                Text(
+                  service.heading.isEmpty ? 'No Title' : service.heading,
+                  style: context.inter50014,
+                ),
                 Gap(CustomPadding.paddingLarge.v),
                 SizedBox(
                   height: 160,
                   width: double.infinity,
                   child:
-                      service.image?.key != null
+                      imageUrl != null
                           ? Image.network(
                             imageUrl,
                             fit: BoxFit.fill,
@@ -455,7 +463,12 @@ class ServiceCardWidget extends StatelessWidget {
                 Gap(CustomPadding.paddingLarge.v),
                 Expanded(
                   child: SingleChildScrollView(
-                    child: Text(service.description),
+                    // Handle null description
+                    child: Text(
+                      service.description.isNotEmpty == true
+                          ? service.description
+                          : 'No description available',
+                    ),
                   ),
                 ),
               ],
@@ -475,7 +488,6 @@ class ServiceCardWidget extends StatelessWidget {
                         ),
                       ),
                     ),
-
                     TextButton(
                       onPressed: onDelete,
                       child: Text(
@@ -494,3 +506,133 @@ class ServiceCardWidget extends StatelessWidget {
     );
   }
 }
+
+// class ServiceCardWidget extends StatelessWidget {
+//   final PortfolioDataModel? portfolio;
+//   final baseUrl;
+//   final Service service;
+//   final VoidCallback? onEdit;
+//   final VoidCallback? onDelete;
+//   final bool isEditMode;
+
+//   const ServiceCardWidget({
+//     super.key,
+//     required this.portfolio,
+//     required this.baseUrl,
+//     required this.service,
+//     this.onEdit,
+//     this.onDelete,
+//     this.isEditMode = false,
+//   });
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final imageUrl =
+//         '$baseUrlImage/portfolios/portfolio_services/${service.image!.key}';
+//     logSuccess('Full Image URL: $imageUrl');
+//     return Card(
+//       color: Colors.white,
+//       elevation: 8,
+//       surfaceTintColor: CustomColors.secondaryColor,
+
+//       shadowColor: Colors.black.withValues(alpha: 0.6),
+//       child: Container(
+//         padding: EdgeInsets.all(CustomPadding.paddingLarge.v),
+//         width: 350,
+//         height: 400,
+
+//         child: Stack(
+//           children: [
+//             Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Text(service.heading, style: context.inter50014),
+//                 Gap(CustomPadding.paddingLarge.v),
+//                 SizedBox(
+//                   height: 160,
+//                   width: double.infinity,
+//                   child:
+//                       service.image?.key != null
+//                           ? Image.network(
+//                             imageUrl,
+//                             fit: BoxFit.fill,
+//                             loadingBuilder: (context, child, loadingProgress) {
+//                               if (loadingProgress == null) return child;
+//                               return Center(
+//                                 child: CircularProgressIndicator(
+//                                   value:
+//                                       loadingProgress.expectedTotalBytes != null
+//                                           ? loadingProgress
+//                                                   .cumulativeBytesLoaded /
+//                                               loadingProgress
+//                                                   .expectedTotalBytes!
+//                                           : null,
+//                                 ),
+//                               );
+//                             },
+//                             errorBuilder: (context, error, stackTrace) {
+//                               logError('Image Error for $imageUrl: $error');
+//                               return const Center(
+//                                 child: Icon(
+//                                   Icons.image_not_supported,
+//                                   size: 40,
+//                                   color: CustomColors.hintGrey,
+//                                 ),
+//                               );
+//                             },
+//                           )
+//                           : const Center(
+//                             child: Icon(
+//                               Icons.image_not_supported,
+//                               size: 40,
+//                               color: CustomColors.hintGrey,
+//                             ),
+//                           ),
+//                 ),
+//                 Gap(CustomPadding.paddingLarge.v),
+//                 Text(
+//                   'Description',
+//                   style: TextStyle(color: CustomColors.textFieldBorderGrey),
+//                 ),
+//                 Gap(CustomPadding.paddingLarge.v),
+//                 Expanded(
+//                   child: SingleChildScrollView(
+//                     child: Text(service.description),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//             if (isEditMode)
+//               Positioned(
+//                 top: 0,
+//                 right: 0,
+//                 child: Row(
+//                   children: [
+//                     TextButton(
+//                       onPressed: onEdit,
+//                       child: Text(
+//                         'Edit',
+//                         style: context.inter50016.copyWith(
+//                           color: CustomColors.green,
+//                         ),
+//                       ),
+//                     ),
+
+//                     TextButton(
+//                       onPressed: onDelete,
+//                       child: Text(
+//                         'Delete',
+//                         style: context.inter50016.copyWith(
+//                           color: CustomColors.red,
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
