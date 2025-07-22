@@ -34,6 +34,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     'Last Week': 'lastWeek',
     'This Month': 'thisMonth',
     'Last Month': 'lastMonth',
+    'All Time': 'allTime',
   };
   String getDropdownLabel(String value) {
     return dateFilters.entries.firstWhere((entry) => entry.value == value).key;
