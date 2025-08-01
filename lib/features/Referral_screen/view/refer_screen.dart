@@ -140,7 +140,7 @@ class _ReferScreenState extends State<ReferScreen> {
   @override
   Widget build(BuildContext context) {
     TextStyle headingTextStyle = context.inter60016.copyWith(
-      fontSize: 18.fSize,
+      fontSize: 17.fSize,
     );
     return Scaffold(
       body: SingleChildScrollView(
@@ -222,6 +222,7 @@ class _ReferScreenState extends State<ReferScreen> {
                           ),
                         ),
                         child: PaginatedDataTable(
+                          headingRowHeight: 60.h,
                           key: _tableKey,
                           dividerThickness: 0.6,
                           header: Row(

@@ -5,7 +5,12 @@ class GradientBorderField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final String hintText;
   final TextEditingController? controller;
-  const GradientBorderField({super.key, required this.hintText, this.onChanged,this.controller});
+  const GradientBorderField({
+    super.key,
+    required this.hintText,
+    this.onChanged,
+    this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +39,7 @@ class GradientBorderField extends StatelessWidget {
             border: Border.all(width: 2, color: Colors.white),
           ),
           child: TextFormField(
-            onChanged:onChanged,
+            onChanged: onChanged,
             decoration: InputDecoration(
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
