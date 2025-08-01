@@ -1,4 +1,4 @@
-/// Response model for payment details API
+
 class PaymentDetailsResponse {
   final bool success;
   final String message;
@@ -23,7 +23,7 @@ class PaymentDetailsResponse {
   }
 }
 
-/// Model for payment details (bank account or UPI)
+
 class PaymentDetails {
   final String id;
   final String client;
@@ -33,17 +33,17 @@ class PaymentDetails {
   final bool isDeleted;
   final DateTime createdAt;
 
-  // Bank account specific fields
+  
   final String? accountHolderName;
   final String? bankName;
   final String? ifsc;
   final int? accountNumber;
   final String? branch;
 
-  // UPI specific fields
-  final String? upiID; // Changed from upiId to upiID to match API response
+  
+  final String? upiID; 
 
-  // Constructor for both bank account and UPI
+  
   PaymentDetails({
     required this.id,
     required this.client,
@@ -57,13 +57,13 @@ class PaymentDetails {
     this.ifsc,
     this.accountNumber,
     this.branch,
-    this.upiID, // Changed from upiId to upiID
+    this.upiID, 
   });
 
-  /// Determines if this is a UPI payment method
+  
   bool get isUpi => defaultAcc == 'UPI';
 
-  /// Determines if this is a bank account payment method
+  
   bool get isBankAccount => defaultAcc == 'Bank_Account';
 
   factory PaymentDetails.fromJson(Map<String, dynamic> json) {
@@ -79,15 +79,15 @@ class PaymentDetails {
               ? DateTime.parse(json['createdAt'])
               : DateTime.now(),
 
-      // Bank account fields
+      
       accountHolderName: json['accountHolderName'],
       bankName: json['bankName'],
       ifsc: json['ifsc'],
       accountNumber: json['accountNumber'],
       branch: json['branch'],
 
-      // UPI fields - fixed field name to match API response
-      upiID: json['upiID'], // Changed from upiId to upiID
+      
+      upiID: json['upiID'], 
     );
   }
 
@@ -102,7 +102,7 @@ class PaymentDetails {
       'createdAt': createdAt.toIso8601String(),
     };
 
-    // Add bank account fields if present
+    
     if (isBankAccount) {
       if (accountHolderName != null)
         data['accountHolderName'] = accountHolderName;
@@ -112,9 +112,9 @@ class PaymentDetails {
       if (branch != null) data['branch'] = branch;
     }
 
-    // Add UPI fields if present
+    
     if (isUpi && upiID != null) {
-      data['upiID'] = upiID; // Changed from upiId to upiID
+      data['upiID'] = upiID; 
     }
 
     return data;

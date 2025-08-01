@@ -2,11 +2,13 @@ import 'package:taproot_admin/core/api/base_url_constant.dart';
 import 'package:taproot_admin/core/api/dio_helper.dart';
 import 'package:taproot_admin/core/api/error_exception_handler.dart';
 import 'package:taproot_admin/core/logger.dart';
-import 'package:taproot_admin/features/Referral_screen/data/bank_detail_model.dart';
-import 'package:taproot_admin/features/Referral_screen/data/refer_detail_model.dart';
-import 'package:taproot_admin/features/Referral_screen/data/refer_model.dart';
-import 'package:taproot_admin/features/Referral_screen/data/referral_settings_model.dart';
-import 'package:taproot_admin/features/Referral_screen/data/transaction_wallet_model.dart';
+import 'package:taproot_admin/features/Referral_screen/models/account_details_model.dart';
+
+import 'package:taproot_admin/features/Referral_screen/models/bank_detail_model.dart';
+import 'package:taproot_admin/features/Referral_screen/models/refer_detail_model.dart';
+import 'package:taproot_admin/features/Referral_screen/models/refer_model.dart';
+import 'package:taproot_admin/features/Referral_screen/models/referral_settings_model.dart';
+import 'package:taproot_admin/features/Referral_screen/models/transaction_wallet_model.dart';
 
 class ReferService with ErrorExceptionHandler {
   static Future<WalletResponse> fetchReferUser(
@@ -103,21 +105,47 @@ class ReferService with ErrorExceptionHandler {
     }
   }
 
- static Future<ReferralSetting> updateReferralSetting(
-  String id,
-  ReferralSetting setting,
-  ReferralSetting? previousSetting, // Add this parameter
-) async {
-  try {
-    final response = await DioHelper().patch(
-      '/referral-settings/$id',
-      data: setting.toUpdateJson(previousSetting), // Pass the previous setting
-      type: ApiType.baseUrl,
-    );
-    return ReferralSetting.fromJson(response.data['result'] ?? response.data);
-  } catch (e) {
-    rethrow;
+  static Future<ReferralSetting> updateReferralSetting(
+    String id,
+    ReferralSetting setting,
+    ReferralSetting? previousSetting,
+  ) async {
+    try {
+      final response = await DioHelper().patch(
+        '/referral-settings/$id',
+        data: setting.toUpdateJson(previousSetting),
+        type: ApiType.baseUrl,
+      );
+      return ReferralSetting.fromJson(response.data['result'] ?? response.data);
+    } catch (e) {
+      rethrow;
+    }
   }
-}
+
+ static Future<bool> settlePaymentToBank({
+   required String userId,
+  required SettleAccountDetails  accountData, 
+}  ) async {
+    try {
+      final response = await DioHelper().patch(
+        '/wallet/settle/$userId',
+        type: ApiType.baseUrl,
+        data: accountData.toJson(),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        
+        return true;
+      } else {
+        logError(
+          'Failed to settle payment. Status code: ${response.statusCode}',
+        );
+        return false;
+      }
+    } catch (e) {
+      logError('Error settling payment: $e');
+      return false;
+    }
+  }
 
 }

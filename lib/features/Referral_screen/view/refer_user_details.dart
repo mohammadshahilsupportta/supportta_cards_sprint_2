@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
-import 'package:taproot_admin/features/Referral_screen/data/bank_detail_model.dart';
-import 'package:taproot_admin/features/Referral_screen/data/refer_detail_model.dart';
+import 'package:taproot_admin/features/Referral_screen/models/bank_detail_model.dart';
+import 'package:taproot_admin/features/Referral_screen/models/refer_detail_model.dart';
 import 'package:taproot_admin/features/Referral_screen/data/refer_service.dart';
-import 'package:taproot_admin/features/Referral_screen/data/transaction_wallet_model.dart';
+import 'package:taproot_admin/features/Referral_screen/models/transaction_wallet_model.dart';
 import 'package:taproot_admin/features/Referral_screen/widgets/common_details_container.dart';
 import 'package:taproot_admin/features/Referral_screen/widgets/refer_detail_widget.dart';
 import 'package:taproot_admin/features/Referral_screen/widgets/settle_payment.dart';
@@ -135,6 +134,11 @@ class _ReferUserDetailsState extends State<ReferUserDetails>
 
   @override
   Widget build(BuildContext context) {
+    final bool? accountTypeBank =
+        paymentResult == null
+            ? null
+            : paymentResult!.result.defaultAcc == 'Bank_Account';
+
     final totalAmountEarned =
         walletResult != null
             ? '₹${walletResult!.result.wallet.totalEarned.toStringAsFixed(2)}'
@@ -149,6 +153,7 @@ class _ReferUserDetailsState extends State<ReferUserDetails>
             : '₹0.00';
     final referCount =
         walletResult != null ? '${walletResult!.result.referralCount}' : '0';
+    final double balance = walletResult?.result.wallet.balance ?? 0.0;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -225,24 +230,47 @@ class _ReferUserDetailsState extends State<ReferUserDetails>
             ),
 
             Gap(CustomPadding.paddingXL),
+            balance == 0
+                ? Tooltip(
+                  message: 'Redeemable balance is zero',
 
-            SizedBox(
-              width: 400.h,
-              child: MiniLoadingButton(
-                useGradient: true,
-                needRow: false,
-                text: 'Settle Payment',
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return SettlePayment();
+                  child: SizedBox(
+                    width: 400.h,
+                    child: MiniLoadingButton(
+                      // useGradient: true,
+                      backgroundColor: CustomColors.hintGrey,
+
+                      needRow: false,
+                      text: 'Settle Payment',
+                      onPressed: () {},
+
+                      gradientColors: CustomColors.borderGradient.colors,
+                    ),
+                  ),
+                )
+                : SizedBox(
+                  width: 400.h,
+                  child: MiniLoadingButton(
+                    useGradient: true,
+                    needRow: false,
+                    text: 'Settle Payment',
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return SettlePayment(
+                            paymentDetailsResponse: paymentResult!,
+
+                            userId: widget.userId,
+                            fullName: walletResult?.result.user.name ?? '-',
+                            accountTypeBank: accountTypeBank,
+                          );
+                        },
+                      );
                     },
-                  );
-                },
-                gradientColors: CustomColors.borderGradient.colors,
-              ),
-            ),
+                    gradientColors: CustomColors.borderGradient.colors,
+                  ),
+                ),
 
             Gap(CustomPadding.paddingXL),
 

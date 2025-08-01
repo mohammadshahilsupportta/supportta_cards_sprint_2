@@ -633,7 +633,7 @@
 // }
 import 'package:flutter/material.dart';
 import 'package:taproot_admin/features/Referral_screen/data/refer_service.dart';
-import 'package:taproot_admin/features/Referral_screen/data/referral_settings_model.dart';
+import 'package:taproot_admin/features/Referral_screen/models/referral_settings_model.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
 import 'package:taproot_admin/widgets/mini_loading_button.dart';
 
