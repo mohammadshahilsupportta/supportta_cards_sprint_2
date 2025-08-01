@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:taproot_admin/exporter/exporter.dart';
@@ -8,6 +9,7 @@ import 'package:taproot_admin/features/Referral_screen/data/refer_service.dart';
 import 'package:taproot_admin/features/Referral_screen/data/transaction_wallet_model.dart';
 import 'package:taproot_admin/features/Referral_screen/widgets/common_details_container.dart';
 import 'package:taproot_admin/features/Referral_screen/widgets/refer_detail_widget.dart';
+import 'package:taproot_admin/features/Referral_screen/widgets/settle_payment.dart';
 import 'package:taproot_admin/features/Referral_screen/widgets/shimmer.dart';
 import 'package:taproot_admin/features/user_data_update_screen/widgets/detail_row.dart';
 import 'package:taproot_admin/widgets/mini_gradient_border.dart';
@@ -230,7 +232,14 @@ class _ReferUserDetailsState extends State<ReferUserDetails>
                 useGradient: true,
                 needRow: false,
                 text: 'Settle Payment',
-                onPressed: () {},
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return SettlePayment();
+                    },
+                  );
+                },
                 gradientColors: CustomColors.borderGradient.colors,
               ),
             ),
