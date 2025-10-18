@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:gap/gap.dart';
 
-const String baseUrl = "http://213.210.36.7:5000";
+// const String baseUrl = "http://213.210.36.7:5000";
 const String baseUrlImage =
     'https://supportta-cards.blr1.cdn.digitaloceanspaces.com/test';
-// const String baseUrl = 'http://192.168.1.37:5000';
+const String baseUrl = 'https://server.supporttacards.com';
 
 class CustomPadding {
   static const double padding = 8;
