@@ -5,7 +5,7 @@ import 'package:gap/gap.dart';
 
 // const String baseUrl = "http://213.210.36.7:5000";
 const String baseUrlImage =
-    'https://supportta-cards.blr1.cdn.digitaloceanspaces.com/test';
+    'https://supportta-cards.blr1.cdn.digitaloceanspaces.com';
 const String baseUrl = 'https://server.supporttacards.com';
 
 class CustomPadding {
